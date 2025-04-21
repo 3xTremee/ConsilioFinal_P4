@@ -1,0 +1,26 @@
+define domain myDomain
+type robot {
+    speed: int;
+    location: room || robot || door;
+    amalie: int[];
+}
+
+action move(robot r) {
+    if (r.location == room) {
+        r.speed = door;
+    }
+}
+
+define problem p1
+import myDomain
+objects {
+    robot robots[] = {r1, r2};
+    room rooms[] = {A, B};
+}
+initialState {
+    robots[0, 1].location = A;
+}
+
+goalState {
+    r1.location == B;
+}
