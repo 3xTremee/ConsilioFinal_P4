@@ -77,11 +77,11 @@ import domainExample
 objects{
 
     robot robots[] = {r1};
-    packages package[] = {p1, p2, p3};
-    rooms room[] = {A, B, C, D, E};
-    doors door[] = {d1, d2, d3, d4, d5};
-    keys key[] = {k1, k2, k3};
-    items item[] = {i1, i2, i3, i4, i5, i6};
+    package packages[] = {p1, p2, p3};
+    room rooms[] = {A, B, C, D, E};
+    door doors[] = {d1, d2, d3, d4, d5};
+    key keys[] = {k1, k2, k3};
+    item items[] = {i1, i2, i3, i4, i5, i6};
 
 
 }

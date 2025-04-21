@@ -5,17 +5,29 @@ type robot {
     amalie: int[];
 }
 
+type package {
+    location: room;
+    speed: int;
+}
+
 action move(robot r) {
     if (r.location == room) {
         r.speed = door;
     }
 }
 
+action pickUp(robot r, package p) {
+    if (r.location == p.location) {
+        p.location = r;
+    }
+}
+
 define problem p1
 import myDomain
 objects {
-    robot robots[] = {r1, r2};
-    room rooms[] = {A, B};
+    robot robots[] = {r1, r2, r3};
+    package packages[] = {p1, p2};
+    package packages[] = {pa1, pa2};
 }
 initialState {
     robots[0, 1].location = A;
