@@ -10,7 +10,7 @@ type package {
     speed: int;
 }
 
-action move(robot r) {
+action robot(robot r) {
     if (r.location == room) {
         r.speed = door;
     }
