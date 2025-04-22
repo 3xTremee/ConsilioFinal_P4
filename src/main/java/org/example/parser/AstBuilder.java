@@ -82,10 +82,19 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
 
     @Override
     public ValueNode visitOrValue(ConsilioParser.OrValueContext ctx) {
-        ValueNode left = (ValueNode) visit(ctx.valueType());
-        ValueNode right = (ValueNode) visit(ctx.value());
-
-        return new OrValueNode(left, right);
+        List<ValueNode> values = new ArrayList<>();
+        for (ParseTree child : ctx.children) {
+            if (child instanceof ConsilioParser.ValueTypeContext) {
+                values.add((ValueNode) visit(child));
+            }
+            else if (child instanceof ConsilioParser.BaseValueContext) {
+                values.add((ValueNode) visit(child));
+            }
+            else if (child instanceof ConsilioParser.OrValueContext) {
+                values.add((ValueNode) visit(child));
+            }
+        }
+        return new OrValueNode(values);
     }
 
     @Override
@@ -205,17 +214,17 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
 
 
     // Slet denne method hvis den slettes inde fra .g4 filen.
-    @Override
+   /* @Override
     public StatementNode visitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx) {
-        String target = ctx.IDENTIFIER().getText();
+        DotNode target = (DotNode) visit(ctx.dotNotation());
         ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
 
         return new AssignmentNode(target, expr);
-    }
+    }*/
 
     @Override
     public StatementNode visitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx) {
-        String target = ctx.dotNotation().getText();
+        DotNode target =  (DotNode) visit(ctx.dotNotation());
         ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
 
         return new AssignmentNode(target, expr);

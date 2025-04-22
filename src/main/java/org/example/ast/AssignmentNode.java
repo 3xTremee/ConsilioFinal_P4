@@ -1,16 +1,16 @@
 package org.example.ast;
 
 public class AssignmentNode extends StatementNode {
-    private final String target;
+    private final DotNode target;
     private final ExpressionNode expression;
 
-    public AssignmentNode(String target, ExpressionNode expression) {
+    public AssignmentNode(DotNode target, ExpressionNode expression) {
         this.target = target;
         this.expression = expression;
     }
 
     // getters
-    public String getTarget() {
+    public DotNode getTarget() {
         return target;
     }
 

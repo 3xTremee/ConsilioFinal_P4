@@ -1,26 +1,56 @@
-define domain myDomain
+define domain robotDomain
+
 type robot {
-    speed: int;
-    location: room || robot || door;
-    amalie: int[];
+    location : room;
+    carrying : boolean;
 }
 
-action move(robot r) {
-    if (r.location == room) {
-        r.speed = door;
+type package {
+    location : room || robot;
+}
+
+type room {
+
+}
+
+action move(robot r, room dest){
+    if(r.location != dest){
+        r.location = dest;
     }
 }
 
-define problem p1
-import myDomain
-objects {
-    robot robots[] = {r1, r2};
-    room rooms[] = {A, B};
+action pickUpPackage(robot r, package p){
+    if(r.carrying == false && r.location == p.location){
+        p.location = r;
+        r.carrying = true;
+    }
 }
+
+
+action putDownPackage(robot r, package p, room rm){
+    if(r.carrying == true && p.location == r && r.location == rm){
+        p.location = rm;
+        r.carrying = false;
+    }
+}
+define problem movePackagesDemo
+import robotDomain
+
+objects {
+    robot   robots[]   = {rob};
+    package packages[] = {pack1, pack2};
+    room    rooms[]    = {A, B, C};
+}
+
 initialState {
-    robots[0, 1].location = A;
+    rob.location = A;
+    rob.carrying = false;
+
+    pack1.location = B;
+    pack2.location = C;
 }
 
 goalState {
-    r1.location == B;
+    pack1.location == C;
+    pack2.location == A;
 }
