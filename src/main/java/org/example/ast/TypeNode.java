@@ -47,30 +47,21 @@ public class TypeNode extends AstNode {
             return returnValue; // Return an empty list if attributes are null
         }
         for (AttributeNode attribute : attributes) {
-            System.out.println("Checking attribute: " + attribute.getIdentifier());
-            if (attribute.getIdentifier().equals(field)) {
-                System.out.println("Match found for field: " + field);
+             if (attribute.getIdentifier().equals(field)) {
                 ValueNode value = attribute.getValue();
                 if (value == null) {
-                    System.out.println("ValueNode is null for field: " + field);
                     continue;
                 }
-                System.out.println("ValueNode type: " + value.getClass().getSimpleName());
                 if (value instanceof ValueTypeNode) {
-                    System.out.println("ValueTypeNode: " + ((ValueTypeNode) value).getTypeName());
                     returnValue.add(((ValueTypeNode) value).getTypeName());
                 } else if (value instanceof BaseValueNode) {
-                    System.out.println("BaseValueNode: " + ((BaseValueNode) value).getValue());
                     returnValue.add(((BaseValueNode) value).getValue());
                 } else if (value instanceof OrValueNode) {
                     List<ValueNode> types = ((OrValueNode) value).getTypes();
-                    System.out.println("OrValueNode found with types: " + types);
                     for (ValueNode type : types) {
                         if (type instanceof ValueTypeNode) {
-                            System.out.println("ValueTypeNode: " + ((ValueTypeNode) type).getTypeName());
                             returnValue.add(((ValueTypeNode) type).getTypeName());
                         } else if (type instanceof BaseValueNode) {
-                            System.out.println("BaseValueNode: " + ((BaseValueNode) type).getValue());
                             returnValue.add(((BaseValueNode) type).getValue());
                         }
                     }
@@ -79,7 +70,6 @@ public class TypeNode extends AstNode {
                 }
             }
         }
-        System.out.println("list" + returnValue);
         return returnValue; // Return the populated list
     }
 }

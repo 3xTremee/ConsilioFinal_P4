@@ -67,10 +67,7 @@ public class HelperFunctions {
     private String getDotNodeType(DotNode node, List<ParameterNode> parameters, Map<String, TypeNode> typeNodes) {
         String targetType = getExpressionType(node.getTarget(), parameters, typeNodes);
         TypeNode typeDefinition = typeNodes.get(targetType);
-        System.out.println("Target type:" + targetType);
         if (typeDefinition != null && typeDefinition.hasAttribute(node.getField())) {
-            System.out.println("DotNode: " + node.getField() + " in type: " + targetType);
-            System.out.println("list" + typeDefinition.getAttributeType(node.getField()));
             return String.join(", ", typeDefinition.getAttributeType(node.getField()));
         }
         throw new SemanticException("Field '" + node.getField() + "' does not exist in type '" + targetType + "'.");
@@ -101,27 +98,34 @@ public class HelperFunctions {
         ExpressionNode rhs = node.getExpression();
         String lhsType = getExpressionType(lhs, parameters, typeNodes);
         String rhsType = getExpressionType(rhs, parameters, typeNodes);
-
-        if (lhsType.equals("int")) {
-            // Check if the RHS is a numeric type or a numeric constant
-            if (rhs instanceof ConstantNode) {
-                String value = ((ConstantNode) rhs).getValueConstant();
-                try {
-                    Integer.parseInt(value); // Ensure the value is a valid integer
-                } catch (NumberFormatException e) {
-                    throw new SemanticException("Type mismatch: Cannot assign non-integer value '" + value + "' to int");
+        switch (lhsType) {
+            case "int":
+                // Check if the RHS is a numeric type or a numeric constant
+                if (rhs instanceof ConstantNode) {
+                    String value = ((ConstantNode) rhs).getValueConstant();
+                    try {
+                        Integer.parseInt(value); // Ensure the value is a valid integer
+                    } catch (NumberFormatException e) {
+                        throw new SemanticException("Type mismatch: Cannot assign non-integer value '" + value + "' to int");
+                    }
+                } else if (!rhsType.equals("int")) {
+                    throw new SemanticException("Type mismatch: Cannot assign type '" + rhsType + "' to int");
                 }
-            } else if (!rhsType.equals("int")) {
-                throw new SemanticException("Type mismatch: Cannot assign type '" + rhsType + "' to int");
-            }
-
-        if (lhsType.equals("boolean")) {
-
-        }
-
-
-        } else if (!lhsType.contains(rhsType)) {
-            throw new SemanticException("Type mismatch: Cannot assign " + rhsType + " to " + lhsType);
+                break;
+            case "boolean":
+                if (rhs instanceof ConstantNode) {
+                    String value = ((ConstantNode) rhs).getValueConstant();
+                    if (!value.equals("true") && !value.equals("false")) {
+                        throw new SemanticException("Type mismatch: Cannot assign non-boolean value '" + value + "' to boolean");
+                    }
+                } else if (!lhsType.contains(rhsType)) {
+                    throw new SemanticException("Type mismatch: Cannot assign " + rhsType + " to " + lhsType);
+                }
+                break;
+            default:
+                if (!lhsType.contains(rhsType)) {
+                    throw new SemanticException("Type mismatch: Cannot assign " + rhsType + " to " + lhsType);
+                }
         }
     }
 }
