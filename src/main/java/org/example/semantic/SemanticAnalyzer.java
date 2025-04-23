@@ -9,22 +9,28 @@ public class SemanticAnalyzer {
     private final Map<String, ObjectNode> objects = new HashMap<>();
     private final HelperFunctions helperFunctions = new HelperFunctions();
 
+    // Hjælper funktion til at enter et symbol i et given hashmap.
+    private <T> void enterSymbol(Map<String, T> table, String name, T symbol, String kind) {
+        if (table.containsKey(name)) {
+            throw new SemanticException(kind + " duplicate: " + name);
+        }
+        table.put(name, symbol);
+    }
+
     public void analyze(DomainNode domain, ProblemNode problem) {
+
         // Tjek typer
         for (TypeNode type : domain.getTypes()) {
-            if (types.containsKey(type.getName())) {
-                throw new SemanticException("Type duplicate: " + type.getName());
-            } else {
-                types.put(type.getName(), type);
-                System.out.println(types);
-            }
+            enterSymbol(types, type.getName(), type, "Type");
         }
 
         // Tjek actions
         for (ActionNode action : domain.getActions()) {
-            if (actions.containsKey(action.getName())) {
-                throw new SemanticException("Action duplicate: " + action.getName());
-            } else {
+            enterSymbol(actions, action.getName(), action, "Action");
+        }
+
+        /*
+        else {
                 List<ParameterNode> parameters = action.getParameters();
                 for (ParameterNode parameter : parameters) {
                     String parametertype = parameter.getType();
@@ -37,22 +43,56 @@ public class SemanticAnalyzer {
                 actions.put(action.getName(), action);
                 System.out.println(actions);
             }
-        }
+         */
 
         // Tjek import af domain
         if (!domain.getName().equals(problem.getImportName())) {
             throw new SemanticException("Import name mismatch: " + problem.getImportName() + " Expected: " + domain.getName());
         }
 
-        // Tjek objects
-        for (ObjectNode object : problem.getObjects()) {
-            if (objects.containsKey(object.getElementName())) {
-                throw new SemanticException("Object duplicate: " + object.getElementName());
-            } else {
-                objects.put(object.getElementName(), object);
+        // tjek fields (vi kalder det attributes) for type definitions.
+        for (TypeNode type : domain.getTypes()) {
+            for (AttributeNode attr : type.getAttributes()) {
+                checkValueNode(attr.getValue());
             }
+        }
+
+
+        // type check ide
+/*
+        checkProblem();
+        checkTypes();
+        checkAction();
+        checkStatement();
+        checkExpression();
+        checkObjects();
+        checkInitial();
+        checkGoal();
+
+ */
+    }
+
+    // Helper method which checks the value the fields of the types can take.
+    /* location: door || room, in this example, there needs to be a valid type definition named door and room for it
+    *  to pass the type check. */
+    private void checkValueNode(ValueNode value) {
+        if (value instanceof ValueTypeNode) {
+            String typeName = ((ValueTypeNode) value).getTypeName();
+            if (!(types.containsKey(typeName)
+                    || "int".equals(typeName)
+                    || "boolean".equals(typeName)))
+                throw new SemanticException("Unknown type in attribute: " + typeName);
+        } else if (value instanceof BaseValueNode) {
+            String typeName = ((BaseValueNode) value).getValue();
+            if (!(types.containsKey(typeName)
+                    || "int".equals(typeName)
+                    || "boolean".equals(typeName)))
+                throw new SemanticException("Unknown type in attribute: " + typeName);
+        } else if (value instanceof ArrayValueNode) {
+            checkValueNode(((ArrayValueNode) value).getElementType());
+        } else if (value instanceof OrValueNode) {
+            checkValueNode(((OrValueNode) value).getLeft());
+            checkValueNode(((OrValueNode) value).getRight());
         }
     }
 }
-
-
