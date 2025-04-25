@@ -3,7 +3,6 @@ package org.example.semantic;
 import java.util.*;
 import org.example.ast.*;
 
-import javax.swing.*;
 //Symbol table based on AST Nodes
 public class SemanticAnalyzer {
     private static final Map<String, TypeNode> types = new HashMap<>();
@@ -58,19 +57,8 @@ public class SemanticAnalyzer {
             }
             enterSymbol(objects, object.getElementName(), object, "Object");
         }
+    }
 
-
-            // type check ide
-    /*
-            checkProblem();
-            checkTypes();
-            checkAction();
-            checkStatement();
-            checkExpression();
-            checkObjects();
-            checkInitial();
-            checkGoal();
-     */
         // type check ide
 /*
         checkStatement(); Kage
@@ -80,7 +68,6 @@ public class SemanticAnalyzer {
         checkGoal();
 
  */
-    }
 
         // Helper method which checks the value the fields of the types can take.
         /* location: door || room, in this example, there needs to be a valid type definition named door and room for it
