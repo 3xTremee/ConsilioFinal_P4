@@ -18,14 +18,14 @@ public class Main {
         ProgramNode program = astBuilder.visitProgram(parser.program());
 
         // Bare for at printe AST. Skal bare slettes igen på et tidspunkt så den ikke printer AST
-        System.out.println(program);
+        //System.out.println(program);
 
         // Semantic tjek (pt uden typetjek)
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
         semanticAnalyzer.analyze(program.getDomain(), program.getProblem());
 
         // Print af tabeller
-        semanticAnalyzer.printTables();
+        //semanticAnalyzer.printTables();
 
     }
 }

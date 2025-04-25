@@ -7,7 +7,7 @@ import org.example.ast.*;
 public class SemanticAnalyzer {
 
     // Hashmaps er unordered, vi kan bruge LinkedHashmap hvis skal deres bruge deres insertion order til noget.
-    private final Map<String, TypeNode> types = new HashMap<>();
+    private static final Map<String, TypeNode> types = new HashMap<>();
     private final Map<String, ActionNode> actions = new HashMap<>();
     private final Map<String, ArrayInitializerNode> arrays = new HashMap<>();
     private final Map<String, ObjectNode> objects = new HashMap<>();
@@ -68,31 +68,15 @@ public class SemanticAnalyzer {
                 enterSymbol(objects, elem, new ObjectNode(ai.getType(), ai.getName(), elem), "object");
             }
         }
-        
-        /*
-        // Check objects
-        for (ObjectNode object : problem.getObjects()) {
-            String typeName = object.getType();
-            if (!types.containsKey(typeName)) {
-                throw new SemanticException("Unknown object type: " + typeName + " for object(s) " + object.getArrayName());
-            }
-            enterSymbol(objects, object.getElementName(), object, "Object");
-        }
-        */
-
-        // type check ide
-/*
-        checkStatement(); Kage
-        checkExpression(); Astrid
-        checkObjects(); Tilde
-        checkInitial();
-        checkGoal();
-
- */
+        System.out.println(types);
+        System.out.println(actions);
+        System.out.println(arrays);
+        System.out.println(objects);
+    }
 
         // Helper method which checks the value the fields of the types can take.
         /* location: door || room, in this example, there needs to be a valid type definition named door and room for it
-        *  to pass the type check. */
+         *  to pass the type check. */
         private static void checkValueNode(ValueNode value) {
             if (value instanceof ValueTypeNode) {
                 String typeName = ((ValueTypeNode) value).getTypeName();
@@ -132,5 +116,27 @@ public class SemanticAnalyzer {
                 System.out.println("Object Name: " + entry.getKey() + ", Object Details: " + entry.getValue());
             }
         }
+        
+        /*
+        // Check objects
+        for (ObjectNode object : problem.getObjects()) {
+            String typeName = object.getType();
+            if (!types.containsKey(typeName)) {
+                throw new SemanticException("Unknown object type: " + typeName + " for object(s) " + object.getArrayName());
+            }
+            enterSymbol(objects, object.getElementName(), object, "Object");
+        }
+        */
+
+        // type check ide
+/*
+        checkStatement(); Kage
+        checkExpression(); Astrid
+        checkObjects(); Tilde
+        checkInitial();
+        checkGoal();
+
+ */
+
+
     }
-}

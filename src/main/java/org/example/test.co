@@ -38,6 +38,7 @@ import robotDomain
 objects {
     robot   robots[]   = {rob};
     package packages[] = {pack1, pack2};
+    package redPackages[] = {pa1, pa2};
     room    rooms[]    = {A, B, C};
 }
 
