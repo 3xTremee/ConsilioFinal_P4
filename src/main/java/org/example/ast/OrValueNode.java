@@ -1,25 +1,20 @@
 package org.example.ast;
 
+import java.util.List;
+
 public class OrValueNode extends ValueNode {
-    private final ValueNode left;
-    private final ValueNode right;
+    private final List<ValueNode> types;
 
-    public OrValueNode(ValueNode left, ValueNode right) {
-        this.left = left;
-        this.right = right;
+    public OrValueNode(List<ValueNode> types) {
+        this.types = types;
     }
 
-    //getters
-    public ValueNode getLeft() {
-        return left;
-    }
-
-    public ValueNode getRight() {
-        return right;
+    public List<ValueNode> getTypes() {
+        return types;
     }
 
     @Override
     public String toString() {
-        return "OrValueNode(left=" + left + ", right=" + right + ")";
+        return "OrValueNode(types=" + types + ")";
     }
 }
