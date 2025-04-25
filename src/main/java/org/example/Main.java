@@ -23,5 +23,9 @@ public class Main {
         // Semantic tjek (pt uden typetjek)
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
         semanticAnalyzer.analyze(program.getDomain(), program.getProblem());
+
+        // Print af tabeller
+        semanticAnalyzer.printTables();
+
     }
 }

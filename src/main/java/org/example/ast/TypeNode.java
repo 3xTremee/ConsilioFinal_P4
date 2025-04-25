@@ -41,6 +41,7 @@ public class TypeNode extends AstNode {
         return "Type(name=" + name + ", attributes=" + attributes + ")";
     }
 
+    /* muligvis lettes
     public List<String> getAttributeType(String field) {
         List<String> returnValue = new ArrayList<>(); // Use a mutable list
         if (attributes == null) {
@@ -72,4 +73,7 @@ public class TypeNode extends AstNode {
         }
         return returnValue; // Return the populated list
     }
+    */
+
 }
+

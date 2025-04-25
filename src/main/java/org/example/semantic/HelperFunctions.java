@@ -5,6 +5,12 @@ import org.example.ast.*;
 import java.util.List;
 import java.util.Map;
 
+// Helper functions som blev lavet ret tidligt i projektet
+// Skal laves om og følge symbol tabellen mere
+// Er til for at typecheckeren kan blive mere overskuelig
+// Skal bare slettes, hvis vi ikke bruger det
+
+/*
 public class HelperFunctions {
 
     // Get the type of an expression
@@ -14,6 +20,7 @@ public class HelperFunctions {
         } else if (node instanceof DotNode) {
             return getDotNodeType((DotNode) node, parameters, typeNodes);
         } else if (node instanceof BinaryOpNode) {
+            validateOperation((BinaryOpNode) node, parameters, typeNodes);
             return getBinaryOpType((BinaryOpNode) node, parameters, typeNodes);
         } else if (node instanceof ConstantNode) {
             return ((ConstantNode) node).getValueConstant();
@@ -75,12 +82,47 @@ public class HelperFunctions {
 
     // Helper: Get the type of a BinaryOpNode
     private String getBinaryOpType(BinaryOpNode node, List<ParameterNode> parameters, Map<String, TypeNode> typeNodes) {
-        String leftType = getExpressionType(node.getLeft(), parameters, typeNodes);
-        String rightType = getExpressionType(node.getRight(), parameters, typeNodes);
-        if (!leftType.equals(rightType)) {
-            throw new SemanticException("Type mismatch in binary operation: " + leftType + " and " + rightType);
+        String returnValue = null;
+        if (node.getOperator().equals("==") || node.getOperator().equals("!=") || node.getOperator().equals("<") ||
+                node.getOperator().equals("<=") || node.getOperator().equals(">") || node.getOperator().equals(">=")
+                || node.getOperator().equals("&&") || node.getOperator().equals("||")) {
+            returnValue = "boolean";
+        } else if (node.getOperator().equals("+") || node.getOperator().equals("-")) {
+            returnValue = "int";
         }
-        return leftType;
+        return returnValue;
+    }
+
+    private void validateOperation(BinaryOpNode node, List<ParameterNode> parameters, Map<String, TypeNode> typeNodes) {
+        ExpressionNode lhs = node.getLeft();
+        ExpressionNode rhs = node.getRight();
+        String lhsType = getExpressionType(lhs, parameters, typeNodes);
+        String rhsType = getExpressionType(rhs, parameters, typeNodes);
+        switch (lhsType) {
+            case "int":
+                // Check if the RHS is a numeric type or a numeric constant
+                if (rhs instanceof ConstantNode) {
+                    String value = ((ConstantNode) rhs).getValueConstant();
+                    try {
+                        Integer.parseInt(value); // Ensure the value is a valid integer
+                    } catch (NumberFormatException e) {
+                        throw new SemanticException("Type mismatch: Cannot assign non-integer value '" + value + "' to int");
+                    }
+                } else if (!rhsType.equals("int")) {
+                    throw new SemanticException("Type mismatch: Cannot assign type '" + rhsType + "' to int");
+                }
+                break;
+            case "boolean":
+                if (rhs instanceof ConstantNode) {
+                    String value = ((ConstantNode) rhs).getValueConstant();
+                    if (!value.equals("true") && !value.equals("false")) {
+                        throw new SemanticException("Type mismatch: Cannot assign non-boolean value '" + value + "' to boolean");
+                    }
+                } else if (!lhsType.contains(rhsType)) {
+                    throw new SemanticException("Type mismatch: Cannot assign " + rhsType + " to " + lhsType);
+                }
+                break;
+        }
     }
 
     // Helper: Validate a DotNode
@@ -92,7 +134,7 @@ public class HelperFunctions {
         }
     }
 
-    // Helper: Validate an AssignmentNode
+    // Function for validating Assignments
     private void validateAssignment(AssignmentNode node, List<ParameterNode> parameters, Map<String, TypeNode> typeNodes) {
         DotNode lhs = node.getTarget();
         ExpressionNode rhs = node.getExpression();
@@ -129,3 +171,4 @@ public class HelperFunctions {
         }
     }
 }
+*/
