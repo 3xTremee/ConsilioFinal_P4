@@ -9,8 +9,8 @@ public class SemanticAnalyzer {
     private static final Map<String, TypeNode> types = new HashMap<>();
     private final Map<String, ActionNode> actions = new HashMap<>();
     private final Map<String, ObjectNode> objects = new HashMap<>();
-    //private final TypeChecker typeChecker = new TypeChecker(types); // Instantiate TypeChecker
 
+    // Hjælper funktion til at enter et symbol i et given hashmap.
     private <T> void enterSymbol(Map<String, T> table, String name, T symbol, String kind) {
         if (table.containsKey(name)) {
             throw new SemanticException(kind + " duplicate: " + name);
@@ -59,10 +59,6 @@ public class SemanticAnalyzer {
             enterSymbol(objects, object.getElementName(), object, "Object");
         }
 
-        // --- Type Checking ---
-        //typeChecker.checkActions(domain.getActions());
-        //typeChecker.checkProblem(problem);
-    }
 
             // type check ide
     /*
@@ -75,6 +71,16 @@ public class SemanticAnalyzer {
             checkInitial();
             checkGoal();
      */
+        // type check ide
+/*
+        checkStatement(); Kage
+        checkExpression(); Astrid
+        checkObjects(); Tilde
+        checkInitial();
+        checkGoal();
+
+ */
+    }
 
         // Helper method which checks the value the fields of the types can take.
         /* location: door || room, in this example, there needs to be a valid type definition named door and room for it
