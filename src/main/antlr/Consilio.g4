@@ -83,14 +83,14 @@ ifBlock
 
 statement
     : ifBlock                   #ifStatement
-    | assignment                #assignmentStatement // var før assignment SEMI
-//    | statement statement       #statementConcatination
+    | assignment SEMI           #assignmentStatement // var før assignment SEMI
+//    | statement statement     #statementConcatination
 //    | expression        #expressionStatement
 //    | SEMI              #semiColon
     ;
 
 statementList
-    : (statement SEMI)+
+    : statement+
     ;
 
 assignment

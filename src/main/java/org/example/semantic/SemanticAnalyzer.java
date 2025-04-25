@@ -42,12 +42,9 @@ public class SemanticAnalyzer {
 
         // type check ide
 /*
-        checkProblem();
-        checkTypes();
-        checkAction();
-        checkStatement();
-        checkExpression();
-        checkObjects();
+        checkStatement(); Kage
+        checkExpression(); Astrid
+        checkObjects(); Tilde
         checkInitial();
         checkGoal();
 
