@@ -4,13 +4,22 @@ import java.util.*;
 import org.example.ast.*;
 
 public class SemanticAnalyzer {
+    // Hashmaps er unordered, vi kan bruge LinkedHashmap hvis skal deres bruge deres insertion order til noget.
     private final Map<String, TypeNode> types = new HashMap<>();
     private final Map<String, ActionNode> actions = new HashMap<>();
+    private final Map<String, ArrayInitializerNode> arrays = new HashMap<>();
+    private final Map<String, ObjectNode> objects = new HashMap<>();
+
+    private <T> void lookUp(Map<String, T> table, String name){
+        if (!table.containsKey(name)){
+            throw new SemanticException("Undeclared variable: " + name);
+        }
+    }
 
     // Hjælper funktion til at enter et symbol i et given hashmap.
     private <T> void enterSymbol(Map<String, T> table, String name, T symbol, String kind) {
         if (table.containsKey(name)) {
-            throw new SemanticException(kind + " duplicate: " + name);
+            throw new SemanticException("Duplicate declaration of " + kind + ": " + name);
         }
         table.put(name, symbol);
     }
@@ -20,6 +29,13 @@ public class SemanticAnalyzer {
         // Tjek typer
         for (TypeNode type : domain.getTypes()) {
             enterSymbol(types, type.getName(), type, "Type");
+        }
+
+        // tjek fields (vi kalder det attributes) for type definitions.
+        for (TypeNode type : domain.getTypes()) {
+            for (AttributeNode attr : type.getAttributes()) {
+                checkValueNode(attr.getValue());
+            }
         }
 
         // Tjek actions
@@ -32,13 +48,21 @@ public class SemanticAnalyzer {
             throw new SemanticException("Import name mismatch: " + problem.getImportName() + " Expected: " + domain.getName());
         }
 
-        // tjek fields (vi kalder det attributes) for type definitions.
-        for (TypeNode type : domain.getTypes()) {
-            for (AttributeNode attr : type.getAttributes()) {
-                checkValueNode(attr.getValue());
+        // Tjek arrays / objects
+        for (ArrayInitializerNode ai : problem.getArrayInitializers()) {
+            String typeName = ai.getType();
+            String arrayName = ai.getName();
+
+            if (!types.containsKey(typeName)) {
+                throw new SemanticException("Undeclared type in objects declaration: " + typeName);
+            }
+
+            enterSymbol(arrays, arrayName, ai, "array");
+
+            for (String elem : ai.getElements()) {
+                enterSymbol(objects, elem, new ObjectNode(ai.getType(), ai.getName(), elem), "object");
             }
         }
-
 
         // type check ide
 /*

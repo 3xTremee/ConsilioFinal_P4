@@ -29,8 +29,8 @@ define problem p1
 import myDomain
 objects {
     robot robots[] = {r1, r2, r3};
-    package packages[] = {p1, p2};
-    package packages[] = {pa1, pa2};
+    package bluePackages[] = {p1, p2};
+    package redPackages[] = {pa1, pa2};
 }
 initialState {
     robots[0, 1].location = A;

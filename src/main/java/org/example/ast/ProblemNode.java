@@ -5,17 +5,17 @@ import java.util.List;
 public class ProblemNode extends AstNode{
     private final String name;
     private final String importName;
-    private final List<ObjectNode> objects;
+    private final List<ArrayInitializerNode> arrayInitializers;
     private final List<StatementNode> init;
     private final List<ExpressionNode> goal;
 
     public ProblemNode(String name, String importName,
-                       List<ObjectNode> objects,
+                       List<ArrayInitializerNode> arrayInitializers,
                        List<StatementNode> init,
                        List<ExpressionNode> goal) {
         this.name = name;
         this.importName = importName;
-        this.objects = objects;
+        this.arrayInitializers = arrayInitializers;
         this.init = init;
         this.goal = goal;
     }
@@ -29,8 +29,8 @@ public class ProblemNode extends AstNode{
         return importName;
     }
 
-    public List<ObjectNode> getObjects() {
-        return objects;
+    public List<ArrayInitializerNode> getArrayInitializers() {
+        return arrayInitializers;
     }
 
     public List<StatementNode> getStatement() {
@@ -44,7 +44,6 @@ public class ProblemNode extends AstNode{
     @Override
     public String toString() {
         return "Problem(name=" + name + ", import=" + importName +
-                ", objects=" + objects + ", init=" + init + ", goal=" + goal + ")";
-
+                ", arrays=" + arrayInitializers + ", init=" + init + ", goal=" + goal + ")";
     }
 }
