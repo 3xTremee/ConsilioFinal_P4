@@ -52,7 +52,6 @@ public class SemanticAnalyzer {
             throw new SemanticException("Import name mismatch: " + problem.getImportName() + " Expected: " + domain.getName());
         }
 
-
         // Tjek arrays / objects
         for (ArrayInitializerNode ai : problem.getArrayInitializers()) {
             String typeName = ai.getType();
@@ -116,17 +115,6 @@ public class SemanticAnalyzer {
                 System.out.println("Object Name: " + entry.getKey() + ", Object Details: " + entry.getValue());
             }
         }
-        
-        /*
-        // Check objects
-        for (ObjectNode object : problem.getObjects()) {
-            String typeName = object.getType();
-            if (!types.containsKey(typeName)) {
-                throw new SemanticException("Unknown object type: " + typeName + " for object(s) " + object.getArrayName());
-            }
-            enterSymbol(objects, object.getElementName(), object, "Object");
-        }
-        */
 
         // type check ide
 /*
@@ -135,8 +123,5 @@ public class SemanticAnalyzer {
         checkObjects(); Tilde
         checkInitial();
         checkGoal();
-
  */
-
-
-    }
+}
