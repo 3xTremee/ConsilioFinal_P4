@@ -62,7 +62,7 @@ public class Main {
         for (ExpressionNode goal : program.getProblem().getExpression()) {
             String eval = goalCheck.typeEvaluation(goal);
             if (!"boolean".equals(eval)) {
-                throw new RuntimeException("Type-fejl i goalState: udtryk “" + goal + "” er ikke boolean men " + eval);
+                throw new RuntimeException("Type-fejl i goalState: udtryk '" + goal + "' er ikke boolean men " + eval);
             }
         }
 
@@ -125,6 +125,7 @@ public class Main {
                 },
                 () -> {
                     try {
+                        System.out.print("No plan found");
                         Files.writeString(
                                 Path.of(resultFilePath),
                                 "No plan found.",

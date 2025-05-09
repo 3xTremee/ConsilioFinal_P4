@@ -1,7 +1,7 @@
-loadPackage{p=P1, t=T2}
-loadPackage{p=P3, t=T1}
-unloadPackage{p=P1, t=T2}
-moveTruck{to=L3, t=T2, from=L2}
-loadPackage{p=P2, t=T2}
-unloadPackage{p=P2, t=T2}
-unloadPackage{p=P3, t=T1}
+loadPackage{t=T2, p=P1}
+loadPackage{t=T1, p=P3}
+unloadPackage{t=T2, p=P1}
+moveTruck{to=L3, from=L2, t=T2}
+loadPackage{t=T2, p=P2}
+unloadPackage{t=T2, p=P2}
+unloadPackage{t=T1, p=P3}

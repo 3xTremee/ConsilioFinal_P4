@@ -1,0 +1,12 @@
+moveTo{e=E1, f=F2}
+openDoor{e=E1}
+board{e=E1, p=Alice}
+closeDoor{e=E1}
+moveTo{e=E1, f=F3}
+openDoor{e=E1}
+board{e=E1, p=Bob}
+closeDoor{e=E1}
+moveTo{e=E1, f=F1}
+openDoor{e=E1}
+leave{e=E1, p=Alice}
+leave{e=E1, p=Bob}
