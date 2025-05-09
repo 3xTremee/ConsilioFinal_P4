@@ -38,15 +38,15 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
                 .stream()
                 .map(ai -> (ArrayInitializerNode) visit(ai))
                 .toList();
-/*
+
         List<ObjectNode> objects = ctx.objects().objectBody().arrayInitializer().stream()
                 .flatMap(ai -> {
                     ArrayInitializerNode arrayInit = (ArrayInitializerNode) visit(ai);
                     return arrayInit.getElements().stream()
-                            .map(elem -> new ObjectNode(arrayInit.getType(), arrayInit.getName(), elem));
+                            .map(elem -> new ObjectNode(arrayInit.getType(), arrayInit.getName(), elem, new IdentifierNode(elem)));
                 })
                 .toList();
-
+        /*
          - GAMLE UDGAVE IMENS DER VAR AMBIGUITY I GRAMMAR FIL
         List<StatementNode> initStatements = ctx.init().statement().stream()
                 .map(s -> (StatementNode) visit(s))
@@ -61,7 +61,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
                 .map(e -> (ExpressionNode) visit(e))
                 .toList();
 
-        return new ProblemNode(name, importName, arrays, initStatements, goals);
+        return new ProblemNode(name, importName, arrays, objects, initStatements, goals);
     }
 
     @Override

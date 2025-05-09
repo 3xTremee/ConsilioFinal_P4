@@ -10,15 +10,9 @@ type package {
 }
 
 type room {
-
+    numberOfItems : int;
 }
 
-
-action move(robot r, room dest){
-    if(r.location != dest){
-        r.location = dest;
-    }
-}
 
 action pickUpPackage(robot r, package p){
     if(r.carrying == false && r.location == p.location){
@@ -28,32 +22,45 @@ action pickUpPackage(robot r, package p){
 }
 
 
+action move(robot r, room dest){
+    if(r.location != dest){
+        r.location = dest;
+    }
+}
+
 action putDownPackage(robot r, package p, room rm){
     if(r.carrying == true && p.location == r && r.location == rm){
         p.location = rm;
         r.carrying = false;
     }
 }
+
 define problem movePackagesDemo
 import robotDomain
 
 objects {
-    robot   robots[]   = {rob};
+    robot robots[] = {rob};
     package packages[] = {pack1, pack2};
-    room    rooms[]    = {A, B, C};
-    lol lols[] = {1,2,3}
+    package redPackages[] = {rPack1, rPack2};
+    room rooms[] = {A, B, C};
 }
 
 initialState {
     rob.location = A;
     rob.carrying = false;
 
-    pack1.location = B;
-    pack2.location = C;
+    packages[0,1].location = A;
+
+    redPackages[0,1].location = C;
+
+    A.numberOfItems = 5 + 6 + 10 + 8;
+    B.numberOfItems = 2;
+    C.numberOfItems = 4;
 }
 
 goalState {
-    pack1.location == C;
+    packages[0].location == C;
     pack2.location == B;
+    redPackages[0,1].location == A;
 
 }

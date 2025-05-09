@@ -1,0 +1,73 @@
+define domain buildingTransport
+
+type floor {
+    number: int;
+}
+
+type elevator {
+    currentFloor: floor;
+    doorOpen: boolean;
+}
+
+type person {
+    location: floor;
+    insideElevator: boolean;
+}
+
+action openDoor(elevator e) {
+    if (e.doorOpen == false) {
+        e.doorOpen = true;
+    }
+}
+
+action closeDoor(elevator e) {
+    if (e.doorOpen == true) {
+        e.doorOpen = false;
+    }
+}
+
+action moveTo(elevator e, floor f) {
+    if (e.doorOpen == false && e.currentFloor != f) {
+        e.currentFloor = f;
+    }
+}
+
+action board(person p, elevator e) {
+    if (p.location == e.currentFloor && e.doorOpen == true && p.insideElevator == false) {
+        p.insideElevator = true;
+    }
+}
+
+action leave(person p, elevator e) {
+    if (p.insideElevator == true && e.doorOpen == true) {
+        p.location = e.currentFloor;
+        p.insideElevator = false;
+    }
+}
+define problem movePeople
+import buildingTransport
+
+objects {
+    floor floors[] = {F1, F2, F3};
+    elevator elevators[] = {E1};
+    person persons[] = {Alice, Bob};
+}
+
+initialState {
+    F1.number = 1;
+    F2.number = 2;
+    F3.number = 3;
+
+    E1.currentFloor = F1;
+    E1.doorOpen = false;
+
+    Alice.location = F2;
+    Alice.insideElevator= false;
+    Bob.location = F3;
+    Bob.insideElevator = false;
+}
+
+goalState {
+    Alice.location == F1;
+    Bob.location == F1;
+}

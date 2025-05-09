@@ -1,0 +1,57 @@
+define domain Delivery
+
+type Location { }
+
+type Truck { location: Location; capacity: int; load: int; battery: int; }
+
+type Package { location: Location; weight: int; carried: boolean; delivered: boolean; }
+
+type Robot { location: Location; capacity: int; carrying: boolean; }
+
+action moveTruck(Truck t, Location from, Location to) {
+    if (t.location == from && t.battery > 0) {
+        t.location = to;
+        t.battery = t.battery - 1;
+    }
+}
+
+action loadPackage(Package p, Truck t) {
+    if (p.location == t.location && t.load + p.weight <= t.capacity && p.carried == false) {
+        p.carried = true;
+        t.load = t.load + p.weight;
+    }
+}
+
+action unloadPackage(Package p, Truck t) {
+    if (p.carried == true && p.location == t.location) {
+        p.carried = false;
+        p.delivered = true;
+        t.load = t.load - p.weight;
+    }
+}
+
+action rechargeTruck(Truck t) {
+    if (t.battery < t.capacity) {
+        t.battery = t.capacity;
+    }
+}
+
+
+action complexOperation(Truck t, Package p) {
+    if (p.weight > 5 || t.capacity - t.load >= p.weight && t.load > 0) {
+        t.load = t.load + 1;
+        p.carried = true;
+    }
+}
+
+action decrementLoad(Truck t) {
+    if (t.load > 0) {
+        t.load = t.load - 1;
+    }
+}
+
+action conditionChain(Truck t) {
+    if (t.battery > 5 && t.capacity > t.load) {
+        t.load = t.load + 1;
+    }
+}

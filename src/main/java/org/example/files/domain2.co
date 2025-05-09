@@ -1,0 +1,46 @@
+define domain buildingTransport
+
+type floor {
+    number: int;
+}
+
+type elevator {
+    currentFloor: floor;
+    doorOpen: boolean;
+}
+
+type person {
+    location: floor;
+    insideElevator: boolean;
+}
+
+action openDoor(elevator e) {
+    if (e.doorOpen == false) {
+        e.doorOpen = true;
+    }
+}
+
+action closeDoor(elevator e) {
+    if (e.doorOpen == true) {
+        e.doorOpen = false;
+    }
+}
+
+action moveTo(elevator e, floor f) {
+    if (e.doorOpen == false && e.currentFloor != f) {
+        e.currentFloor = f;
+    }
+}
+
+action board(person p, elevator e) {
+    if (p.location == e.currentFloor && e.doorOpen == true && p.insideElevator == false) {
+        p.insideElevator = true;
+    }
+}
+
+action leave(person p, elevator e) {
+    if (p.insideElevator == true && e.doorOpen == true) {
+        p.location = e.currentFloor;
+        p.insideElevator = false;
+    }
+}

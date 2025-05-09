@@ -1,0 +1,29 @@
+define problem movePackagesDemo
+import robotDomain
+
+objects {
+    robot robots[] = {rob};
+    package packages[] = {pack1, pack2};
+    package redPackages[] = {rPack1, rPack2};
+    room rooms[] = {A, B, C};
+}
+
+initialState {
+    rob.location = A;
+    rob.carrying = false;
+
+    packages[0,1].location = A;
+
+    redPackages[0,1].location = C;
+
+    A.numberOfItems = 5 + 6 + 10 + 8;
+    B.numberOfItems = 2;
+    C.numberOfItems = 4;
+}
+
+goalState {
+    packages[0].location == C;
+    pack2.location == B;
+    redPackages[0,1].location == A;
+
+}

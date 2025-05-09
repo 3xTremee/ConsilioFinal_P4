@@ -36,6 +36,11 @@ public class TypeNode extends AstNode {
         return false;
     }
 
+    public TypeNode getNode(){
+        return this;
+    }
+
+
     @Override
     public String toString() {
         return "Type(name=" + name + ", attributes=" + attributes + ")";

@@ -14,6 +14,6 @@ public class ValueTypeNode extends ValueNode {
 
     @Override
     public String toString() {
-        return "ValueTypeNode(typeName=" + typeName + ")";
+        return typeName;
     }
 }

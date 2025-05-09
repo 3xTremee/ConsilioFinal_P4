@@ -1,0 +1,27 @@
+define problem movePeople
+import buildingTransport
+
+objects {
+    floor floors[] = {F1, F2, F3};
+    elevator elevators[] = {E1};
+    person persons[] = {Alice, Bob};
+}
+
+initialState {
+    F1.number = 1;
+    F2.number = 2;
+    F3.number = 3;
+
+    E1.currentFloor = F1;
+    E1.doorOpen = false;
+
+    Alice.location = F2;
+    Alice.insideElevator= false;
+    Bob.location = F3;
+    Bob.insideElevator = false;
+}
+
+goalState {
+    Alice.location == F1;
+    Bob.location == F1;
+}
