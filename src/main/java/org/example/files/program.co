@@ -6,7 +6,7 @@ type robot {
 }
 
 type package {
-    location : room || robot;
+    location : room || robot || package;
 }
 
 type room {
@@ -53,14 +53,29 @@ initialState {
 
     redPackages[0,1].location = C;
 
-    A.numberOfItems = 5 + 6 + 10 + 8;
-    B.numberOfItems = 2;
+    A.numberOfItems = 5 + 6 + 10 - 8;
+    B.numberOfItems = 4;
     C.numberOfItems = 4;
 }
 
 goalState {
-    packages[0].location == C;
-    pack2.location == B;
-    redPackages[0,1].location == A;
+    packages[0].location == C && (pack2.location == B || pack2.location == C) && redPackages[0,1].location == A;
+
+    rob.carrying != true;
+    B.numberOfItems == 4;
+    C.numberOfItems != 3;
+    C.numberOfItems > 3;
+    C.numberOfItems < 5;
+    C.numberOfItems >= 3;
+    C.numberOfItems <= 5;
+
+    rooms[1,2].numberOfItems == 4;
+    rooms[1,2].numberOfItems != 3;
+    rooms[1,2].numberOfItems > 3;
+    rooms[1,2].numberOfItems < 5;
+    rooms[1,2].numberOfItems >= 3;
+    rooms[1,2].numberOfItems <= 5;
+
+    robots[0].carrying == false;
 
 }

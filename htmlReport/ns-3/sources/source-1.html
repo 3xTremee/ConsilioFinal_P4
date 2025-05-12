@@ -1,0 +1,456 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AstBuilder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.parser</a>
+</div>
+
+<h1>Coverage Summary for Class: AstBuilder (org.example.parser)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AstBuilder</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,1%
+  </span>
+  <span class="absValue">
+    (27/29)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    93,8%
+  </span>
+  <span class="absValue">
+    (15/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,6%
+  </span>
+  <span class="absValue">
+    (112/121)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.parser;
+&nbsp;
+&nbsp;import org.example.ConsilioBaseVisitor;
+&nbsp;import org.example.ConsilioParser;
+&nbsp;import org.example.ast.*;
+&nbsp;import org.antlr.v4.runtime.tree.ParseTree;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+<b class="fc">&nbsp;public class AstBuilder extends ConsilioBaseVisitor&lt;AstNode&gt; {</b>
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProgramNode visitProgram(ConsilioParser.ProgramContext ctx) {
+<b class="fc">&nbsp;        DomainNode domain = (DomainNode) visit(ctx.domain());</b>
+<b class="fc">&nbsp;        ProblemNode problem = (ProblemNode) visit(ctx.problem());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ProgramNode(domain, problem);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public DomainNode visitDomain(ConsilioParser.DomainContext ctx) {
+<b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
+<b class="fc">&nbsp;        List&lt;TypeNode&gt; types = ctx.type().stream()</b>
+<b class="fc">&nbsp;                .map(t -&gt; (TypeNode) visit(t)).collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        List&lt;ActionNode&gt; actions = ctx.action().stream()</b>
+<b class="fc">&nbsp;                .map(a -&gt; (ActionNode) visit(a)).collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return new DomainNode(name, types, actions);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ProblemNode visitProblem(ConsilioParser.ProblemContext ctx) {
+<b class="fc">&nbsp;        String name = ctx.getChild(2).getText();</b>
+<b class="fc">&nbsp;        String importName = ctx.getChild(4).getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;ArrayInitializerNode&gt; arrays = ctx.objects()</b>
+<b class="fc">&nbsp;                .objectBody()</b>
+<b class="fc">&nbsp;                .arrayInitializer()</b>
+<b class="fc">&nbsp;                .stream()</b>
+<b class="fc">&nbsp;                .map(ai -&gt; (ArrayInitializerNode) visit(ai))</b>
+<b class="fc">&nbsp;                .toList();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;ObjectNode&gt; objects = ctx.objects().objectBody().arrayInitializer().stream()</b>
+<b class="fc">&nbsp;                .flatMap(ai -&gt; {</b>
+<b class="fc">&nbsp;                    ArrayInitializerNode arrayInit = (ArrayInitializerNode) visit(ai);</b>
+<b class="fc">&nbsp;                    return arrayInit.getElements().stream()</b>
+<b class="fc">&nbsp;                            .map(elem -&gt; new ObjectNode(arrayInit.getType(), arrayInit.getName(), elem, new IdentifierNode(elem)));</b>
+&nbsp;                })
+<b class="fc">&nbsp;                .toList();</b>
+&nbsp;        /*
+&nbsp;         - GAMLE UDGAVE IMENS DER VAR AMBIGUITY I GRAMMAR FIL
+&nbsp;        List&lt;StatementNode&gt; initStatements = ctx.init().statement().stream()
+&nbsp;                .map(s -&gt; (StatementNode) visit(s))
+&nbsp;                .toList();
+&nbsp;                */
+<b class="pc">&nbsp;        StatementListNode initList = ctx.init().statementList() != null</b>
+<b class="fc">&nbsp;                ? (StatementListNode) visit(ctx.init().statementList())</b>
+<b class="nc">&nbsp;                : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement</b>
+<b class="fc">&nbsp;        List&lt;StatementNode&gt; initStatements = initList.getStatements();</b>
+&nbsp;
+<b class="fc">&nbsp;        List&lt;ExpressionNode&gt; goals = ctx.goal().expression().stream()</b>
+<b class="fc">&nbsp;                .map(e -&gt; (ExpressionNode) visit(e))</b>
+<b class="fc">&nbsp;                .toList();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ProblemNode(name, importName, arrays, objects, initStatements, goals);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public TypeNode visitType(ConsilioParser.TypeContext ctx) {
+<b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
+<b class="fc">&nbsp;        List&lt;AttributeNode&gt; attributes = ctx.attribute().stream()</b>
+<b class="fc">&nbsp;                .map(a -&gt; (AttributeNode) visit(a))</b>
+<b class="fc">&nbsp;                .toList();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new TypeNode(name, attributes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public AttributeNode visitAttribute(ConsilioParser.AttributeContext ctx) {
+<b class="fc">&nbsp;        String id = ctx.IDENTIFIER().getText();</b>
+<b class="fc">&nbsp;        ValueNode value = (ValueNode) visit(ctx.value());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new AttributeNode(id, value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ValueNode visitBaseValue(ConsilioParser.BaseValueContext ctx) {
+<b class="fc">&nbsp;        String value = ctx.valueType().getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new BaseValueNode(value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ValueNode visitOrValue(ConsilioParser.OrValueContext ctx) {
+<b class="fc">&nbsp;        List&lt;ValueNode&gt; values = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (ParseTree child : ctx.children) {</b>
+<b class="fc">&nbsp;            if (child instanceof ConsilioParser.ValueTypeContext) {</b>
+<b class="fc">&nbsp;                values.add((ValueNode) visit(child));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (child instanceof ConsilioParser.BaseValueContext) {</b>
+<b class="fc">&nbsp;                values.add((ValueNode) visit(child));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (child instanceof ConsilioParser.OrValueContext) {</b>
+<b class="fc">&nbsp;                values.add((ValueNode) visit(child));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return new OrValueNode(values);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Bliver pt ikke brugt &quot;doors: door[];&quot;
+&nbsp;    @Override
+&nbsp;    public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
+<b class="nc">&nbsp;        ValueNode elementType = (ValueNode) visit(ctx.valueType());</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.print(&quot;visitArrayValue&quot; + elementType);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ArrayValueNode(elementType, 0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ValueNode visitValueType(ConsilioParser.ValueTypeContext ctx) {
+<b class="fc">&nbsp;        String type = ctx.getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ValueTypeNode(type);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ActionNode visitAction(ConsilioParser.ActionContext ctx) {
+<b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
+&nbsp;        // Indsamler parameter rekursivt.
+<b class="fc">&nbsp;        List&lt;ParameterNode&gt; parameters = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        ConsilioParser.ParameterContext pctx = ctx.parameter();</b>
+<b class="fc">&nbsp;        while (pctx != null) {</b>
+<b class="fc">&nbsp;            parameters.add((ParameterNode) visit(pctx));</b>
+<b class="fc">&nbsp;            pctx = pctx.parameter();</b>
+&nbsp;        }
+&nbsp;        // Body af action
+<b class="fc">&nbsp;        StatementNode body = (StatementNode) visit(ctx.statement());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ActionNode(name, parameters, body);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ParameterNode visitParameter(ConsilioParser.ParameterContext ctx) {
+<b class="fc">&nbsp;        String type = ctx.getChild(0).getText();</b>
+<b class="fc">&nbsp;        String name = ctx.getChild(1).getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ParameterNode(type, name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public StatementNode visitIfStatement(ConsilioParser.IfStatementContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode exprCondition = (ExpressionNode) visit(ctx.ifBlock().expression());</b>
+<b class="fc">&nbsp;        StatementListNode thenPart = (StatementListNode) visit(ctx.ifBlock().statementList());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new IfNode(exprCondition, thenPart);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public StatementNode visitAssignmentStatement(ConsilioParser.AssignmentStatementContext ctx) {
+<b class="fc">&nbsp;        return (StatementNode) visit(ctx.assignment());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /* GAMLE UDGAVE - UDGAVE 1
+&nbsp;    @Override
+&nbsp;    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
+&nbsp;        StatementNode first = (StatementNode) visit(ctx.statement(0));
+&nbsp;        StatementNode second = (StatementNode) visit(ctx.statement(1));
+&nbsp;        List&lt;StatementNode&gt; statements = new ArrayList&lt;&gt;();
+&nbsp;        if(first instanceof StatementListNode) {
+&nbsp;            statements.addAll(((StatementListNode) first).getStatements());
+&nbsp;        } else {
+&nbsp;            statements.add(first);
+&nbsp;        }
+&nbsp;        if(first instanceof StatementListNode) {
+&nbsp;            statements.addAll(((StatementListNode) second).getStatements());
+&nbsp;        } else {
+&nbsp;            statements.add(second);
+&nbsp;        }
+&nbsp;
+&nbsp;        return new StatementListNode(statements);
+&nbsp;    }*/
+&nbsp;
+&nbsp;    /* NYESTE UDGAVE - UDGAVE 2
+&nbsp;    @Override
+&nbsp;    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
+&nbsp;        StatementNode leftNode = (StatementNode) visit(ctx.statement(0));
+&nbsp;        StatementNode rightNode = (StatementNode) visit(ctx.statement(1));
+&nbsp;        List&lt;StatementNode&gt; stmts = new ArrayList&lt;&gt;();
+&nbsp;
+&nbsp;        // Left side
+&nbsp;        if (leftNode instanceof StatementListNode) {
+&nbsp;            stmts.addAll(((StatementListNode) leftNode).getStatements());
+&nbsp;        } else {
+&nbsp;            stmts.add(leftNode);
+&nbsp;        }
+&nbsp;
+&nbsp;        // Right side
+&nbsp;        if (rightNode instanceof StatementListNode) {
+&nbsp;            stmts.addAll(((StatementListNode) rightNode).getStatements());
+&nbsp;        } else {
+&nbsp;            stmts.add(rightNode);
+&nbsp;        }
+&nbsp;
+&nbsp;        return new StatementListNode(stmts);
+&nbsp;    }
+&nbsp;    */
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public StatementListNode visitStatementList(ConsilioParser.StatementListContext ctx) {
+<b class="fc">&nbsp;        List&lt;StatementNode&gt; stmts = ctx.statement().stream()</b>
+<b class="fc">&nbsp;                .map(s -&gt; (StatementNode) visit(s))</b>
+<b class="fc">&nbsp;                .collect(Collectors.toList());</b>
+<b class="fc">&nbsp;        return new StatementListNode(stmts);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    // Slet denne method hvis den slettes inde fra .g4 filen.
+&nbsp;   /* @Override
+&nbsp;    public StatementNode visitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx) {
+&nbsp;        DotNode target = (DotNode) visit(ctx.dotNotation());
+&nbsp;        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
+&nbsp;
+&nbsp;        return new AssignmentNode(target, expr);
+&nbsp;    }*/
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public StatementNode visitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx) {
+<b class="fc">&nbsp;        DotNode target =  (DotNode) visit(ctx.dotNotation());</b>
+<b class="fc">&nbsp;        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new AssignmentNode(target, expr);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitSimpleDot(ConsilioParser.SimpleDotContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode target = new IdentifierNode(ctx.IDENTIFIER(0).getText());</b>
+<b class="fc">&nbsp;        String field = ctx.IDENTIFIER(1).getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new DotNode(target, field);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitArrayDot(ConsilioParser.ArrayDotContext ctx) {
+<b class="fc">&nbsp;        String arrayName = ctx.IDENTIFIER(0).getText();</b>
+&nbsp;
+&nbsp;        // rekursivt hentes af alle index
+<b class="fc">&nbsp;        List&lt;ExpressionNode&gt; indices = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        collectArrayBody(ctx.arrayBodyInt(), indices);</b>
+<b class="fc">&nbsp;        ExpressionNode arrayAccess = new ArrayAccessNode(arrayName, indices);</b>
+<b class="fc">&nbsp;        String field = ctx.IDENTIFIER(1).getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new DotNode(arrayAccess, field);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void collectArrayBody(ConsilioParser.ArrayBodyIntContext ctx, List&lt;ExpressionNode&gt; indices) {
+<b class="fc">&nbsp;        indices.add((ExpressionNode) visit(ctx.expression()));</b>
+<b class="fc">&nbsp;        if(ctx.arrayBodyInt() != null) {</b>
+<b class="fc">&nbsp;            collectArrayBody(ctx.arrayBodyInt(), indices);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ArrayInitializerNode visitArrayInitializer(ConsilioParser.ArrayInitializerContext ctx) {
+<b class="fc">&nbsp;        String type = ctx.IDENTIFIER(0).getText();</b>
+<b class="fc">&nbsp;        String name = ctx.IDENTIFIER(1).getText();</b>
+<b class="fc">&nbsp;        List&lt;String&gt; elements = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        collectArrayInitElements(ctx.arrayBody(), elements);</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ArrayInitializerNode(type, name, elements);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void collectArrayInitElements(ConsilioParser.ArrayBodyContext ctx, List&lt;String&gt; list) {
+&nbsp;        // Hver IDENTIFIER i arrayBody
+<b class="fc">&nbsp;        list.add(ctx.IDENTIFIER().getText());</b>
+<b class="fc">&nbsp;        if (ctx.arrayBody() != null) {</b>
+<b class="fc">&nbsp;            collectArrayInitElements(ctx.arrayBody(), list);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitConstantExpression(ConsilioParser.ConstantExpressionContext ctx) {
+<b class="fc">&nbsp;        String value = ctx.getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ConstantNode(value);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitIdentifierExpression(ConsilioParser.IdentifierExpressionContext ctx) {
+<b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
+&nbsp;
+<b class="fc">&nbsp;        return new IdentifierNode(name);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitParenthesisExpression(ConsilioParser.ParenthesisExpressionContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode inner = (ExpressionNode) visit(ctx.expression());</b>
+&nbsp;
+<b class="fc">&nbsp;        return new ParenExpressionNode(inner);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Bliver heller ikke brugt, &quot;rob.location = rooms[0];&quot;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
+<b class="nc">&nbsp;        String arrayName = ctx.IDENTIFIER().getText();</b>
+<b class="nc">&nbsp;        List&lt;ExpressionNode&gt; indices = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        collectArrayBody(ctx.arrayBodyInt(), indices);</b>
+&nbsp;
+<b class="nc">&nbsp;        System.out.print(&quot;visitArrayAccessExpression&quot; + arrayName);</b>
+&nbsp;
+<b class="nc">&nbsp;        return new ArrayAccessNode(arrayName, indices);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitAdditionExpression(ConsilioParser.AdditionExpressionContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode left = (ExpressionNode) visit(ctx.expression(0));</b>
+<b class="fc">&nbsp;        String operator = ctx.addOp().getText();</b>
+<b class="fc">&nbsp;        ExpressionNode right = (ExpressionNode) visit(ctx.expression(1));</b>
+&nbsp;
+<b class="fc">&nbsp;        return new BinaryOpNode(left, operator, right);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitCompareExpression(ConsilioParser.CompareExpressionContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode left = (ExpressionNode) visit(ctx.expression(0));</b>
+<b class="fc">&nbsp;        String operator = ctx.compOp().getText();</b>
+<b class="fc">&nbsp;        ExpressionNode right = (ExpressionNode) visit(ctx.expression(1));</b>
+&nbsp;
+<b class="fc">&nbsp;        return new BinaryOpNode(left, operator, right);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ExpressionNode visitLogicalExpression(ConsilioParser.LogicalExpressionContext ctx) {
+<b class="fc">&nbsp;        ExpressionNode left = (ExpressionNode) visit(ctx.expression(0));</b>
+<b class="fc">&nbsp;        String operator = ctx.locOp().getText();</b>
+<b class="fc">&nbsp;        ExpressionNode right = (ExpressionNode) visit(ctx.expression(1));</b>
+&nbsp;
+<b class="fc">&nbsp;        return new BinaryOpNode(left, operator, right);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

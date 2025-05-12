@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Main</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example</a>
+</div>
+
+<h1>Coverage Summary for Class: Main (org.example)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Main</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/50)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Main$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/52)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example;
+&nbsp;
+&nbsp;import org.example.parser.AstBuilder;
+&nbsp;import org.example.ast.*;
+&nbsp;import org.example.semantic.*;
+&nbsp;import org.example.planner.*;
+&nbsp;import org.antlr.v4.runtime.*;
+&nbsp;import org.w3c.dom.Attr;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.StandardOpenOption;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Optional;
+&nbsp;
+<b class="nc">&nbsp;public class Main {</b>
+&nbsp;    public static void main(String[] args) throws Exception {
+<b class="nc">&nbsp;        String domainFilePath = &quot;./src/main/java/org/example/files/domain.co&quot;;</b>
+<b class="nc">&nbsp;        String problemFilePath = &quot;./src/main/java/org/example/files/problem.co&quot;;</b>
+<b class="nc">&nbsp;        String outputFilePath = &quot;./src/main/java/org/example/files/program.co&quot;;</b>
+<b class="nc">&nbsp;        concatenateFiles(</b>
+&nbsp;                domainFilePath,
+&nbsp;                problemFilePath,
+&nbsp;                outputFilePath
+&nbsp;        );
+<b class="nc">&nbsp;        CharStream input = CharStreams.fromFileName(outputFilePath);</b>
+<b class="nc">&nbsp;        ConsilioLexer lexer = new ConsilioLexer(input);</b>
+<b class="nc">&nbsp;        CommonTokenStream tokens = new CommonTokenStream(lexer);</b>
+<b class="nc">&nbsp;        ConsilioParser parser = new ConsilioParser(tokens);</b>
+&nbsp;
+&nbsp;        // Fjerner standard‐error listeners som er lavet af ANTLR
+<b class="nc">&nbsp;        parser.removeErrorListeners();</b>
+&nbsp;
+&nbsp;        // Tilføj en listener som kaster exception ved FØRSTE syntax fejl
+<b class="nc">&nbsp;        parser.addErrorListener(new BaseErrorListener() {</b>
+&nbsp;            @Override
+&nbsp;            public void syntaxError(Recognizer&lt;?,?&gt; recognizer, Object offendingSymbol, int line, int charPositionInLine,
+&nbsp;                    String msg, RecognitionException e)
+&nbsp;            {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Syntaxfejl ved linje &quot; + line + &quot;:&quot; + charPositionInLine + &quot; – &quot; + msg);</b>
+&nbsp;            }
+&nbsp;        });
+&nbsp;
+&nbsp;        // Parser og bygger AST
+<b class="nc">&nbsp;        AstBuilder astBuilder = new AstBuilder();</b>
+<b class="nc">&nbsp;        ProgramNode program = astBuilder.visitProgram(parser.program());</b>
+&nbsp;
+&nbsp;        // Bare for at printe AST. Skal bare slettes igen på et tidspunkt så den ikke printer AST
+&nbsp;        //System.out.println(program);
+&nbsp;
+&nbsp;        // Semantic tjek
+<b class="nc">&nbsp;        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();</b>
+<b class="nc">&nbsp;        semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());</b>
+&nbsp;        // Typechecking
+<b class="nc">&nbsp;        semanticAnalyzer.addObjectValues(program.getProblem());</b>
+&nbsp;
+&nbsp;        //Type tjekker goals: alle goal-expressions SKAL være boolean
+<b class="nc">&nbsp;        ExpressionCheck goalCheck = new ExpressionCheck(semanticAnalyzer);</b>
+<b class="nc">&nbsp;        for (ExpressionNode goal : program.getProblem().getExpression()) {</b>
+<b class="nc">&nbsp;            String eval = goalCheck.typeEvaluation(goal);</b>
+<b class="nc">&nbsp;            if (!&quot;boolean&quot;.equals(eval)) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Type-fejl i goalState: udtryk &#39;&quot; + goal + &quot;&#39; er ikke boolean men &quot; + eval);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // Type tjekker hver action inden planneren bliver kaldt
+<b class="nc">&nbsp;        for (ActionNode action : program.getDomain().getActions()) {</b>
+<b class="nc">&nbsp;            semanticAnalyzer.analyzeAction(action);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // Print af tabeller
+&nbsp;        //semanticAnalyzer.printTables();
+&nbsp;
+&nbsp;        /*
+&nbsp;        // Test af expressioncheck
+&nbsp;        ExpressionCheck expressionCheck = new ExpressionCheck(semanticAnalyzer);
+&nbsp;        ProblemNode problem = program.getProblem();
+&nbsp;
+&nbsp;        List&lt;ArrayInitializerNode&gt; arraysInProblem = problem.getArrayInitializers();
+&nbsp;
+&nbsp;        for (ArrayInitializerNode array : arraysInProblem) {
+&nbsp;            IdentifierNode identifierNode = new IdentifierNode(array.getName());
+&nbsp;            expressionCheck.checkIdentifier(identifierNode);
+&nbsp;        }
+&nbsp;
+&nbsp;        List&lt;ObjectNode&gt; objectsInProblem = problem.getObjects();
+&nbsp;
+&nbsp;        for (ObjectNode object : objectsInProblem) {
+&nbsp;            String objectType = expressionCheck.checkObject(object.getIdentifier());
+&nbsp;            expressionCheck.typeExists(objectType);
+&nbsp;        }
+&nbsp;
+&nbsp;         */
+&nbsp;
+&nbsp;
+&nbsp;        // Planning
+<b class="nc">&nbsp;        Map&lt;String, Symbol&gt; symbolTable = semanticAnalyzer.getSymbolTable();</b>
+<b class="nc">&nbsp;        State init = State.fromSymbolTable(symbolTable, semanticAnalyzer);</b>
+<b class="nc">&nbsp;        Planner planner = new Planner(</b>
+<b class="nc">&nbsp;                program.getDomain(),</b>
+<b class="nc">&nbsp;                program.getProblem().getObjects(),</b>
+&nbsp;                //new StatementCheck(semanticAnalyzer), // Denne var med før, men StatementCheck er fjernet fra planner constructor
+&nbsp;                semanticAnalyzer
+&nbsp;        );
+<b class="nc">&nbsp;        Optional&lt;List&lt;GroundedAction&gt;&gt; plan = planner.bfs(</b>
+&nbsp;                init,
+<b class="nc">&nbsp;                program.getProblem().getExpression()</b>
+&nbsp;        );
+<b class="nc">&nbsp;        String resultFilePath = &quot;./src/main/java/org/example/files/result.co&quot;;</b>
+&nbsp;
+<b class="nc">&nbsp;        plan.ifPresentOrElse(</b>
+&nbsp;                p -&gt; {
+&nbsp;                    try {
+<b class="nc">&nbsp;                        String planContent = p.stream()</b>
+<b class="nc">&nbsp;                                .map(Object::toString)</b>
+<b class="nc">&nbsp;                                .reduce(&quot;&quot;, (a, b) -&gt; a + b + System.lineSeparator());</b>
+<b class="nc">&nbsp;                        Files.writeString(Path.of(resultFilePath), planContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;Plan written to result.co&quot;);</b>
+<b class="nc">&nbsp;                    } catch (IOException e) {</b>
+<b class="nc">&nbsp;                        System.err.println(&quot;An error occurred while writing the plan to the file: &quot; + e.getMessage());</b>
+&nbsp;                    }
+&nbsp;                },
+&nbsp;                () -&gt; {
+&nbsp;                    try {
+<b class="nc">&nbsp;                        System.out.print(&quot;No plan found&quot;);</b>
+<b class="nc">&nbsp;                        Files.writeString(</b>
+<b class="nc">&nbsp;                                Path.of(resultFilePath),</b>
+&nbsp;                                &quot;No plan found.&quot;,
+&nbsp;                                StandardOpenOption.CREATE,
+&nbsp;                                StandardOpenOption.TRUNCATE_EXISTING
+&nbsp;                        );
+<b class="nc">&nbsp;                    } catch (IOException e) {</b>
+<b class="nc">&nbsp;                        throw new RuntimeException(e);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;        );
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public static void concatenateFiles(String domainFilePath, String problemFilePath, String outputFilePath) {
+&nbsp;        try {
+&nbsp;            // Read the contents of both files
+<b class="nc">&nbsp;            String domainContent = Files.readString(Path.of(domainFilePath));</b>
+<b class="nc">&nbsp;            String problemContent = Files.readString(Path.of(problemFilePath));</b>
+&nbsp;
+&nbsp;            // Concatenate the contents
+<b class="nc">&nbsp;            String concatenatedContent = domainContent + System.lineSeparator() + problemContent;</b>
+&nbsp;
+&nbsp;            // Write the concatenated content back to the domain file
+<b class="nc">&nbsp;            Files.writeString(Path.of(outputFilePath), concatenatedContent, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);</b>
+&nbsp;
+<b class="nc">&nbsp;        } catch (IOException e) {</b>
+<b class="nc">&nbsp;            System.err.println(&quot;An error occurred while concatenating files: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

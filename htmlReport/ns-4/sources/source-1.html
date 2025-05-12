@@ -1,0 +1,311 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExpressionEvaluator</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.planner</a>
+</div>
+
+<h1>Coverage Summary for Class: ExpressionEvaluator (org.example.planner)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExpressionEvaluator</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (2/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13,2%
+  </span>
+  <span class="absValue">
+    (15/114)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    25%
+  </span>
+  <span class="absValue">
+    (25/100)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.planner;
+&nbsp;
+&nbsp;import org.example.ast.BinaryOpNode;
+&nbsp;import org.example.ast.ConstantNode;
+&nbsp;import org.example.ast.DotNode;
+&nbsp;import org.example.ast.ExpressionNode;
+&nbsp;import org.example.ast.IdentifierNode;
+&nbsp;import org.example.ast.ParenExpressionNode;
+&nbsp;import org.example.ast.ArrayAccessNode;
+&nbsp;import org.example.semantic.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * Evaluate AST expressions in the context of a State,
+&nbsp; * including boolean equality/inequality.
+&nbsp; */
+&nbsp;public class ExpressionEvaluator {
+&nbsp;
+&nbsp;    private final Map&lt;String,String&gt; binding;
+&nbsp;    SemanticAnalyzer semanticAnalyzer;
+&nbsp;    ExpressionCheck expressionCheck;
+&nbsp;    StatementCheck statementCheck;
+&nbsp;
+<b class="fc">&nbsp;    public ExpressionEvaluator(SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="fc">&nbsp;        this.binding = Map.of();</b>
+<b class="fc">&nbsp;        this.semanticAnalyzer = semanticAnalyzer;</b>
+<b class="fc">&nbsp;        this.expressionCheck = new ExpressionCheck(semanticAnalyzer);</b>
+<b class="fc">&nbsp;        this.statementCheck = new StatementCheck(semanticAnalyzer);</b>
+&nbsp;    }
+&nbsp;
+<b class="nc">&nbsp;    public ExpressionEvaluator(Map&lt;String,String&gt; binding, SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="nc">&nbsp;        this.binding = Map.copyOf(binding);</b>
+<b class="nc">&nbsp;        this.semanticAnalyzer = semanticAnalyzer;</b>
+<b class="nc">&nbsp;        this.expressionCheck = new ExpressionCheck(semanticAnalyzer);</b>
+<b class="nc">&nbsp;        this.statementCheck = new StatementCheck(semanticAnalyzer);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Object evaluate(ExpressionNode expr, State s) {
+<b class="pc">&nbsp;        if (expr instanceof DotNode dn &amp;&amp; dn.getTarget() instanceof ArrayAccessNode aa) {</b>
+<b class="nc">&nbsp;            List &lt;ExpressionNode&gt; indices = aa.getIndices();</b>
+<b class="nc">&nbsp;            List&lt;Object&gt; results = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            SymbolArray current = (SymbolArray) semanticAnalyzer.getSymbolTable().get(aa.getArrayName());</b>
+&nbsp;
+<b class="nc">&nbsp;            for (ExpressionNode ix : indices) {</b>
+<b class="nc">&nbsp;                int i = (Integer) evaluate(ix, s);</b>
+<b class="nc">&nbsp;                SymbolObject elem = current.getObjects().get(i);</b>
+<b class="nc">&nbsp;                results.add(s.get(elem.getName(), dn.getField()));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // if only one index, unwrap; otherwise return the list
+<b class="nc">&nbsp;            return (results.size() == 1) ? results.getFirst() : results;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        else if (expr instanceof ConstantNode c) {</b>
+<b class="fc">&nbsp;            String v = c.getValueConstant();</b>
+&nbsp;
+<b class="fc">&nbsp;            if (expressionCheck.checkBool(c)){</b>
+&nbsp;                //System.out.println(&quot;bool: &quot; + v);
+<b class="fc">&nbsp;                return Boolean.parseBoolean(v);</b>
+<b class="pc">&nbsp;            } else if (expressionCheck.checkInt(c)) {</b>
+<b class="fc">&nbsp;                return Integer.parseInt(v);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (expr instanceof IdentifierNode id) {</b>
+&nbsp;            try {
+<b class="fc">&nbsp;                String name = id.getName();</b>
+<b class="fc">&nbsp;                return binding.getOrDefault(name, name);          // hvis binding indeholder en værdi for key(name) returneres dens værdi og hvis ikke returneres bare navnet (uden værdi)</b>
+<b class="nc">&nbsp;            } catch (NullPointerException e) {</b>
+<b class="nc">&nbsp;                System.err.println(&quot;Semantisk fejl: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        // DotNode-objekt (f.eks. noget som x.y)
+<b class="pc">&nbsp;         else if (expr instanceof DotNode dn) {</b>
+&nbsp;            //denne returnerer det som står før punktumet dvs. i x.y er det x.
+&nbsp;            //den castes til IdentifierNode, fordi man antager det er et simpelt variabelnavn.
+<b class="nc">&nbsp;            String varName = ((IdentifierNode) dn.getTarget()).getName();</b>
+&nbsp;            //hvis der findes en binding (fx &quot;x&quot; -&gt; &quot;user42&quot;) så bruges den værdi, ellers bruges x som det er.
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            String object  = binding.getOrDefault(varName, varName);</b>
+&nbsp;            //s ligner en form for symboltabel, model eller et objektlager
+&nbsp;            //dn.getField() er feltet (højresiden af punktumet) fx &quot;y&quot; i x.y
+&nbsp;            //der slås altså op &quot;user42&quot;.y og det returneres.
+<b class="nc">&nbsp;            return s.get(object, dn.getField());</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        else if (expr instanceof BinaryOpNode bin) {</b>
+&nbsp;
+<b class="fc">&nbsp;            Object L = evaluate(bin.getLeft(), s);</b>
+<b class="fc">&nbsp;            Object R = evaluate(bin.getRight(), s);</b>
+<b class="fc">&nbsp;            String op = bin.getOperator();</b>
+&nbsp;
+&nbsp;            // MultiTarget comparisons &quot;robots[0,1,2].location == A&quot;;
+<b class="pc">&nbsp;            if (L instanceof List&lt;?&gt; list) {</b>
+&nbsp;                // Numeric comparisons (all elements must satisfy)
+<b class="nc">&nbsp;                if (R instanceof Integer ri) {</b>
+<b class="nc">&nbsp;                    return switch (op) {</b>
+<b class="nc">&nbsp;                        case &quot;==&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v).equals(ri));</b>
+<b class="nc">&nbsp;                        case &quot;!=&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .anyMatch(v -&gt; v instanceof Integer &amp;&amp; !((Integer)v).equals(ri));</b>
+<b class="nc">&nbsp;                        case &quot;&gt;&quot;  -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v) &gt; ri);</b>
+<b class="nc">&nbsp;                        case &quot;&lt;&quot;  -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v) &lt; ri);</b>
+<b class="nc">&nbsp;                        case &quot;&gt;=&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v) &gt;= ri);</b>
+<b class="nc">&nbsp;                        case &quot;&lt;=&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v) &lt;= ri);</b>
+<b class="nc">&nbsp;                        default   -&gt; throw new UnsupportedOperationException(</b>
+&nbsp;                                &quot;Unsupported op for int-list: &quot; + op);
+&nbsp;                    };
+&nbsp;                }
+&nbsp;
+&nbsp;                // Boolean logic (combine each element with R)
+<b class="nc">&nbsp;                if (R instanceof Boolean rb) {</b>
+<b class="nc">&nbsp;                    return switch (op) {</b>
+<b class="nc">&nbsp;                        case &quot;==&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Boolean &amp;&amp; ((Boolean)v).equals(rb));</b>
+<b class="nc">&nbsp;                        case &quot;!=&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .anyMatch(v -&gt; v instanceof Boolean &amp;&amp; !((Boolean)v).equals(rb));</b>
+<b class="nc">&nbsp;                        case &quot;&amp;&amp;&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .allMatch(v -&gt; v instanceof Boolean &amp;&amp; ((Boolean)v) &amp;&amp; rb);</b>
+<b class="nc">&nbsp;                        case &quot;||&quot; -&gt; list.stream()</b>
+<b class="nc">&nbsp;                                .anyMatch(v -&gt; v instanceof Boolean &amp;&amp;</b>
+<b class="nc">&nbsp;                                        (((Boolean)v) || rb));</b>
+<b class="nc">&nbsp;                        default   -&gt; throw new UnsupportedOperationException(</b>
+&nbsp;                                &quot;Unsupported op for bool-list: &quot; + op);
+&nbsp;                    };
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                throw new UnsupportedOperationException(</b>
+&nbsp;                        &quot;Cannot compare list of “&quot; +
+<b class="nc">&nbsp;                                (list.isEmpty() ? &quot;unknown&quot; : list.get(0).getClass().getSimpleName()) +</b>
+<b class="nc">&nbsp;                                &quot;” with “&quot; + R.getClass().getSimpleName() + &quot;” using “&quot; + op + &quot;”&quot;);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // integer arithmetic &amp; comparisons
+<b class="pc">&nbsp;            if (L instanceof Integer li &amp;&amp; R instanceof Integer ri) {</b>
+<b class="pc">&nbsp;                return switch (op) {</b>
+<b class="fc">&nbsp;                    case &quot;+&quot;  -&gt; li + ri;</b>
+<b class="fc">&nbsp;                    case &quot;-&quot;  -&gt; li - ri;</b>
+<b class="nc">&nbsp;                    case &quot;&gt;&quot;  -&gt; li &gt; ri;</b>
+<b class="nc">&nbsp;                    case &quot;&lt;&quot;  -&gt; li &lt; ri;</b>
+<b class="nc">&nbsp;                    case &quot;&gt;=&quot; -&gt; li &gt;= ri;</b>
+<b class="nc">&nbsp;                    case &quot;&lt;=&quot; -&gt; li &lt;= ri;</b>
+<b class="nc">&nbsp;                    case &quot;==&quot; -&gt; li.equals(ri);</b>
+<b class="nc">&nbsp;                    case &quot;!=&quot; -&gt; !li.equals(ri);</b>
+<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown int op: &quot; + op);</b>
+&nbsp;                };
+&nbsp;            }
+&nbsp;
+&nbsp;            // boolean logic &amp; comparisons
+<b class="nc">&nbsp;            if (L instanceof Boolean lb &amp;&amp; R instanceof Boolean rb) {</b>
+<b class="nc">&nbsp;                return switch (op) {</b>
+<b class="nc">&nbsp;                    case &quot;&amp;&amp;&quot; -&gt; lb &amp;&amp; rb;</b>
+<b class="nc">&nbsp;                    case &quot;||&quot; -&gt; lb || rb;</b>
+&nbsp;                    case &quot;==&quot; -&gt; {
+<b class="nc">&nbsp;                        if (statementCheck.checkComparison(bin)) {</b>
+<b class="nc">&nbsp;                            yield lb.equals(rb);</b>
+&nbsp;                        } else {
+<b class="nc">&nbsp;                            yield null;</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                    case &quot;!=&quot; -&gt; {
+<b class="nc">&nbsp;                        if (statementCheck.checkComparison(bin)) {</b>
+<b class="nc">&nbsp;                            yield !lb.equals(rb);</b>
+&nbsp;                        } else {
+<b class="nc">&nbsp;                            yield null;</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown bool op: &quot; + op);</b>
+&nbsp;                };
+&nbsp;            }
+&nbsp;
+&nbsp;            // fallback for any other types (null-safe equality)
+<b class="nc">&nbsp;            return switch (op) {</b>
+<b class="nc">&nbsp;                case &quot;==&quot; -&gt; (L != null) &amp;&amp; L.equals(R);</b>
+<b class="nc">&nbsp;                case &quot;!=&quot; -&gt; (L == null) || !L.equals(R);</b>
+<b class="nc">&nbsp;                default   -&gt; throw new UnsupportedOperationException(&quot;Unknown op: &quot; + op);</b>
+&nbsp;            };
+&nbsp;        }
+<b class="nc">&nbsp;        else if (expr instanceof ParenExpressionNode p) {</b>
+<b class="nc">&nbsp;            return evaluate(p.getInner(), s);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new UnsupportedOperationException(&quot;Cannot evaluate node type: &quot; + expr.getClass().getSimpleName());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

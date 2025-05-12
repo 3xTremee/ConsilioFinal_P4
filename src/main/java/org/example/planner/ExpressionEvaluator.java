@@ -38,15 +38,19 @@ public class ExpressionEvaluator {
 
     public Object evaluate(ExpressionNode expr, State s) {
         if (expr instanceof DotNode dn && dn.getTarget() instanceof ArrayAccessNode aa) {
-            ExpressionNode ix = aa.getIndices().getFirst();
-            Object idxVal = evaluate(ix, s);
+            List <ExpressionNode> indices = aa.getIndices();
+            List<Object> results = new ArrayList<>();
 
-            int idx = (Integer) idxVal;
-            SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(aa.getArrayName());
-            SymbolObject elem = symArr.getObjects().get(idx);
-            Object fieldValue = s.get(elem.getName(), dn.getField());
+            SymbolArray current = (SymbolArray) semanticAnalyzer.getSymbolTable().get(aa.getArrayName());
 
-            return fieldValue;
+            for (ExpressionNode ix : indices) {
+                int i = (Integer) evaluate(ix, s);
+                SymbolObject elem = current.getObjects().get(i);
+                results.add(s.get(elem.getName(), dn.getField()));
+            }
+
+            // unwrap from list if only 1 index, otherwise return entire list
+            return (results.size() == 1) ? results.get(0) : results;
         }
 
         else if (expr instanceof ConstantNode c) {
@@ -89,6 +93,49 @@ public class ExpressionEvaluator {
             Object L = evaluate(bin.getLeft(), s);
             Object R = evaluate(bin.getRight(), s);
             String op = bin.getOperator();
+
+            // MultiTarget comparisons "robots[0,1,2].location == A";
+            if (L instanceof List<?> list) {
+                // integer arithmetic & comparisons
+                if (R instanceof Integer ri) {
+                    return switch (op) {
+                        case "==" ->
+                                list.stream().allMatch(v -> v instanceof Integer && v.equals(ri));
+                        case "!=" ->
+                                list.stream().anyMatch(v -> v instanceof Integer && !v.equals(ri));
+                        case ">"  ->
+                                list.stream().allMatch(v -> v instanceof Integer && ((Integer)v) > ri);
+                        case "<"  ->
+                                list.stream().allMatch(v -> v instanceof Integer && ((Integer)v) < ri);
+                        case ">=" ->
+                                list.stream().allMatch(v -> v instanceof Integer && ((Integer)v) >= ri);
+                        case "<=" ->
+                                list.stream().allMatch(v -> v instanceof Integer && ((Integer)v) <= ri);
+                        default ->
+                                throw new UnsupportedOperationException("Unsupported op for int-list: " + op);
+                    };
+                }
+                // boolean logic & comparisons
+                if (R instanceof Boolean rb) {
+                    return switch (op) {
+                        case "==" ->
+                                list.stream().allMatch(v -> v instanceof Boolean && v.equals(rb));
+                        case "!=" ->
+                                list.stream().anyMatch(v -> v instanceof Boolean && !v.equals(rb));
+                        case "&&" ->
+                                list.stream().allMatch(v -> v instanceof Boolean && ((Boolean)v) && rb);
+                        case "||" ->
+                                list.stream().anyMatch(v -> v instanceof Boolean && (((Boolean)v) || rb));
+                        default ->
+                                throw new UnsupportedOperationException("Unsupported op for bool-list: " + op);
+                    };
+                }
+                // Generic equality for any other element‐type (String)
+                if (op.equals("==") || op.equals("!=")) {
+                    boolean allEqual = list.stream().allMatch(v -> v != null && v.equals(R));
+                    return op.equals("==") ? allEqual : !allEqual;
+                }
+            }
 
             // integer arithmetic & comparisons
             if (L instanceof Integer li && R instanceof Integer ri) {
@@ -139,8 +186,7 @@ public class ExpressionEvaluator {
             return evaluate(p.getInner(), s);
         }
         else {
-            throw new UnsupportedOperationException(
-                    "Cannot evaluate node type: " + expr.getClass().getSimpleName());
+            throw new UnsupportedOperationException("Cannot evaluate node type: " + expr.getClass().getSimpleName());
         }
     }
 

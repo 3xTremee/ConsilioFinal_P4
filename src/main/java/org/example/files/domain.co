@@ -6,7 +6,7 @@ type robot {
 }
 
 type package {
-    location : room || robot;
+    location : room || robot || package;
 }
 
 type room {

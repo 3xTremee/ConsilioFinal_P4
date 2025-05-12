@@ -54,7 +54,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
                 */
         StatementListNode initList = ctx.init().statementList() != null
                 ? (StatementListNode) visit(ctx.init().statementList())
-                : new StatementListNode(Collections.emptyList());
+                : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement
         List<StatementNode> initStatements = initList.getStatements();
 
         List<ExpressionNode> goals = ctx.goal().expression().stream()
@@ -106,9 +106,12 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new OrValueNode(values);
     }
 
+    // Bliver pt ikke brugt "doors: door[];"
     @Override
     public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
         ValueNode elementType = (ValueNode) visit(ctx.valueType());
+
+        System.out.print("visitArrayValue" + elementType);
 
         return new ArrayValueNode(elementType, 0);
     }
@@ -296,11 +299,14 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new ParenExpressionNode(inner);
     }
 
+    // Bliver heller ikke brugt, "rob.location = rooms[0];"
     @Override
     public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
         String arrayName = ctx.IDENTIFIER().getText();
         List<ExpressionNode> indices = new ArrayList<>();
         collectArrayBody(ctx.arrayBodyInt(), indices);
+
+        System.out.print("visitArrayAccessExpression" + arrayName);
 
         return new ArrayAccessNode(arrayName, indices);
     }

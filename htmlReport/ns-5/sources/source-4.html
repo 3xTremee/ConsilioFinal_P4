@@ -1,0 +1,272 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > StatementCheck</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.semantic</a>
+</div>
+
+<h1>Coverage Summary for Class: StatementCheck (org.example.semantic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StatementCheck</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    57,1%
+  </span>
+  <span class="absValue">
+    (4/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    61,8%
+  </span>
+  <span class="absValue">
+    (21/34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73,2%
+  </span>
+  <span class="absValue">
+    (52/71)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.semantic;
+&nbsp;
+&nbsp;import org.example.ast.*;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;public class StatementCheck {
+&nbsp;
+&nbsp;    SemanticAnalyzer semanticAnalyzer;
+&nbsp;    ExpressionCheck expressionCheck;
+&nbsp;
+<b class="fc">&nbsp;    public StatementCheck(SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="fc">&nbsp;        this.semanticAnalyzer = semanticAnalyzer;</b>
+<b class="fc">&nbsp;        this.expressionCheck = new ExpressionCheck(semanticAnalyzer);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ExpressionNode checkIfCondition(IfNode ifNode) {
+<b class="nc">&nbsp;        ExpressionNode ifCondition = ifNode.getCondition();</b>
+&nbsp;
+&nbsp;        //System.out.println(&quot;ifCond: &quot; + ifCondition);
+<b class="nc">&nbsp;        return ifCondition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean checkComparison(BinaryOpNode node){
+<b class="nc">&nbsp;        String leftType = expressionCheck.typeEvaluation(node.getLeft());</b>
+<b class="nc">&nbsp;        String rightType = expressionCheck.typeEvaluation(node.getRight());</b>
+&nbsp;
+<b class="nc">&nbsp;        if(leftType.equals(rightType)){</b>
+&nbsp;            //System.out.println(&quot;Successful comparison of &quot; + node.getLeft() + &quot; and &quot; + node.getRight());
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Cannot compare &quot; + leftType + &quot; with &quot; + rightType);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;StatementNode&gt; checkThenBranch(IfNode ifNode) {
+&nbsp;        //bliver nødt til at caste for at få statements.
+<b class="nc">&nbsp;        StatementListNode thenBranch = (StatementListNode) ifNode.getThenBranch();</b>
+&nbsp;
+&nbsp;        //System.out.println(&quot;thenBranch: &quot; + thenBranch);
+&nbsp;        //System.out.println(thenBranch.getStatements());
+&nbsp;
+<b class="nc">&nbsp;        return thenBranch.getStatements();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean checkAssignment(AssignmentNode node){
+&nbsp;        // get the possible values of the attribute on left-hand side
+<b class="fc">&nbsp;        DotNode target = node.getTarget();</b>
+<b class="fc">&nbsp;        ExpressionNode exprNode = target.getTarget();</b>
+<b class="fc">&nbsp;        String field = target.getField();</b>
+&nbsp;
+&nbsp;        // Left side; possible types
+<b class="fc">&nbsp;        List&lt;String&gt; possibleValueType = getAssignableTypes(node);</b>
+&nbsp;
+&nbsp;        //System.out.println(&quot;possibleValueType: &quot; + possibleValueType);
+&nbsp;
+&nbsp;        String objectName;
+<b class="fc">&nbsp;        if (exprNode instanceof IdentifierNode id) {</b>
+<b class="fc">&nbsp;            objectName = id.getName();</b>
+&nbsp;        }
+<b class="pc">&nbsp;        else if (exprNode instanceof ArrayAccessNode arr) {</b>
+<b class="fc">&nbsp;            objectName = arr.getArrayName() + arr.getIndices().toString()</b>
+<b class="fc">&nbsp;                    .replace(&quot;Constant(value=&quot;, &quot;&quot;).replace(&quot;)&quot;,&quot;&quot;);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Cannot assign &quot; + exprNode + &quot; to &quot; + field);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        //get value that is assigned to the attribute
+<b class="fc">&nbsp;        String valueType = getExpressionType(node.getExpression());</b>
+&nbsp;        //System.out.println(&quot;valueType: &quot; + valueType);
+&nbsp;
+<b class="pc">&nbsp;        if (valueType == null){</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is not recognized.&quot;);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        else if (!possibleValueType.contains(valueType)) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is of wrong type.&quot;);</b>
+&nbsp;        }
+&nbsp;        //System.out.println(&quot;Assigment OK&quot;);
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;String&gt; getAssignableTypes(AssignmentNode node) {
+&nbsp;        // Extract the field‐access on the LHS
+<b class="fc">&nbsp;        DotNode target = node.getTarget();</b>
+<b class="fc">&nbsp;        ExpressionNode exprNode = target.getTarget();</b>
+<b class="fc">&nbsp;        String field = target.getField();</b>
+&nbsp;
+&nbsp;        // Check if the object has the attribute
+<b class="fc">&nbsp;        expressionCheck.checkDotNode(target);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (exprNode instanceof IdentifierNode objectName) {</b>
+<b class="fc">&nbsp;            SymbolType typeSymbol = expressionCheck.checkObject(objectName);</b>
+<b class="fc">&nbsp;            Map&lt;String, SymbolAttribute&gt; attributes = typeSymbol.getAttributes();</b>
+<b class="fc">&nbsp;            SymbolAttribute attribute = attributes.get(field);</b>
+<b class="fc">&nbsp;            List&lt;String&gt; types = expressionCheck.attributeCheck(typeSymbol, attribute);</b>
+<b class="pc">&nbsp;            if (types == null) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Type: &quot; + objectName + &quot; does not have any attributes&quot;);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return types;</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        else if (exprNode instanceof ArrayAccessNode arr) {</b>
+<b class="fc">&nbsp;            SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;String&gt; intersection = null;</b>
+<b class="fc">&nbsp;            for (ExpressionNode idxExpr : arr.getIndices()) {</b>
+<b class="fc">&nbsp;                int i = Integer.parseInt(((ConstantNode)idxExpr).getValueConstant());</b>
+<b class="fc">&nbsp;                SymbolObject obj = symArr.getObjects().get(i);</b>
+<b class="fc">&nbsp;                SymbolType typeSymbol = obj.getSymbolType();</b>
+<b class="fc">&nbsp;                SymbolAttribute attribute = typeSymbol.getAttributes().get(field);</b>
+<b class="fc">&nbsp;                List&lt;String&gt; types = expressionCheck.attributeCheck(typeSymbol, attribute);</b>
+<b class="pc">&nbsp;                if (types == null) {</b>
+<b class="nc">&nbsp;                    throw new RuntimeException(&quot;Type: &quot; + obj + &quot; does not have any attributes&quot;);</b>
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                if (intersection == null) {</b>
+<b class="fc">&nbsp;                    intersection = new ArrayList&lt;&gt;(types);</b>
+&nbsp;                } else {
+<b class="fc">&nbsp;                    intersection.retainAll(types);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return intersection;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Cannot assign into expression &#39;&quot; + exprNode + &quot;&#39;&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getExpressionType(ExpressionNode expression){
+&nbsp;
+<b class="fc">&nbsp;        if (expression instanceof IdentifierNode) {</b>
+<b class="fc">&nbsp;            IdentifierNode leftSide = (IdentifierNode) expression;</b>
+<b class="fc">&nbsp;            SymbolType symbolType = expressionCheck.checkObject(leftSide);</b>
+<b class="fc">&nbsp;            return symbolType.getName();</b>
+&nbsp;
+<b class="fc">&nbsp;        } else if (expression instanceof ConstantNode) {</b>
+<b class="fc">&nbsp;            ConstantNode leftSide = (ConstantNode) expression;</b>
+<b class="fc">&nbsp;            if (expressionCheck.checkBool(leftSide)){</b>
+<b class="fc">&nbsp;                return &quot;boolean&quot;;</b>
+<b class="pc">&nbsp;            } else if (expressionCheck.checkInt(leftSide)){</b>
+<b class="fc">&nbsp;                return &quot;int&quot;;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        } else if (expression instanceof BinaryOpNode){</b>
+<b class="fc">&nbsp;            return expressionCheck.binOpEval((BinaryOpNode) expression);</b>
+&nbsp;        }
+&nbsp;        // DotNode, så man kan skrive p.location == r.robot. Altså dotNode på hver side af ==
+<b class="nc">&nbsp;        if (expression instanceof DotNode dotNode) {</b>
+<b class="nc">&nbsp;            return expressionCheck.typeEvaluation(dotNode);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

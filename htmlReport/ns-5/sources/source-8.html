@@ -1,0 +1,170 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SymbolAttribute</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.semantic</a>
+</div>
+
+<h1>Coverage Summary for Class: SymbolAttribute (org.example.semantic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SymbolAttribute</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71,4%
+  </span>
+  <span class="absValue">
+    (5/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (7/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    70%
+  </span>
+  <span class="absValue">
+    (14/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.semantic;
+&nbsp;
+&nbsp;import org.example.ast.*;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;public class SymbolAttribute extends Symbol {
+&nbsp;
+&nbsp;    public SymbolAttribute(String name, AttributeNode node) {
+<b class="fc">&nbsp;        super(name, node);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String getKind() {
+<b class="nc">&nbsp;        return &quot;Attribute&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public AttributeNode getAttributeNode() {
+<b class="fc">&nbsp;        return (AttributeNode) getNode();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ValueNode getValueNode() {
+<b class="fc">&nbsp;        return getAttributeNode().getValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;String&gt; getPossibleTypes() {
+<b class="fc">&nbsp;        List&lt;String&gt; possibleTypes = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        ValueNode value = getValueNode();</b>
+<b class="fc">&nbsp;        extractTypes(value, possibleTypes);</b>
+<b class="fc">&nbsp;        return possibleTypes;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void extractTypes(ValueNode node, List&lt;String&gt; types) {
+<b class="fc">&nbsp;        if (node instanceof ValueTypeNode) {</b>
+<b class="fc">&nbsp;            types.add(((ValueTypeNode) node).getTypeName());</b>
+<b class="fc">&nbsp;        } else if (node instanceof BaseValueNode) {</b>
+<b class="fc">&nbsp;            types.add(((BaseValueNode) node).getValue());</b>
+<b class="pc">&nbsp;        } else if (node instanceof ArrayValueNode) {</b>
+<b class="nc">&nbsp;            ValueNode elementType = ((ArrayValueNode) node).getElementType();</b>
+<b class="nc">&nbsp;            String elementTypeName = ((ValueTypeNode) elementType).getTypeName();</b>
+<b class="nc">&nbsp;            types.add(elementTypeName + &quot;[]&quot;);</b>
+<b class="nc">&nbsp;        } else if (node instanceof OrValueNode) {</b>
+<b class="fc">&nbsp;            for (ValueNode type : ((OrValueNode) node).getTypes()) {</b>
+<b class="fc">&nbsp;                extractTypes(type, types); // Rekursivt kald for nested OrValueNodes</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public String toString(){
+<b class="nc">&nbsp;        return &quot; type of value: &quot; + getPossibleTypes();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

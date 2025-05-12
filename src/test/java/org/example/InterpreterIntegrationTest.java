@@ -8,7 +8,7 @@ import org.example.planner.Planner;
 import org.example.planner.State;
 import org.example.planner.GroundedAction;
 import org.example.semantic.SemanticAnalyzer;
-import org.antlr.v4.runtime.tree.ParseTree;
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
@@ -19,9 +19,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class IntegrationTest {
+public class InterpreterIntegrationTest {
 
-    private ProgramNode buildProgram(String fileName) throws Exception {
+    public static ProgramNode parseAndBuildAST(String fileName) throws Exception {
         String content = Files.readString(Paths.get("src/main/java/org/example/files", fileName));
         ConsilioLexer lexer = new ConsilioLexer(CharStreams.fromString(content));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
@@ -55,7 +55,7 @@ public class IntegrationTest {
 
     @Test
     public void testRobotDomain() throws Exception {
-        ProgramNode program = buildProgram("program.co");
+        ProgramNode program = parseAndBuildAST("program.co");
         List<String> expected = readExpected("result.co");
 
         List<String> actual = planProgram(program);
@@ -65,7 +65,7 @@ public class IntegrationTest {
     /*
     @Test
     public void testDeliveryDomain() throws Exception {
-        ProgramNode program = buildProgram("rescueProgram.co");
+        ProgramNode program = parseAndBuildAST("rescueProgram.co");
         List<String> expected = readExpected("rescueResult.co");
         List<String> actual = planProgram(program);
         assertEquals(expected, actual, "Plan for rescueProgram.co should match expected rescueResult.co");

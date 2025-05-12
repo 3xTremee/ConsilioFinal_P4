@@ -1,0 +1,387 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ExpressionCheck</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.semantic</a>
+</div>
+
+<h1>Coverage Summary for Class: ExpressionCheck (org.example.semantic)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExpressionCheck</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    67%
+  </span>
+  <span class="absValue">
+    (59/88)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,4%
+  </span>
+  <span class="absValue">
+    (96/118)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.semantic;
+&nbsp;
+&nbsp;import com.ibm.icu.text.SymbolTable;
+&nbsp;import org.antlr.v4.parse.v4ParserException;
+&nbsp;import org.example.ast.*;
+&nbsp;
+&nbsp;import java.beans.Expression;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;public class ExpressionCheck {
+&nbsp;
+&nbsp;    //kaldes injektion
+&nbsp;    SemanticAnalyzer semanticAnalyzer;
+&nbsp;
+&nbsp;    // Constructor for at den har sin egen SemanticAnalyzer
+<b class="fc">&nbsp;    public ExpressionCheck(SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="fc">&nbsp;        this.semanticAnalyzer = semanticAnalyzer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean checkInt(ConstantNode c) {
+<b class="fc">&nbsp;        String v = c.getValueConstant();</b>
+&nbsp;
+&nbsp;        try {
+<b class="fc">&nbsp;            Integer.parseInt(v);</b>
+<b class="fc">&nbsp;            return true;</b>
+<b class="nc">&nbsp;        } catch (NumberFormatException e) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public boolean checkBool(ConstantNode c) {
+<b class="fc">&nbsp;        String v = c.getValueConstant();</b>
+<b class="pc">&nbsp;        return &quot;true&quot;.equals(v) || &quot;false&quot;.equals(v);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Metode til at tjekke om
+&nbsp;    public String checkIdentifier(IdentifierNode id) {
+<b class="fc">&nbsp;        Map&lt;String, Symbol&gt; symbolTable = semanticAnalyzer.getSymbolTable();        // get symbol table</b>
+<b class="fc">&nbsp;        String name = id.getName();                                                 // get name of IdentifierNode</b>
+&nbsp;
+<b class="pc">&nbsp;        if (symbolTable.containsKey(name)) {</b>
+&nbsp;            //System.out.println(&quot;Identifier &quot; + name + &quot; exists&quot;);
+<b class="fc">&nbsp;            return name;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        throw new NullPointerException(&quot;Identifier &quot; + name + &quot; not found in symbol table&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //Her findes typen (type) af et object (SymbolObject) i symboltabellen baseret på navnet
+&nbsp;    // på en identifier-node (id)
+&nbsp;    public SymbolType checkObject(IdentifierNode id) {
+<b class="fc">&nbsp;        Map&lt;String, Symbol&gt; symbolTable = semanticAnalyzer.getSymbolTable();</b>
+&nbsp;
+<b class="fc">&nbsp;        String name = checkIdentifier(id);</b>
+<b class="fc">&nbsp;        Symbol symbol = symbolTable.get(name);                            //find tilhørende Symbol for targetName</b>
+&nbsp;
+<b class="pc">&nbsp;        if (!(symbol instanceof SymbolObject)) {</b>
+<b class="nc">&nbsp;            throw new RuntimeException(&quot;Undeclared type in objects declaration: &quot; + id);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return ((SymbolObject) symbol).getSymbolType();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean typeExists(String typeName) {
+<b class="fc">&nbsp;        Map&lt;String, Symbol&gt; symbolTable = semanticAnalyzer.getSymbolTable();</b>
+&nbsp;
+<b class="fc">&nbsp;        return symbolTable.containsKey(typeName);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public Boolean arrayInitializerCheck(Symbol sym, String typeName){
+<b class="pc">&nbsp;        if (sym == null || !typeExists(typeName)) {</b>
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Undeclared type in objects declaration: &quot; + typeName);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method checking which types the values of the attribute must have
+&nbsp;    public List&lt;String&gt; attributeCheck(SymbolType sym, SymbolAttribute attribute) {
+<b class="fc">&nbsp;        Map&lt;String, SymbolAttribute&gt; attributes = sym.getAttributes();</b>
+&nbsp;
+<b class="fc">&nbsp;        SymbolAttribute symbolAttribute = attributes.get(attribute.getName());</b>
+&nbsp;
+<b class="pc">&nbsp;        if (symbolAttribute == null){</b>
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Undeclared attribute in objects declaration: &quot; + attribute.getName());</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return symbolAttribute.getPossibleTypes();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //metode tjekker om target er i objekts, samt finder typen på objekt
+&nbsp;    //derudover tjekker den om attributten må bruges på objekt af den type
+&nbsp;    //hvis den må så returneres true.
+&nbsp;    public boolean checkDotNode (DotNode dotNode) {
+<b class="fc">&nbsp;        ExpressionNode target = dotNode.getTarget();                 //Printer: targetName: IdentifierNode= Name:rob</b>
+<b class="fc">&nbsp;        String fieldName = dotNode.getField();                       //printer field navn</b>
+&nbsp;
+<b class="fc">&nbsp;        if (target instanceof IdentifierNode id) {</b>
+<b class="fc">&nbsp;            SymbolType symbolType = checkObject(id);</b>
+&nbsp;
+&nbsp;            /* Laver en datastruktur over alle nøgler fra symbolTypes map attributes. Nøglerne er navne på attributterne
+&nbsp;               Set bruges som hurtigt opslag for at se om fieldName er en attribut for typen*/
+<b class="fc">&nbsp;            Set&lt;String&gt; attributeNames = symbolType.getAttributes().keySet();</b>
+&nbsp;
+<b class="pc">&nbsp;            if (attributeNames.contains(fieldName)) {</b>
+&nbsp;                //System.out.println(&quot;Attribute: &quot; + fieldName + &quot; is possible for type: &quot; + symbolType.getName());
+<b class="fc">&nbsp;                return true;</b>
+&nbsp;            } else {
+&nbsp;                //System.out.println(&quot;Attribute: &quot; + fieldName + &quot; not possible for type: &quot; + symbolType.getName());
+<b class="nc">&nbsp;                String targetName = ((IdentifierNode) target).getName();     //Printer kun navnet fx rob</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Attribute: &quot; + fieldName + &quot; not possible for object: &quot; + targetName + &quot; of type: &quot; + symbolType.getName());</b>
+&nbsp;            }
+&nbsp;        }
+<b class="pc">&nbsp;        else if (target instanceof ArrayAccessNode arr) {</b>
+<b class="fc">&nbsp;            SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());</b>
+<b class="pc">&nbsp;            if (symArr == null){</b>
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Array &#39;&quot; + arr.getArrayName() + &quot;&#39; not defined&quot;);</b>
+&nbsp;            }
+&nbsp;            // for each constant index, check that object has that field
+<b class="fc">&nbsp;            for (ExpressionNode idxExpr : arr.getIndices()) {</b>
+&nbsp;                // Kaster exception hvis index ikke er en konstant eller matcher (\d+) hvor &#39;d&#39; er integer og &#39;+&#39; er en eller flere.
+<b class="pc">&nbsp;                if (!(idxExpr instanceof ConstantNode c) || !c.getValueConstant().matches(&quot;\\d+&quot;)){</b>
+<b class="nc">&nbsp;                    throw new SemanticException(&quot;Invalid index in initializer for &#39;&quot; + arr.getArrayName() + &quot;&#39;&quot;);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                int i = Integer.parseInt(c.getValueConstant());</b>
+<b class="pc">&nbsp;                if (i &lt; 0 || i &gt;= symArr.getObjects().size()) {</b>
+<b class="nc">&nbsp;                    throw new SemanticException(&quot;Index &quot; + i + &quot; out of bounds for &#39;&quot; + arr.getArrayName() + &quot;&#39;&quot;);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                SymbolObject obj = symArr.getObjects().get(i);</b>
+<b class="fc">&nbsp;                SymbolType objType = obj.getSymbolType();</b>
+<b class="pc">&nbsp;                if (!objType.getAttributes().containsKey(fieldName)) {</b>
+<b class="nc">&nbsp;                    throw new SemanticException(&quot;Attribute &#39;&quot; + fieldName + &quot;&#39; not on object &#39;&quot; + obj.getName() + &quot;&#39; of type &quot; + objType.getName());</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Unsupported dot‐target: &quot; + target);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //returnerer det udtryk som er inde i parentesen, så længe det er af ExpressionNode.
+&nbsp;    public ExpressionNode checkParentheses (ParenExpressionNode p) {
+<b class="fc">&nbsp;        return p.getInner();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String typeEvaluation(ExpressionNode expr){
+&nbsp;        //System.out.println(&quot;&gt;&gt; typeEvaluation on: &quot; + expr.getClass().getSimpleName() + &quot; -&gt; &quot; + expr);
+&nbsp;
+<b class="fc">&nbsp;        if (expr instanceof ConstantNode){</b>
+<b class="pc">&nbsp;            if (checkBool((ConstantNode) expr)){</b>
+&nbsp;                //System.out.println(&quot;bool: &quot; + v);
+<b class="nc">&nbsp;                return &quot;boolean&quot;;</b>
+<b class="pc">&nbsp;            } else if (checkInt((ConstantNode) expr)) {</b>
+<b class="fc">&nbsp;                return &quot;int&quot;;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        else if (expr instanceof IdentifierNode id) {</b>
+<b class="fc">&nbsp;            String name = id.getName();</b>
+<b class="fc">&nbsp;            Symbol sym = semanticAnalyzer.getSymbolTable().get(name);</b>
+<b class="pc">&nbsp;            if (sym == null) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Identifier &quot; + name + &quot; not found in symbol table&quot;);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            if (sym instanceof SymbolObject objSym) {</b>
+&nbsp;                // Returner typen på objektet/parameteren, ikke selve navnet
+<b class="fc">&nbsp;                return objSym.getSymbolType().getName();</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Identifier &quot; + name + &quot; is not an object or variable&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        else if (expr instanceof ArrayAccessNode arr) {</b>
+<b class="fc">&nbsp;            SymbolArray sa = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());</b>
+<b class="fc">&nbsp;            Set&lt;String&gt; types = new LinkedHashSet&lt;&gt;();</b>
+<b class="fc">&nbsp;            for (ExpressionNode idx : arr.getIndices()) {</b>
+<b class="fc">&nbsp;                int i = Integer.parseInt(((ConstantNode)idx).getValueConstant());</b>
+<b class="fc">&nbsp;                types.add(sa.getObjects().get(i).getSymbolType().getName());</b>
+&nbsp;            }
+<b class="pc">&nbsp;            return (types.size() == 1)</b>
+<b class="fc">&nbsp;                    ? types.iterator().next()</b>
+<b class="nc">&nbsp;                    : String.join(&quot;||&quot;, types);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (expr instanceof DotNode dn) {</b>
+&nbsp;            // Tjek først at attributten findes
+<b class="pc">&nbsp;            if (!checkDotNode(dn)) {</b>
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Invalid dot‐expression: &quot; + dn);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            ExpressionNode target = dn.getTarget();</b>
+&nbsp;
+&nbsp;            SymbolType ownerType;
+&nbsp;
+<b class="fc">&nbsp;            if (target instanceof IdentifierNode id) {</b>
+&nbsp;                // Find typen på objektet (f.eks. robot)
+<b class="fc">&nbsp;                ownerType = checkObject(id);</b>
+&nbsp;            }
+<b class="pc">&nbsp;            else if (target instanceof ArrayAccessNode arr) {</b>
+<b class="fc">&nbsp;                SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());</b>
+<b class="fc">&nbsp;                int idx = Integer.parseInt(((ConstantNode)arr.getIndices().getFirst()).getValueConstant());</b>
+<b class="fc">&nbsp;                SymbolObject elem = symArr.getObjects().get(idx);</b>
+<b class="fc">&nbsp;                ownerType = elem.getSymbolType();</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Unsupported target in expr: &quot; + expr);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Find SymbolAttribute for feltet (f.eks. carrying)
+<b class="fc">&nbsp;            SymbolAttribute attr = ownerType.getAttributes().get(dn.getField());</b>
+<b class="fc">&nbsp;            List&lt;String&gt; poss = attr.getPossibleTypes();</b>
+<b class="fc">&nbsp;            if (poss.size() == 1) {</b>
+<b class="fc">&nbsp;                return poss.getFirst();</b>
+&nbsp;            } else {
+&nbsp;                // Fletter union typer sammen
+<b class="fc">&nbsp;                return String.join(&quot;||&quot;, poss);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        else if(expr instanceof ParenExpressionNode) {</b>
+<b class="fc">&nbsp;            ExpressionNode inner = checkParentheses((ParenExpressionNode) expr);</b>
+<b class="fc">&nbsp;            return typeEvaluation(inner);</b>
+&nbsp;
+<b class="pc">&nbsp;        } else if (expr instanceof BinaryOpNode) {</b>
+&nbsp;            //System.out.println(&quot;Now evaluating Binary Operation Node! :)&quot;);
+<b class="fc">&nbsp;            return binOpEval((BinaryOpNode) expr);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Invalid ExpressionNode in Expression: &quot; + expr.getClass().getSimpleName());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Method which returns the type of the evaluation
+&nbsp;    public String binOpEval(BinaryOpNode opNode) {
+<b class="fc">&nbsp;        String op = opNode.getOperator();</b>
+<b class="fc">&nbsp;        String leftType = typeEvaluation(opNode.getLeft());</b>
+<b class="fc">&nbsp;        String rightType = typeEvaluation(opNode.getRight());</b>
+&nbsp;        //System.out.println(&quot;Comparing types for op &quot; + op + &quot;: left=&quot; + typeEvaluation(opNode.getLeft()) + &quot; right=&quot; + typeEvaluation(opNode.getRight()));
+&nbsp;        //System.out.println(&quot;&gt;&gt; binOpEval &quot; + op + &quot;: left=&quot; + leftType +  &quot; right=&quot; + rightType);
+&nbsp;        //System.out.println(&quot;&gt;&gt; binOpEval &quot; + op + &quot;: venstre=&quot; + leftType + &quot;, højre=&quot; + rightType + &quot; (expression: &quot; + opNode + &quot;)&quot;);
+<b class="pc">&nbsp;        switch (op) {</b>
+&nbsp;            case &quot;+&quot;, &quot;-&quot;:
+<b class="pc">&nbsp;                if (&quot;int&quot;.equals(leftType) &amp;&amp; &quot;int&quot;.equals(rightType)) {</b>
+<b class="fc">&nbsp;                    return &quot;int&quot;;</b>
+&nbsp;                }
+&nbsp;                break;
+&nbsp;
+&nbsp;            case &quot;&gt;&quot;, &quot;&lt;&quot;, &quot;&gt;=&quot;, &quot;&lt;=&quot;:
+<b class="pc">&nbsp;                if (&quot;int&quot;.equals(leftType) &amp;&amp; &quot;int&quot;.equals(rightType)) {</b>
+<b class="fc">&nbsp;                    return &quot;boolean&quot;;</b>
+&nbsp;                }
+&nbsp;                break;
+&nbsp;
+&nbsp;            case &quot;&amp;&amp;&quot;, &quot;||&quot;:
+<b class="pc">&nbsp;                if (&quot;boolean&quot;.equals(leftType) &amp;&amp; &quot;boolean&quot;.equals(rightType)) {</b>
+<b class="fc">&nbsp;                    return &quot;boolean&quot;;</b>
+&nbsp;                }
+&nbsp;                break;
+&nbsp;
+&nbsp;            case &quot;==&quot;, &quot;!=&quot;:
+&nbsp;                // Split union-typer på &quot;||&quot;
+<b class="fc">&nbsp;                Set&lt;String&gt; leftSet  = new HashSet&lt;&gt;(Arrays.asList(leftType.split(&quot;\\|\\|&quot;)));</b>
+<b class="fc">&nbsp;                Set&lt;String&gt; rightSet = new HashSet&lt;&gt;(Arrays.asList(rightType.split(&quot;\\|\\|&quot;)));</b>
+&nbsp;                // Behold kun de typer, der går igen. Ligesom intersection fra DTG
+<b class="fc">&nbsp;                leftSet.retainAll(rightSet);</b>
+<b class="pc">&nbsp;                if (!leftSet.isEmpty()) {</b>
+<b class="fc">&nbsp;                    return &quot;boolean&quot;;</b>
+&nbsp;                }
+&nbsp;                break;
+&nbsp;
+&nbsp;            default:
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt operator: &quot; + op);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        throw new RuntimeException(</b>
+&nbsp;                &quot;Not compatible types: &quot; + leftType + &quot; and &quot; + rightType
+&nbsp;        );
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>

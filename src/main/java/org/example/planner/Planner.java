@@ -239,6 +239,7 @@ public class Planner {
 
         frontier.add(new Node(init, List.of()));
         seen.add(init);
+        System.out.print("Init: " + init + "\n");
 
         if (isGoal(init, goals)) {
             throw new SemanticException("Initial state is already in goal state");
@@ -259,6 +260,7 @@ public class Planner {
                         // Check goal right away
                         if (isGoal(nxt, goals)) {
                             //System.out.println("\u001B[34m" + "Reached goal with action: " + ga + "\u001B[0m");
+                            System.out.print("Goal: " + nxt + "\n");
                             return Optional.of(p2);
                         }
                         frontier.add(new Node(nxt, p2));

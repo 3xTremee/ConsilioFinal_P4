@@ -1,0 +1,426 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Planner</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.example.planner</a>
+</div>
+
+<h1>Coverage Summary for Class: Planner (org.example.planner)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Planner</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/75)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Planner$1Node</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/76)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.example.planner;
+&nbsp;
+&nbsp;import org.example.ast.*;
+&nbsp;import org.example.semantic.*;
+&nbsp;
+&nbsp;import java.util.*;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * Simple breadth‑first search planner, with debug prints on every action attempt.
+&nbsp; */
+&nbsp;public class Planner {
+&nbsp;    private final List&lt;GroundedAction&gt; allActions;
+&nbsp;    //private final StatementCheck statementCheck;
+&nbsp;    private final SemanticAnalyzer semanticAnalyzer;
+&nbsp;
+&nbsp;//    public Planner(DomainNode domain, List&lt;ObjectNode&gt; objects, StatementCheck statementCheck, SemanticAnalyzer semanticAnalyzer) {
+&nbsp;//        this.statementCheck = statementCheck;
+&nbsp;//        this.allActions = groundAll(domain, objects);
+&nbsp;//        this.semanticAnalyzer = semanticAnalyzer;
+&nbsp;//    }
+&nbsp;
+<b class="nc">&nbsp;    public Planner(DomainNode domain, List&lt;ObjectNode&gt; objects, SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="nc">&nbsp;        this.allActions = groundAll(domain, objects);</b>
+<b class="nc">&nbsp;        this.semanticAnalyzer = semanticAnalyzer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private List&lt;GroundedAction&gt; groundAll(DomainNode domain, List&lt;ObjectNode&gt; objs) {
+<b class="nc">&nbsp;        Map&lt;String, List&lt;String&gt;&gt; byType = new HashMap&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (ObjectNode o : objs) {</b>
+<b class="nc">&nbsp;            byType.computeIfAbsent(o.getType(), k -&gt; new ArrayList&lt;&gt;())</b>
+<b class="nc">&nbsp;                    .add(o.getElementName());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        List&lt;GroundedAction&gt; out = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (ActionNode a : domain.getActions()) {</b>
+<b class="nc">&nbsp;            backtrackBind(a.getParameters(), byType, 0, new HashMap&lt;&gt;(), a, out);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return out;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void backtrackBind(
+&nbsp;            List&lt;ParameterNode&gt; params,
+&nbsp;            Map&lt;String, List&lt;String&gt;&gt; byType,
+&nbsp;            int idx,
+&nbsp;            Map&lt;String, String&gt; curr,
+&nbsp;            ActionNode schema,
+&nbsp;            List&lt;GroundedAction&gt; out
+&nbsp;    ) {
+<b class="nc">&nbsp;        if (idx == params.size()) {</b>
+<b class="nc">&nbsp;            out.add(new GroundedAction(schema, curr));</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        ParameterNode p = params.get(idx);</b>
+<b class="nc">&nbsp;        for (String obj : byType.getOrDefault(p.getType(), List.of())) {</b>
+<b class="nc">&nbsp;            curr.put(p.getName(), obj);</b>
+<b class="nc">&nbsp;            backtrackBind(params, byType, idx + 1, curr, schema, out);</b>
+<b class="nc">&nbsp;            curr.remove(p.getName());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Apply one grounded action to state s.
+&nbsp;     * Returns new State if guard passes, or null if guard fails.
+&nbsp;     */
+&nbsp;//    private State apply(GroundedAction ga, State s) {
+&nbsp;//        //ga.getBinding() bruges typisk til mapping fra variabler til konkrete værdier eller objekter
+&nbsp;//        ExpressionEvaluator eval = new ExpressionEvaluator(ga.getBinding(), this.semanticAnalyzer);
+&nbsp;//
+&nbsp;//        //System.out.println(&quot;ga: &quot; + ga.getSchema().getBody());
+&nbsp;//
+&nbsp;//        IfNode ifn = (IfNode) ga.getSchema().getBody();
+&nbsp;//
+&nbsp;//        if((ga.getSchema().getBody() instanceof IfNode)) {
+&nbsp;//            ExpressionNode ifCondition = ((IfNode) ga.getSchema().getBody()).getCondition();          //først castes der til ifNode og bagefter hentes condition
+&nbsp;//
+&nbsp;//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition((IfNode) ga.getSchema().getBody());
+&nbsp;//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
+&nbsp;//
+&nbsp;//            Boolean guard = (Boolean) eval.evaluate(ifCondition, s);
+&nbsp;//            System.out.println(&quot;guard2: &quot; + guard2);
+&nbsp;//            if (!guard2) {
+&nbsp;//                return null;
+&nbsp;//            }
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        /*Boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);
+&nbsp;//        System.out.println(&quot;guard: &quot; + guard);
+&nbsp;//        if (!guard) {
+&nbsp;//            return null;
+&nbsp;//        }*/
+&nbsp;//
+&nbsp;//        State next = s;
+&nbsp;//        for (StatementNode st : (statementCheck.checkThenBranch(ifn))) {    /*;ifn.getThenBranch()).getStatements()*/
+&nbsp;//            AssignmentNode asn = (AssignmentNode) st;
+&nbsp;//            boolean isOkay = statementCheck.checkAssignment(asn);
+&nbsp;//            System.out.println(&quot;isOkay: &quot; + isOkay);
+&nbsp;//
+&nbsp;//
+&nbsp;//            DotNode dotNode = asn.getTarget();
+&nbsp;//            ExpressionNode exprNode = dotNode.getTarget();
+&nbsp;//            String varName = ((IdentifierNode) exprNode).getName();
+&nbsp;//            String object  = ga.getBinding().getOrDefault(varName, varName);
+&nbsp;//            String field   = dotNode.getField();
+&nbsp;//            Object val     = eval.evaluate(asn.getExpression(), next);
+&nbsp;//            next = next.with(object, field, val);
+&nbsp;//        }
+&nbsp;//        return next;
+&nbsp;//    }
+&nbsp;
+&nbsp;
+&nbsp;    //DET HER ER DEN SOM VIRKER PT. EFTER FROKOST ONSDAG D. 7/5
+&nbsp;//    private State apply(GroundedAction ga, State s) {
+&nbsp;//        // Bind parametre ind i symbolTable
+&nbsp;//        Map&lt;String,String&gt; binding = ga.getBinding();
+&nbsp;//        for (var entry : binding.entrySet()) {
+&nbsp;//            String varName = entry.getKey();       // kunne være &quot;r&quot;
+&nbsp;//            String objName = entry.getValue();     // kunne være &quot;rob&quot;
+&nbsp;//            // hent det eksisterende SymbolObject for &quot;rob&quot;
+&nbsp;//            SymbolObject symObj = (SymbolObject) semanticAnalyzer.getSymbolTable().get(objName);
+&nbsp;//            semanticAnalyzer.getSymbolTable().put(varName, symObj);
+&nbsp;//        }
+&nbsp;//
+&nbsp;//        try {
+&nbsp;//            // Opret evaluator med binding
+&nbsp;//            ExpressionEvaluator eval = new ExpressionEvaluator(binding, this.semanticAnalyzer);
+&nbsp;//
+&nbsp;//            IfNode ifn = (IfNode) ga.getSchema().getBody();
+&nbsp;//            // Guard check
+&nbsp;//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition(ifn);
+&nbsp;//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
+&nbsp;//            System.out.println(&quot;guard2: &quot; + guard2);
+&nbsp;//            if (!guard2) {
+&nbsp;//                return null;
+&nbsp;//            }
+&nbsp;//
+&nbsp;//            // Kør body
+&nbsp;//            State next = s;
+&nbsp;//            for (StatementNode st : statementCheck.checkThenBranch(ifn)) {
+&nbsp;//                AssignmentNode asn = (AssignmentNode) st;
+&nbsp;//                //statementCheck.checkAssignment(asn);
+&nbsp;//
+&nbsp;//                DotNode dotNode = asn.getTarget();
+&nbsp;//                // find objekt- og felt-navn
+&nbsp;//                IdentifierNode targetObj = (IdentifierNode) dotNode.getTarget();
+&nbsp;//                String varName = targetObj.getName();
+&nbsp;//                String object = binding.getOrDefault(varName, varName);
+&nbsp;//                String field = dotNode.getField();
+&nbsp;//                Object val = eval.evaluate(asn.getExpression(), next);
+&nbsp;//                next = next.with(object, field, val);
+&nbsp;//            }
+&nbsp;//            return next;
+&nbsp;//
+&nbsp;//        } finally {
+&nbsp;//            // Fjern parametre igen uanset hvad
+&nbsp;//            for (String varName : binding.keySet()) {
+&nbsp;//                semanticAnalyzer.getSymbolTable().remove(varName);
+&nbsp;//            }
+&nbsp;//        }
+&nbsp;//    }
+&nbsp;
+&nbsp;    private State apply(GroundedAction ga, State s) {
+&nbsp;        // Bind parametre
+<b class="nc">&nbsp;        Map&lt;String,String&gt; binding = ga.getBinding();</b>
+<b class="nc">&nbsp;        binding.forEach((var, obj) -&gt; {</b>
+<b class="nc">&nbsp;            SymbolObject symObj = (SymbolObject) semanticAnalyzer.getSymbolTable().get(obj);</b>
+<b class="nc">&nbsp;            semanticAnalyzer.getSymbolTable().put(var, symObj);</b>
+&nbsp;        });
+&nbsp;
+&nbsp;        try {
+<b class="nc">&nbsp;            ExpressionEvaluator eval = new ExpressionEvaluator(binding, semanticAnalyzer);</b>
+&nbsp;
+<b class="nc">&nbsp;            IfNode ifn = (IfNode) ga.getSchema().getBody();</b>
+&nbsp;            // ren evaluering, ingen type tjek
+<b class="nc">&nbsp;            boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);</b>
+<b class="nc">&nbsp;            if (!guard) return null;</b>
+&nbsp;
+<b class="nc">&nbsp;            State next = s;</b>
+<b class="nc">&nbsp;            for (StatementNode st : ((StatementListNode) ifn.getThenBranch()).getStatements()) {</b>
+<b class="nc">&nbsp;                AssignmentNode asn = (AssignmentNode) st;</b>
+<b class="nc">&nbsp;                DotNode target = asn.getTarget();</b>
+<b class="nc">&nbsp;                String field = target.getField();</b>
+<b class="nc">&nbsp;                Object val = eval.evaluate(asn.getExpression(), next);</b>
+<b class="nc">&nbsp;                ExpressionNode t = target.getTarget();</b>
+&nbsp;
+<b class="nc">&nbsp;                if (t instanceof IdentifierNode id) {</b>
+<b class="nc">&nbsp;                    String objName =</b>
+<b class="nc">&nbsp;                            binding.getOrDefault(id.getName(), id.getName());</b>
+<b class="nc">&nbsp;                    next = next.with(objName, field, val);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (t instanceof ArrayAccessNode arr) {</b>
+<b class="nc">&nbsp;                    List&lt;Integer&gt; idxs = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                    for (ExpressionNode idxExpr : arr.getIndices()) {</b>
+<b class="nc">&nbsp;                        idxs.add((Integer) eval.evaluate(idxExpr, next));</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());</b>
+&nbsp;
+<b class="nc">&nbsp;                    for (int i : idxs) {</b>
+<b class="nc">&nbsp;                        String objName = symArr.getObjects().get(i).getName();</b>
+<b class="nc">&nbsp;                        next = next.with(objName, target.getField(), val);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    throw new UnsupportedOperationException(</b>
+&nbsp;                            &quot;Cannot assign to target: &quot; + t);
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            return next;</b>
+&nbsp;        } finally {
+&nbsp;            // Fjern bindinger
+<b class="nc">&nbsp;            binding.keySet().forEach(k -&gt; semanticAnalyzer.getSymbolTable().remove(k));</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    /** Check whether every goal expression holds in state s. */
+&nbsp;    private boolean isGoal(State s, List&lt;ExpressionNode&gt; goals) {
+<b class="nc">&nbsp;        ExpressionEvaluator eval = new ExpressionEvaluator(this.semanticAnalyzer); // no bindings</b>
+<b class="nc">&nbsp;        for (ExpressionNode g : goals) {</b>
+<b class="nc">&nbsp;            Object v = eval.evaluate(g, s);</b>
+<b class="nc">&nbsp;            if (!(v instanceof Boolean b) || !b) {</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Breadth‑first search for a plan.
+&nbsp;     * Prints every attempted action and result.
+&nbsp;     */
+&nbsp;    public Optional&lt;List&lt;GroundedAction&gt;&gt; bfs(State init, List&lt;ExpressionNode&gt; goals) {
+<b class="nc">&nbsp;        record Node(State state, List&lt;GroundedAction&gt; plan) {}</b>
+<b class="nc">&nbsp;        Queue&lt;Node&gt; frontier = new ArrayDeque&lt;&gt;();</b>
+<b class="nc">&nbsp;        Set&lt;State&gt; seen = new HashSet&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        frontier.add(new Node(init, List.of()));</b>
+<b class="nc">&nbsp;        seen.add(init);</b>
+<b class="nc">&nbsp;        System.out.print(&quot;Init: &quot; + init + &quot;\n&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (isGoal(init, goals)) {</b>
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Initial state is already in goal state&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        while (!frontier.isEmpty()) {</b>
+<b class="nc">&nbsp;            Node n = frontier.poll();</b>
+&nbsp;
+&nbsp;            // Try each action from this state
+<b class="nc">&nbsp;            for (GroundedAction ga : allActions) {</b>
+&nbsp;                //System.out.println(&quot;Attempting action: &quot; + ga + &quot;\n  from state: &quot; + n.state);
+<b class="nc">&nbsp;                State nxt = apply(ga, n.state);</b>
+<b class="nc">&nbsp;                if (nxt != null) {</b>
+&nbsp;                    //System.out.println(&quot;\u001B[32m&quot; + &quot;  → Applied, new state: &quot; + &quot;\u001B[0m&quot; + nxt);
+<b class="nc">&nbsp;                    if (seen.add(nxt)) {</b>
+<b class="nc">&nbsp;                        List&lt;GroundedAction&gt; p2 = new ArrayList&lt;&gt;(n.plan);</b>
+<b class="nc">&nbsp;                        p2.add(ga);</b>
+&nbsp;                        // Check goal right away
+<b class="nc">&nbsp;                        if (isGoal(nxt, goals)) {</b>
+&nbsp;                            //System.out.println(&quot;\u001B[34m&quot; + &quot;Reached goal with action: &quot; + ga + &quot;\u001B[0m&quot;);
+<b class="nc">&nbsp;                            System.out.print(&quot;Goal: &quot; + nxt + &quot;\n&quot;);</b>
+<b class="nc">&nbsp;                            return Optional.of(p2);</b>
+&nbsp;                        }
+<b class="nc">&nbsp;                        frontier.add(new Node(nxt, p2));</b>
+&nbsp;                    }
+&nbsp;                } else {
+&nbsp;                    //System.out.println(&quot;\u001B[31m&quot; + &quot;  → Guard failed, skipping&quot; + &quot;\u001B[0m&quot;);
+&nbsp;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return Optional.empty();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-12 12:04</div>
+</div>
+</body>
+</html>
