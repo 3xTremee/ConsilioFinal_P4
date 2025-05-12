@@ -7,6 +7,7 @@ type robot {
 
 type package {
     location : room || robot || package;
+    test : boolean;
 }
 
 type room {
@@ -39,7 +40,7 @@ define problem movePackagesDemo
 import robotDomain
 
 objects {
-    robot robots[] = {rob};
+    robot robots[] = {rob, rob2};
     package packages[] = {pack1, pack2};
     package redPackages[] = {rPack1, rPack2};
     room rooms[] = {A, B, C};
@@ -49,9 +50,15 @@ initialState {
     rob.location = A;
     rob.carrying = false;
 
+    rob2.location = C;
+    rob2.carrying = false;
+
     packages[0,1].location = A;
 
     redPackages[0,1].location = C;
+
+    packages[0,1].test = true;
+    redPackages[0,1].test = false;
 
     A.numberOfItems = 5 + 6 + 10 - 8;
     B.numberOfItems = 4;
@@ -76,6 +83,9 @@ goalState {
     rooms[1,2].numberOfItems >= 3;
     rooms[1,2].numberOfItems <= 5;
 
-    robots[0].carrying == false;
+    robots[0,1].carrying == false;
+    robots[0,1].carrying != true;
+
+    packages[0,1].test || redPackages[0,1].test == true;
 
 }
