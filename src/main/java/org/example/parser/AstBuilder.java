@@ -136,16 +136,6 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new ActionNode(name, parameters, body);
     }
 
-    /*
-    @Override
-    public ParameterNode visitParameter(ConsilioParser.ParameterContext ctx) {
-        String type = ctx.getChild(1).getText();
-        String name = ctx.getChild(0).getText();
-
-        return new ParameterNode(name, type);
-    }
-    */
-
     @Override
     public ParameterNode visitParameter(ConsilioParser.ParameterContext ctx) {
         String type = ctx.getChild(0).getText();

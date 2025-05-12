@@ -57,8 +57,6 @@ public class IntegrationTest {
     public void testRobotDomain() throws Exception {
         ProgramNode program = buildProgram("program.co");
         List<String> expected = readExpected("result.co");
-        System.out.println("Expected plan: " + expected + "\n \n");
-        System.out.println("Actual plan: " + planProgram(program));
 
         List<String> actual = planProgram(program);
         assertEquals(expected, actual, "Plan for program.co should match expected result.co");

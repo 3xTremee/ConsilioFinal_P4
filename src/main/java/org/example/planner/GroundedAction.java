@@ -1,9 +1,11 @@
 package org.example.planner;
 
 import org.example.ast.ActionNode;
+import org.example.ast.ParameterNode;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.*;
 
 /**
  * One concrete instantiation of an ActionNode schema.
@@ -14,7 +16,14 @@ public class GroundedAction { //schema=action, binding=paramnavn bundet til konk
 
     public GroundedAction(ActionNode schema, Map<String, String> binding) {
         this.schema = schema;
-        this.binding = Map.copyOf(binding); //laver immutable kopi af mappet
+        LinkedHashMap<String, String> ordered = new LinkedHashMap<>();
+        for (ParameterNode param : schema.getParameters()) {
+            if (binding.containsKey(param.getName())) {
+                ordered.put(param.getName(), binding.get(param.getName()));
+            }
+        }
+        this.binding = Collections.unmodifiableMap(ordered);
+        //this.binding = Map.copyOf(binding); //laver immutable kopi af mappet
     }
 
     public ActionNode getSchema() {
