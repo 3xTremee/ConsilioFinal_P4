@@ -10,7 +10,10 @@ version = '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
-
+// MATHIAS - min stationære pc kan ikke forstå noget hvis ikke dette er med
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
 dependencies {
     antlr 'org.antlr:antlr4:4.13.1'
     implementation 'org.antlr:antlr4-runtime:4.13.1'
