@@ -87,7 +87,7 @@ public class SemanticAnalyzer {
             DotNode dotNode = asn.getTarget();
             ExpressionNode exprNode = dotNode.getTarget();
 
-            expressionCheck.checkDotNode(dotNode);
+            expressionCheck.checkDotNodeExpr(dotNode);
             expressionCheck.typeEvaluation(exprNode);
             statementCheck.checkAssignment(asn);
 

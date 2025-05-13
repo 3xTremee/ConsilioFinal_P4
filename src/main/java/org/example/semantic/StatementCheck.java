@@ -89,7 +89,7 @@ public class StatementCheck {
         String field = target.getField();
 
         // Check if the object has the attribute
-        expressionCheck.checkDotNode(target);
+        expressionCheck.checkDotNodeExpr(target);
 
         if (exprNode instanceof IdentifierNode objectName) {
             SymbolType typeSymbol = expressionCheck.checkObject(objectName);
