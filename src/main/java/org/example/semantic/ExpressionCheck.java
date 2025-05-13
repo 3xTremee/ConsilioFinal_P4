@@ -33,7 +33,7 @@ public class ExpressionCheck {
     }
 
     // Metode til at tjekke om
-    public String checkIdentifier(IdentifierNode id) {       
+    public String checkIdentifier(IdentifierNode id) {
         String name = id.getName();                                                 // get name of IdentifierNode
 
         if (symbolTable.containsKey(name)) {
@@ -110,14 +110,19 @@ public class ExpressionCheck {
             /* Laver en datastruktur over alle nøgler fra symbolTypes map attributes. Nøglerne er navne på attributterne
                Set bruges som hurtigt opslag for at se om fieldName er en attribut for typen*/
         Set<String> attributeNames = symbolType.getAttributes().keySet();
+        String targetName = ((IdentifierNode) target).getName(); //Printer kun navnet fx rob
+        String typeName = symbolType.getName(); //Printer typen fx Robot
+
+        if (!typeExists(symbolType.getName())) {
+            throw new SemanticException("Object: " + targetName + " is of unrecognized type: " + typeName);
+        }
 
         if (attributeNames.contains(fieldName)) {
             //System.out.println("Attribute: " + fieldName + " is possible for type: " + symbolType.getName());
             return true;
         } else {
             //System.out.println("Attribute: " + fieldName + " not possible for type: " + symbolType.getName());
-            String targetName = ((IdentifierNode) target).getName();     //Printer kun navnet fx rob
-            throw new RuntimeException("Attribute: " + fieldName + " not possible for object: " + targetName + " of type: " + symbolType.getName());
+            throw new RuntimeException("Attribute: " + fieldName + " not possible for object: " + targetName + " of type: " + typeName);
         }
     }
 
