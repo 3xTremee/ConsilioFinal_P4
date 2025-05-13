@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ExpressionEvaluatorTest {
 
     private SemanticAnalyzer dummyAnalyzer() {
-        return new SemanticAnalyzer(); // Adjust this if needed
+        return new SemanticAnalyzer();
     }
 
     private State makeState(Map<String, Map<String, Object>> values) {
