@@ -1,0 +1,97 @@
+define domain robotDomain
+
+type robot {
+    location : room;
+    carrying : boolean;
+}
+
+type package {
+    location : room || robot || package;
+    test : boolean;
+}
+
+type room {
+    numberOfItems : int;
+    test : boolean;
+}
+
+
+action pickUpPackage(robot r, package p){
+    if(r.carrying == false && r.location == p.location){
+        p.location = r;
+        r.carrying = true;
+    }
+}
+
+
+action move(robot r, room dest){
+    if(r.location != dest){
+        r.location = dest;
+    }
+}
+
+action putDownPackage(robot r, package p, room rm){
+    if(r.carrying == true && p.location == r && r.location == rm){
+        p.location = rm;
+        r.carrying = false;
+    }
+}
+
+action test(package p, room ro){
+    if(p.test == true){
+        packages[0].test = rooms[0].test;
+    }
+}
+define problem movePackagesDemo
+import robotDomain
+
+objects {
+    robot robots[] = {rob, rob2};
+    package packages[] = {pack1, pack2};
+    package redPackages[] = {rPack1, rPack2};
+    room rooms[] = {A, B, C};
+}
+
+initialState {
+    rob.location = 2;
+    rob.carrying = false;
+
+    rob2.location = C;
+    rob2.carrying = false;
+
+    packages[0,1].location = A;
+
+    redPackages[0,1].location = C;
+
+    packages[0,1].test = true;
+    redPackages[0,1].test = true;
+
+    A.numberOfItems = 5 + 6 + 10 - 8;
+    B.numberOfItems = 4;
+    C.numberOfItems = 4;
+    rooms[0,1,2].test = true;
+}
+
+goalState {
+    packages[0].location == C && (pack2.location == B || pack2.location == C) && redPackages[0,1].location == A;
+
+    rob.carrying != true;
+    B.numberOfItems == 4;
+    C.numberOfItems != 3;
+    C.numberOfItems > 3;
+    C.numberOfItems < 5;
+    C.numberOfItems >= 3;
+    C.numberOfItems <= 5;
+
+    rooms[1,2].numberOfItems == 4;
+    rooms[1,2].numberOfItems != 3;
+    rooms[1,2].numberOfItems > 3;
+    rooms[1,2].numberOfItems < 5;
+    rooms[1,2].numberOfItems >= 3;
+    rooms[1,2].numberOfItems <= 5;
+
+    robots[0,1].carrying == false;
+    robots[0,1].carrying != true;
+
+    packages[0,1].test && redPackages[0,1].test == true;
+    packages[0,1].test || redPackages[0,1].test == true;}

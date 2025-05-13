@@ -181,7 +181,7 @@ public class SemanticAnalyzer {
         }
     }
 
-
+/*
     //  Print symbol table
     public void printTables() {
         System.out.println("\nSymbol Table:");
@@ -215,4 +215,5 @@ public class SemanticAnalyzer {
             }
         }
     }
+    */
 }
