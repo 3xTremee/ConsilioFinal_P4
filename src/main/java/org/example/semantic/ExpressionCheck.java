@@ -1,21 +1,19 @@
 package org.example.semantic;
 
-import com.ibm.icu.text.SymbolTable;
-import org.antlr.v4.parse.v4ParserException;
 import org.example.ast.*;
 
-import java.beans.Expression;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ExpressionCheck {
 
     //kaldes injektion
     SemanticAnalyzer semanticAnalyzer;
+    Map<String, Symbol> symbolTable;
 
     // Constructor for at den har sin egen SemanticAnalyzer
     public ExpressionCheck(SemanticAnalyzer semanticAnalyzer) {
         this.semanticAnalyzer = semanticAnalyzer;
+        this.symbolTable = semanticAnalyzer.getSymbolTable();
     }
 
     public boolean checkInt(ConstantNode c) {
@@ -35,8 +33,7 @@ public class ExpressionCheck {
     }
 
     // Metode til at tjekke om
-    public String checkIdentifier(IdentifierNode id) {
-        Map<String, Symbol> symbolTable = semanticAnalyzer.getSymbolTable();        // get symbol table
+    public String checkIdentifier(IdentifierNode id) {       
         String name = id.getName();                                                 // get name of IdentifierNode
 
         if (symbolTable.containsKey(name)) {
@@ -49,7 +46,6 @@ public class ExpressionCheck {
     //Her findes typen (type) af et object (SymbolObject) i symboltabellen baseret på navnet
     // på en identifier-node (id)
     public SymbolType checkObject(IdentifierNode id) {
-        Map<String, Symbol> symbolTable = semanticAnalyzer.getSymbolTable();
 
         String name = checkIdentifier(id);
         Symbol symbol = symbolTable.get(name);                            //find tilhørende Symbol for targetName
@@ -61,8 +57,6 @@ public class ExpressionCheck {
     }
 
     public Boolean typeExists(String typeName) {
-        Map<String, Symbol> symbolTable = semanticAnalyzer.getSymbolTable();
-
         return symbolTable.containsKey(typeName);
     }
 
@@ -86,64 +80,125 @@ public class ExpressionCheck {
         }
     }
 
-    //metode tjekker om target er i objekts, samt finder typen på objekt
-    //derudover tjekker den om attributten må bruges på objekt af den type
-    //hvis den må så returneres true.
-    public boolean checkDotNode (DotNode dotNode) {
-        ExpressionNode target = dotNode.getTarget();                 //Printer: targetName: IdentifierNode= Name:rob
-        String fieldName = dotNode.getField();                       //printer field navn
+    public boolean checkArrayDot(ArrayAccessNode arr, String fieldName){
+        SymbolArray symArr = (SymbolArray) symbolTable.get(arr.getArrayName());
+        if (symArr == null){
+            throw new SemanticException("Array '" + arr.getArrayName() + "' not defined");
+        }
+        // for each constant index, check that object has that field
+        for (ExpressionNode idxExpr : arr.getIndices()) {
+            // Kaster exception hvis index ikke er en konstant eller matcher (\d+) hvor 'd' er integer og '+' er en eller flere.
+            if (!(idxExpr instanceof ConstantNode c) || !c.getValueConstant().matches("\\d+")){
+                throw new SemanticException("Invalid index in initializer for '" + arr.getArrayName() + "'");
+            }
+            int i = Integer.parseInt(c.getValueConstant());
+            if (i < 0 || i >= symArr.getObjects().size()) {
+                throw new SemanticException("Index " + i + " out of bounds for '" + arr.getArrayName() + "'");
+            }
+            SymbolObject obj = symArr.getObjects().get(i);
+            SymbolType objType = obj.getSymbolType();
+            if (!objType.getAttributes().containsKey(fieldName)) {
+                throw new SemanticException("Attribute '" + fieldName + "' not on object '" + obj.getName() + "' of type " + objType.getName());
+            }
+        }
+        return true;
+    }
 
-        if (target instanceof IdentifierNode id) {
-            SymbolType symbolType = checkObject(id);
+    public boolean checkDot(IdentifierNode id, String fieldName, ExpressionNode target){
+        SymbolType symbolType = checkObject(id);
 
             /* Laver en datastruktur over alle nøgler fra symbolTypes map attributes. Nøglerne er navne på attributterne
                Set bruges som hurtigt opslag for at se om fieldName er en attribut for typen*/
-            Set<String> attributeNames = symbolType.getAttributes().keySet();
+        Set<String> attributeNames = symbolType.getAttributes().keySet();
 
-            if (attributeNames.contains(fieldName)) {
-                //System.out.println("Attribute: " + fieldName + " is possible for type: " + symbolType.getName());
-                return true;
-            } else {
-                //System.out.println("Attribute: " + fieldName + " not possible for type: " + symbolType.getName());
-                String targetName = ((IdentifierNode) target).getName();     //Printer kun navnet fx rob
-                throw new RuntimeException("Attribute: " + fieldName + " not possible for object: " + targetName + " of type: " + symbolType.getName());
-            }
+        if (attributeNames.contains(fieldName)) {
+            //System.out.println("Attribute: " + fieldName + " is possible for type: " + symbolType.getName());
+            return true;
+        } else {
+            //System.out.println("Attribute: " + fieldName + " not possible for type: " + symbolType.getName());
+            String targetName = ((IdentifierNode) target).getName();     //Printer kun navnet fx rob
+            throw new RuntimeException("Attribute: " + fieldName + " not possible for object: " + targetName + " of type: " + symbolType.getName());
+        }
+    }
+
+    //metode tjekker om target er i objekts, samt finder typen på objekt
+    //derudover tjekker den om attributten må bruges på objekt af den type
+    //hvis den må så returneres true.
+    public boolean checkDotNodeExpr (DotNode dotNode) {
+        ExpressionNode target = dotNode.getTarget();                 //Printer: targetName: IdentifierNode= Name:rob
+        String fieldName = dotNode.getField();                       //printer field navn
+        if (target instanceof IdentifierNode id) {
+            return checkDot(id, fieldName, target);
         }
         else if (target instanceof ArrayAccessNode arr) {
-            SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());
-            if (symArr == null){
-                throw new SemanticException("Array '" + arr.getArrayName() + "' not defined");
-            }
-            // for each constant index, check that object has that field
-            for (ExpressionNode idxExpr : arr.getIndices()) {
-                // Kaster exception hvis index ikke er en konstant eller matcher (\d+) hvor 'd' er integer og '+' er en eller flere.
-                if (!(idxExpr instanceof ConstantNode c) || !c.getValueConstant().matches("\\d+")){
-                    throw new SemanticException("Invalid index in initializer for '" + arr.getArrayName() + "'");
-                }
-                int i = Integer.parseInt(c.getValueConstant());
-                if (i < 0 || i >= symArr.getObjects().size()) {
-                    throw new SemanticException("Index " + i + " out of bounds for '" + arr.getArrayName() + "'");
-                }
-                SymbolObject obj = symArr.getObjects().get(i);
-                SymbolType objType = obj.getSymbolType();
-                if (!objType.getAttributes().containsKey(fieldName)) {
-                    throw new SemanticException("Attribute '" + fieldName + "' not on object '" + obj.getName() + "' of type " + objType.getName());
-                }
-            }
-            return true;
+            return checkArrayDot(arr, fieldName);
         } else {
             throw new SemanticException("Unsupported dot‐target: " + target);
         }
     }
 
-    //returnerer det udtryk som er inde i parentesen, så længe det er af ExpressionNode.
-    public ExpressionNode checkParentheses (ParenExpressionNode p) {
-        return p.getInner();
+    private String typeEvalIdentifier(IdentifierNode id) {
+        String name = checkIdentifier(id);
+        Symbol sym = symbolTable.get(name);
+        if (sym == null) {
+            throw new RuntimeException("Identifier " + name + " not found in symbol table");
+        }
+        if (sym instanceof SymbolObject) {
+            // Returner typen på objektet/parameteren, ikke selve navnet
+            return checkObject(id).getName();
+        } else {
+            // returnerer bare navnet hvis nu identifieren repræsenterer noget andet end et objekt (før lavede den en exception)
+            return name;
+        }
+    }
+
+    private String typeEvalArray(ArrayAccessNode arr) {
+        SymbolArray sa = (SymbolArray) symbolTable.get(arr.getArrayName());
+        Set<String> types = new LinkedHashSet<>();
+        for (ExpressionNode idx : arr.getIndices()) {
+            int i = Integer.parseInt(((ConstantNode)idx).getValueConstant());
+            types.add(sa.getObjects().get(i).getSymbolType().getName());
+        }
+        return (types.size() == 1)
+                ? types.iterator().next()
+                : String.join("||", types);
+    }
+
+    private String typeEvalDot(DotNode dn, ExpressionNode expr){
+        // Tjek først at attributten findes
+        if (!checkDotNodeExpr(dn)) {
+            throw new SemanticException("Invalid dot‐expression: " + dn);
+        }
+        ExpressionNode target = dn.getTarget();
+
+        SymbolType ownerType;
+
+        if (target instanceof IdentifierNode id) {
+            // Find typen på objektet (f.eks. robot)
+            ownerType = checkObject(id);
+        }
+        else if (target instanceof ArrayAccessNode arr) {
+            SymbolArray symArr = (SymbolArray) symbolTable.get(arr.getArrayName());
+            int idx = Integer.parseInt(((ConstantNode)arr.getIndices().getFirst()).getValueConstant());
+            SymbolObject elem = symArr.getObjects().get(idx);
+            ownerType = elem.getSymbolType();
+        }
+        else {
+            throw new SemanticException("Unsupported target in expr: " + expr);
+        }
+
+        // Find SymbolAttribute for feltet (f.eks. carrying)
+        SymbolAttribute attr = ownerType.getAttributes().get(dn.getField());
+        List<String> poss = attr.getPossibleTypes();
+        if (poss.size() == 1) {
+            return poss.getFirst();
+        } else {
+            // Fletter union typer sammen
+            return String.join("||", poss);
+        }
     }
 
     public String typeEvaluation(ExpressionNode expr){
-        //System.out.println(">> typeEvaluation on: " + expr.getClass().getSimpleName() + " -> " + expr);
-
         if (expr instanceof ConstantNode){
             if (checkBool((ConstantNode) expr)){
                 //System.out.println("bool: " + v);
@@ -153,71 +208,21 @@ public class ExpressionCheck {
             }
         }
         else if (expr instanceof IdentifierNode id) {
-            String name = id.getName();
-            Symbol sym = semanticAnalyzer.getSymbolTable().get(name);
-            if (sym == null) {
-                throw new RuntimeException("Identifier " + name + " not found in symbol table");
-            }
-            if (sym instanceof SymbolObject objSym) {
-                // Returner typen på objektet/parameteren, ikke selve navnet
-                return objSym.getSymbolType().getName();
-            } else {
-                throw new RuntimeException("Identifier " + name + " is not an object or variable");
-            }
+            return typeEvalIdentifier(id);
         }
         else if (expr instanceof ArrayAccessNode arr) {
-            SymbolArray sa = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());
-            Set<String> types = new LinkedHashSet<>();
-            for (ExpressionNode idx : arr.getIndices()) {
-                int i = Integer.parseInt(((ConstantNode)idx).getValueConstant());
-                types.add(sa.getObjects().get(i).getSymbolType().getName());
-            }
-            return (types.size() == 1)
-                    ? types.iterator().next()
-                    : String.join("||", types);
+            return typeEvalArray(arr);
         }
         else if (expr instanceof DotNode dn) {
-            // Tjek først at attributten findes
-            if (!checkDotNode(dn)) {
-                throw new SemanticException("Invalid dot‐expression: " + dn);
-            }
-            ExpressionNode target = dn.getTarget();
-
-            SymbolType ownerType;
-
-            if (target instanceof IdentifierNode id) {
-                // Find typen på objektet (f.eks. robot)
-                ownerType = checkObject(id);
-            }
-            else if (target instanceof ArrayAccessNode arr) {
-                SymbolArray symArr = (SymbolArray) semanticAnalyzer.getSymbolTable().get(arr.getArrayName());
-                int idx = Integer.parseInt(((ConstantNode)arr.getIndices().getFirst()).getValueConstant());
-                SymbolObject elem = symArr.getObjects().get(idx);
-                ownerType = elem.getSymbolType();
-            }
-            else {
-                throw new SemanticException("Unsupported target in expr: " + expr);
-            }
-
-            // Find SymbolAttribute for feltet (f.eks. carrying)
-            SymbolAttribute attr = ownerType.getAttributes().get(dn.getField());
-            List<String> poss = attr.getPossibleTypes();
-            if (poss.size() == 1) {
-                return poss.getFirst();
-            } else {
-                // Fletter union typer sammen
-                return String.join("||", poss);
-            }
+            return typeEvalDot(dn, expr);
         }
         else if(expr instanceof ParenExpressionNode) {
-            ExpressionNode inner = checkParentheses((ParenExpressionNode) expr);
+            ExpressionNode inner = ((ParenExpressionNode) expr).getInner();
             return typeEvaluation(inner);
 
         } else if (expr instanceof BinaryOpNode) {
-            //System.out.println("Now evaluating Binary Operation Node! :)");
             return binOpEval((BinaryOpNode) expr);
         }
-
         throw new RuntimeException("Invalid ExpressionNode in Expression: " + expr.getClass().getSimpleName());
     }
 
