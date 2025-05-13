@@ -20,11 +20,12 @@ initialState {
     redPackages[0,1].location = C;
 
     packages[0,1].test = true;
-    redPackages[0,1].test = false;
+    redPackages[0,1].test = true;
 
     A.numberOfItems = 5 + 6 + 10 - 8;
     B.numberOfItems = 4;
     C.numberOfItems = 4;
+    rooms[0,1,2].test = true;
 }
 
 goalState {
@@ -48,6 +49,7 @@ goalState {
     robots[0,1].carrying == false;
     robots[0,1].carrying != true;
 
+    packages[0,1].test && redPackages[0,1].test == true;
     packages[0,1].test || redPackages[0,1].test == true;
 
 }

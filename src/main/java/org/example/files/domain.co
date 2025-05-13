@@ -12,6 +12,7 @@ type package {
 
 type room {
     numberOfItems : int;
+    test : boolean;
 }
 
 
@@ -33,5 +34,11 @@ action putDownPackage(robot r, package p, room rm){
     if(r.carrying == true && p.location == r && r.location == rm){
         p.location = rm;
         r.carrying = false;
+    }
+}
+
+action test(package p, room ro){
+    if(p.test == true){
+        packages[0].test = rooms[0].test;
     }
 }

@@ -106,7 +106,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new OrValueNode(values);
     }
 
-    // Bliver pt ikke brugt "doors: door[];"
+    // Bliver pt ikke brugt "doors: door[];" (slet?)
     @Override
     public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
         ValueNode elementType = (ValueNode) visit(ctx.valueType());
@@ -299,7 +299,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new ParenExpressionNode(inner);
     }
 
-    // Bliver heller ikke brugt, "rob.location = rooms[0];"
+    // Bliver heller ikke brugt, "rob.location = rooms[0];" (slet?)
     @Override
     public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
         String arrayName = ctx.IDENTIFIER().getText();

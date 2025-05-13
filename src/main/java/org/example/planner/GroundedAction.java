@@ -49,6 +49,7 @@ public class GroundedAction { //schema=action, binding=paramnavn bundet til konk
                 && Objects.equals(binding, ga.binding);
     }
 
+    // Bliver muligvis ikke brugt (slet?)
     @Override
     public int hashCode() {
         return Objects.hash(schema.getName(), binding);

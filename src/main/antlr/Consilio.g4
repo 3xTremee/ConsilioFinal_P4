@@ -33,7 +33,7 @@ attribute
 value
     : valueType                 #baseValue
     | valueType OR value        #orValue
-    | valueType LSQUARE RSQUARE #arrayValue            // Var tidligere IDENTIFIER LSQUARE RSQUARE. Men så virker location: int[] IKKE. Der ændret til valueType.
+    | valueType LSQUARE RSQUARE #arrayValue  // Var tidligere IDENTIFIER LSQUARE RSQUARE. Men så virker location: int[] IKKE. Der ændret til valueType. Bliver vidst ikke brugt (slet?)
     ;
 
 valueType: INT | BOOLEAN | IDENTIFIER;
@@ -113,7 +113,7 @@ expression
     | IDENTIFIER                                #identifierExpression
     | LPAREN expression RPAREN                  #parenthesisExpression
     | dotNotation                               #dotExpression
-    | IDENTIFIER LSQUARE arrayBodyInt RSQUARE   #arrayAccessExpression
+    | IDENTIFIER LSQUARE arrayBodyInt RSQUARE   #arrayAccessExpression // Bliver vidst ikke brugt (slet?)
     | expression addOp expression               #additionExpression
     | expression compOp expression              #compareExpression
     | expression locOp expression               #logicalExpression
