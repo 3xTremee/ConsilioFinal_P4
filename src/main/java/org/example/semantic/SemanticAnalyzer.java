@@ -138,7 +138,7 @@ public class SemanticAnalyzer {
             // slår typen op i table (skal allerede være der fra buildSymbolTable method)
             SymbolType typeSym = (SymbolType) symbolTable.get(p.getType());
             if (typeSym == null) {
-                throw new SemanticException("Ukendt type for parameter: " + p.getType());
+                throw new SemanticException("Unknown type for parameter: " + p.getType());
             }
 
             // laver en temp ObjectNode
@@ -157,13 +157,13 @@ public class SemanticAnalyzer {
         // Tjek body’en er en ifNode
         StatementNode body = action.getBody();
         if (!(body instanceof IfNode ifn)) {
-            throw new SemanticException("IfNode er ikke body, fik: " + body.getClass());
+            throw new SemanticException("Body of action: '" + action.getName() + "' does not contain an if statement at entry: " + body.getClass());
         }
 
         // guard skal være boolean
         String guardType = expressionCheck.typeEvaluation(ifn.getCondition());
         if (!"boolean".equals(guardType)) {
-            throw new SemanticException("If-condition skal være boolean, fik: " + guardType);
+            throw new SemanticException("If-condition should be boolean, received: " + guardType);
         }
 
         // tjek alle assignments i then-branchen
@@ -171,7 +171,7 @@ public class SemanticAnalyzer {
             if (stNode instanceof AssignmentNode asNode) {
                 statementCheck.checkAssignment(asNode);
             } else {
-                throw new SemanticException("Ukendt StatementNode i action-body: " + stNode.getClass());
+                throw new SemanticException("Invalid statement in action-body: '" + action.getName() + "' (nested-ifs not currently supported)");
             }
         }
 

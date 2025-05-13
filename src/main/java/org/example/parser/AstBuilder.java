@@ -161,51 +161,6 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return (StatementNode) visit(ctx.assignment());
     }
 
-    /* GAMLE UDGAVE - UDGAVE 1
-    @Override
-    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
-        StatementNode first = (StatementNode) visit(ctx.statement(0));
-        StatementNode second = (StatementNode) visit(ctx.statement(1));
-        List<StatementNode> statements = new ArrayList<>();
-        if(first instanceof StatementListNode) {
-            statements.addAll(((StatementListNode) first).getStatements());
-        } else {
-            statements.add(first);
-        }
-        if(first instanceof StatementListNode) {
-            statements.addAll(((StatementListNode) second).getStatements());
-        } else {
-            statements.add(second);
-        }
-
-        return new StatementListNode(statements);
-    }*/
-
-    /* NYESTE UDGAVE - UDGAVE 2
-    @Override
-    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
-        StatementNode leftNode = (StatementNode) visit(ctx.statement(0));
-        StatementNode rightNode = (StatementNode) visit(ctx.statement(1));
-        List<StatementNode> stmts = new ArrayList<>();
-
-        // Left side
-        if (leftNode instanceof StatementListNode) {
-            stmts.addAll(((StatementListNode) leftNode).getStatements());
-        } else {
-            stmts.add(leftNode);
-        }
-
-        // Right side
-        if (rightNode instanceof StatementListNode) {
-            stmts.addAll(((StatementListNode) rightNode).getStatements());
-        } else {
-            stmts.add(rightNode);
-        }
-
-        return new StatementListNode(stmts);
-    }
-    */
-
     @Override
     public StatementListNode visitStatementList(ConsilioParser.StatementListContext ctx) {
         List<StatementNode> stmts = ctx.statement().stream()
@@ -213,16 +168,6 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
                 .collect(Collectors.toList());
         return new StatementListNode(stmts);
     }
-
-
-    // Slet denne method hvis den slettes inde fra .g4 filen.
-   /* @Override
-    public StatementNode visitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx) {
-        DotNode target = (DotNode) visit(ctx.dotNotation());
-        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-
-        return new AssignmentNode(target, expr);
-    }*/
 
     @Override
     public StatementNode visitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx) {

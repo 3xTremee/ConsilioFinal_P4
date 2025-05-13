@@ -56,26 +56,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    57,1%
+    85,7%
   </span>
   <span class="absValue">
-    (4/7)
+    (6/7)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    61,8%
+    73,5%
   </span>
   <span class="absValue">
-    (21/34)
+    (25/34)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    73,2%
+    87,3%
   </span>
   <span class="absValue">
-    (52/71)
+    (62/71)
   </span>
 </td>
 </tr>
@@ -113,25 +113,25 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public boolean checkComparison(BinaryOpNode node){
-<b class="nc">&nbsp;        String leftType = expressionCheck.typeEvaluation(node.getLeft());</b>
-<b class="nc">&nbsp;        String rightType = expressionCheck.typeEvaluation(node.getRight());</b>
+<b class="fc">&nbsp;        String leftType = expressionCheck.typeEvaluation(node.getLeft());</b>
+<b class="fc">&nbsp;        String rightType = expressionCheck.typeEvaluation(node.getRight());</b>
 &nbsp;
-<b class="nc">&nbsp;        if(leftType.equals(rightType)){</b>
+<b class="fc">&nbsp;        if(leftType.equals(rightType)){</b>
 &nbsp;            //System.out.println(&quot;Successful comparison of &quot; + node.getLeft() + &quot; and &quot; + node.getRight());
-<b class="nc">&nbsp;            return true;</b>
+<b class="fc">&nbsp;            return true;</b>
 &nbsp;        } else {
-<b class="nc">&nbsp;            throw new SemanticException(&quot;Cannot compare &quot; + leftType + &quot; with &quot; + rightType);</b>
+<b class="fc">&nbsp;            throw new SemanticException(&quot;Cannot compare &quot; + leftType + &quot; with &quot; + rightType);</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;StatementNode&gt; checkThenBranch(IfNode ifNode) {
 &nbsp;        //bliver nødt til at caste for at få statements.
-<b class="nc">&nbsp;        StatementListNode thenBranch = (StatementListNode) ifNode.getThenBranch();</b>
+<b class="fc">&nbsp;        StatementListNode thenBranch = (StatementListNode) ifNode.getThenBranch();</b>
 &nbsp;
 &nbsp;        //System.out.println(&quot;thenBranch: &quot; + thenBranch);
 &nbsp;        //System.out.println(thenBranch.getStatements());
 &nbsp;
-<b class="nc">&nbsp;        return thenBranch.getStatements();</b>
+<b class="fc">&nbsp;        return thenBranch.getStatements();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public boolean checkAssignment(AssignmentNode node){
@@ -164,8 +164,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="pc">&nbsp;        if (valueType == null){</b>
 <b class="nc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is not recognized.&quot;);</b>
 &nbsp;        }
-<b class="pc">&nbsp;        else if (!possibleValueType.contains(valueType)) {</b>
-<b class="nc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is of wrong type.&quot;);</b>
+<b class="fc">&nbsp;        else if (!possibleValueType.contains(valueType)) {</b>
+<b class="fc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is of wrong type.&quot;);</b>
 &nbsp;        }
 &nbsp;        //System.out.println(&quot;Assigment OK&quot;);
 <b class="fc">&nbsp;        return true;</b>
@@ -237,8 +237,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;            return expressionCheck.binOpEval((BinaryOpNode) expression);</b>
 &nbsp;        }
 &nbsp;        // DotNode, så man kan skrive p.location == r.robot. Altså dotNode på hver side af ==
-<b class="nc">&nbsp;        if (expression instanceof DotNode dotNode) {</b>
-<b class="nc">&nbsp;            return expressionCheck.typeEvaluation(dotNode);</b>
+<b class="pc">&nbsp;        if (expression instanceof DotNode dotNode) {</b>
+<b class="fc">&nbsp;            return expressionCheck.typeEvaluation(dotNode);</b>
 &nbsp;        }
 <b class="nc">&nbsp;        return null;</b>
 &nbsp;    }
@@ -266,7 +266,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>

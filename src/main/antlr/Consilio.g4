@@ -94,8 +94,7 @@ statementList
     ;
 
 assignment
-    : IDENTIFIER ASSIGN expression       #identifierAssignment //Vi kan ikke huske hvorfor denne var med. Eventuelt slet til sidst hvis ikke det bliver brugt
-    | dotNotation ASSIGN expression      #dotNotationAssignment
+    : dotNotation ASSIGN expression      #dotNotationAssignment
     ;
 
 dotNotation
