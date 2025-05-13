@@ -1,66 +1,24 @@
 define domain robotDomain
 
-type robot {
-    location : room;
-    carrying : boolean;
-}
+         type robot {
+             carrying: boolean;
+         }
 
-type package {
-    location : room || robot;
-}
+         action move(robot r, room d) {
+             r.missingField = d;
+         }
+ define problem p
+        import robotDomain
 
-type room {
-    numberOfItems : int;
-}
+        objects {
+            robot robots[] = {rob};
+            room rooms[] = {A};
+        }
 
+        initialState {
+            rob.carrying = false;
+        }
 
-action pickUpPackage(robot r, package p){
-    if(r.carrying == false && r.location == p.location){
-        p.location = r;
-        r.carrying = true;
-    }
-}
-
-
-action move(robot r, room dest){
-    if(r.location != dest){
-        r.location = dest;
-    }
-}
-
-action putDownPackage(robot r, package p, room rm){
-    if(r.carrying == true && p.location == r && r.location == rm){
-        p.location = rm;
-        r.carrying = false;
-    }
-}
-
-define problem movePackagesDemo
-import robotDomain
-
-objects {
-    robot robots[] = {rob};
-    package packages[] = {pack1, pack2};
-    package redPackages[] = {rPack1, rPack2};
-    room rooms[] = {A, B, C};
-}
-
-initialState {
-    rob.location = A;
-    rob.carrying = false;
-
-    packages[0,1].location = A;
-
-    redPackages[0,1].location = C;
-
-    A.numberOfItems = 5 + 6 + 10 + 8;
-    B.numberOfItems = 2;
-    C.numberOfItems = 4;
-}
-
-goalState {
-    packages[0].location == C;
-    pack2.location == B;
-    redPackages[0,1].location == A;
-
-}
+        goalState {
+            rob.carrying == true;
+        }
