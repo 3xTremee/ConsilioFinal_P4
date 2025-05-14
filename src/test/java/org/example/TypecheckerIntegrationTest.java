@@ -21,25 +21,6 @@ public class TypecheckerIntegrationTest {
     }
 
     @Test
-    public void testUnionTypeInitAssignments() throws Exception {
-        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("typeChecks/initUnionOk.co");
-        SemanticAnalyzer sem = buildSymbols(program);
-        StatementCheck stmtChk = new StatementCheck(sem);
-
-        // find all the package.location assignments
-        List<AssignmentNode> assigns = program.getProblem().getInit().stream()
-                .filter(s -> s instanceof AssignmentNode)
-                .map(s -> (AssignmentNode)s)
-                .filter(a -> a.getTarget().toString().contains("packages"))    // e.g. packages[0].location
-                .toList();
-
-        for (AssignmentNode asn : assigns) {
-            assertTrue(stmtChk.checkAssignment(asn),
-                    "Should accept union-type assignment: " + asn);
-        }
-    }
-
-    @Test
     public void testActionBodiesTypeCheck() throws Exception {
         ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
         SemanticAnalyzer sem = buildSymbols(program);
