@@ -56,10 +56,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    85,7%
+    100%
   </span>
   <span class="absValue">
-    (6/7)
+    (6/6)
   </span>
 </td>
 <td class="coverageStat">
@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    87,3%
+    89,9%
   </span>
   <span class="absValue">
-    (62/71)
+    (62/69)
   </span>
 </td>
 </tr>
@@ -93,7 +93,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import java.util.List;
 &nbsp;import java.util.*;
-&nbsp;import java.util.stream.Collectors;
 &nbsp;
 &nbsp;public class StatementCheck {
 &nbsp;
@@ -105,19 +104,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        this.expressionCheck = new ExpressionCheck(semanticAnalyzer);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    public ExpressionNode checkIfCondition(IfNode ifNode) {
-<b class="nc">&nbsp;        ExpressionNode ifCondition = ifNode.getCondition();</b>
-&nbsp;
-&nbsp;        //System.out.println(&quot;ifCond: &quot; + ifCondition);
-<b class="nc">&nbsp;        return ifCondition;</b>
-&nbsp;    }
-&nbsp;
 &nbsp;    public boolean checkComparison(BinaryOpNode node){
 <b class="fc">&nbsp;        String leftType = expressionCheck.typeEvaluation(node.getLeft());</b>
 <b class="fc">&nbsp;        String rightType = expressionCheck.typeEvaluation(node.getRight());</b>
 &nbsp;
 <b class="fc">&nbsp;        if(leftType.equals(rightType)){</b>
-&nbsp;            //System.out.println(&quot;Successful comparison of &quot; + node.getLeft() + &quot; and &quot; + node.getRight());
 <b class="fc">&nbsp;            return true;</b>
 &nbsp;        } else {
 <b class="fc">&nbsp;            throw new SemanticException(&quot;Cannot compare &quot; + leftType + &quot; with &quot; + rightType);</b>
@@ -125,25 +116,20 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;StatementNode&gt; checkThenBranch(IfNode ifNode) {
-&nbsp;        //bliver nødt til at caste for at få statements.
+&nbsp;        // Must cast to StatementListNode to get the statements
 <b class="fc">&nbsp;        StatementListNode thenBranch = (StatementListNode) ifNode.getThenBranch();</b>
-&nbsp;
-&nbsp;        //System.out.println(&quot;thenBranch: &quot; + thenBranch);
-&nbsp;        //System.out.println(thenBranch.getStatements());
 &nbsp;
 <b class="fc">&nbsp;        return thenBranch.getStatements();</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public boolean checkAssignment(AssignmentNode node){
-&nbsp;        // get the possible values of the attribute on left-hand side
+&nbsp;        // Get the possible values of the attribute on left-hand side
 <b class="fc">&nbsp;        DotNode target = node.getTarget();</b>
 <b class="fc">&nbsp;        ExpressionNode exprNode = target.getTarget();</b>
 <b class="fc">&nbsp;        String field = target.getField();</b>
 &nbsp;
 &nbsp;        // Left side; possible types
 <b class="fc">&nbsp;        List&lt;String&gt; possibleValueType = getAssignableTypes(node);</b>
-&nbsp;
-&nbsp;        //System.out.println(&quot;possibleValueType: &quot; + possibleValueType);
 &nbsp;
 &nbsp;        String objectName;
 <b class="fc">&nbsp;        if (exprNode instanceof IdentifierNode id) {</b>
@@ -157,28 +143,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            throw new SemanticException(&quot;Cannot assign &quot; + exprNode + &quot; to &quot; + field);</b>
 &nbsp;        }
 &nbsp;
-&nbsp;        //get value that is assigned to the attribute
+&nbsp;        // Get value that is assigned to the attribute
 <b class="fc">&nbsp;        String valueType = getExpressionType(node.getExpression());</b>
-&nbsp;        //System.out.println(&quot;valueType: &quot; + valueType);
-&nbsp;
 <b class="pc">&nbsp;        if (valueType == null){</b>
 <b class="nc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is not recognized.&quot;);</b>
 &nbsp;        }
 <b class="fc">&nbsp;        else if (!possibleValueType.contains(valueType)) {</b>
 <b class="fc">&nbsp;            throw new RuntimeException(&quot;Value assigned for attribute: &quot; + target.getField() + &quot;, in object: &quot; + objectName + &quot;, is of wrong type.&quot;);</b>
+&nbsp;
 &nbsp;        }
-&nbsp;        //System.out.println(&quot;Assigment OK&quot;);
 <b class="fc">&nbsp;        return true;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    public List&lt;String&gt; getAssignableTypes(AssignmentNode node) {
-&nbsp;        // Extract the field‐access on the LHS
+&nbsp;        // Extract the field-access on the left-hand side
 <b class="fc">&nbsp;        DotNode target = node.getTarget();</b>
 <b class="fc">&nbsp;        ExpressionNode exprNode = target.getTarget();</b>
 <b class="fc">&nbsp;        String field = target.getField();</b>
 &nbsp;
 &nbsp;        // Check if the object has the attribute
-<b class="fc">&nbsp;        expressionCheck.checkDotNode(target);</b>
+<b class="fc">&nbsp;        expressionCheck.checkDotNodeExpr(target);</b>
 &nbsp;
 <b class="fc">&nbsp;        if (exprNode instanceof IdentifierNode objectName) {</b>
 <b class="fc">&nbsp;            SymbolType typeSymbol = expressionCheck.checkObject(objectName);</b>
@@ -236,7 +220,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        } else if (expression instanceof BinaryOpNode){</b>
 <b class="fc">&nbsp;            return expressionCheck.binOpEval((BinaryOpNode) expression);</b>
 &nbsp;        }
-&nbsp;        // DotNode, så man kan skrive p.location == r.robot. Altså dotNode på hver side af ==
+&nbsp;        // DotNode, in the case that one writes p.location == r.robot. That is, dotNode on each side of ==
 <b class="pc">&nbsp;        if (expression instanceof DotNode dotNode) {</b>
 <b class="fc">&nbsp;            return expressionCheck.typeEvaluation(dotNode);</b>
 &nbsp;        }
@@ -266,7 +250,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

@@ -100,10 +100,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;import java.util.*;
 &nbsp;
-&nbsp;/**
-&nbsp; * Evaluate AST expressions in the context of a State,
-&nbsp; * including boolean equality/inequality.
-&nbsp; */
+&nbsp;
+&nbsp;// Evaluate the AST expression in the context of the State.
 &nbsp;public class ExpressionEvaluator {
 &nbsp;
 &nbsp;    private final Map&lt;String,String&gt; binding;
@@ -138,7 +136,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                results.add(s.get(elem.getName(), dn.getField()));</b>
 &nbsp;            }
 &nbsp;
-&nbsp;            // unwrap from list if only 1 index, otherwise return entire list
+&nbsp;            // If the list only has 1 element, get that. Otherwise returns the entire list
 <b class="fc">&nbsp;            return (results.size() == 1) ? results.get(0) : results;</b>
 &nbsp;        }
 &nbsp;
@@ -146,7 +144,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;            String v = c.getValueConstant();</b>
 &nbsp;
 <b class="fc">&nbsp;            if (expressionCheck.checkBool(c)){</b>
-&nbsp;                //System.out.println(&quot;bool: &quot; + v);
 <b class="fc">&nbsp;                return Boolean.parseBoolean(v);</b>
 <b class="pc">&nbsp;            } else if (expressionCheck.checkInt(c)) {</b>
 <b class="fc">&nbsp;                return Integer.parseInt(v);</b>
@@ -156,36 +153,29 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        else if (expr instanceof IdentifierNode id) {</b>
 &nbsp;            try {
 <b class="fc">&nbsp;                String name = id.getName();</b>
-<b class="fc">&nbsp;                return binding.getOrDefault(name, name);          // hvis binding indeholder en værdi for key(name) returneres dens værdi og hvis ikke returneres bare navnet (uden værdi)</b>
+<b class="fc">&nbsp;                return binding.getOrDefault(name, name);</b>
 <b class="nc">&nbsp;            } catch (NullPointerException e) {</b>
-<b class="nc">&nbsp;                System.err.println(&quot;Semantisk fejl: &quot; + e.getMessage());</b>
+<b class="nc">&nbsp;                System.err.println(&quot;Semantic error: &quot; + e.getMessage());</b>
 <b class="nc">&nbsp;                return null;</b>
 &nbsp;            }
 &nbsp;        }
-&nbsp;        // DotNode-objekt (f.eks. noget som x.y)
+&nbsp;
+&nbsp;        // Handling DotNode object. Exmaple coule be x.y
 <b class="fc">&nbsp;         else if (expr instanceof DotNode dn) {</b>
-&nbsp;            //denne returnerer det som står før punktumet dvs. i x.y er det x.
-&nbsp;            //den castes til IdentifierNode, fordi man antager det er et simpelt variabelnavn.
 <b class="fc">&nbsp;            String varName = ((IdentifierNode) dn.getTarget()).getName();</b>
-&nbsp;            //hvis der findes en binding (fx &quot;x&quot; -&gt; &quot;user42&quot;) så bruges den værdi, ellers bruges x som det er.
-&nbsp;
-&nbsp;
 <b class="fc">&nbsp;            String object  = binding.getOrDefault(varName, varName);</b>
-&nbsp;            //s ligner en form for symboltabel, model eller et objektlager
-&nbsp;            //dn.getField() er feltet (højresiden af punktumet) fx &quot;y&quot; i x.y
-&nbsp;            //der slås altså op &quot;user42&quot;.y og det returneres.
+&nbsp;
 <b class="fc">&nbsp;            return s.get(object, dn.getField());</b>
 &nbsp;        }
 &nbsp;
 <b class="fc">&nbsp;        else if (expr instanceof BinaryOpNode bin) {</b>
-&nbsp;
 <b class="fc">&nbsp;            Object L = evaluate(bin.getLeft(), s);</b>
 <b class="fc">&nbsp;            Object R = evaluate(bin.getRight(), s);</b>
 <b class="fc">&nbsp;            String op = bin.getOperator();</b>
 &nbsp;
-&nbsp;            // MultiTarget comparisons &quot;robots[0,1,2].location == A&quot;;
+&nbsp;            // Handling arrays robots[0,1,2].location == A;
 <b class="fc">&nbsp;            if (L instanceof List&lt;?&gt; list) {</b>
-&nbsp;                // integer arithmetic &amp; comparisons
+&nbsp;
 <b class="fc">&nbsp;                if (R instanceof Integer ri) {</b>
 <b class="pc">&nbsp;                    return switch (op) {</b>
 &nbsp;                        case &quot;==&quot; -&gt;
@@ -201,10 +191,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                        case &quot;&lt;=&quot; -&gt;
 <b class="pc">&nbsp;                                list.stream().allMatch(v -&gt; v instanceof Integer &amp;&amp; ((Integer)v) &lt;= ri);</b>
 &nbsp;                        default -&gt;
-<b class="nc">&nbsp;                                throw new UnsupportedOperationException(&quot;Unsupported op for int-list: &quot; + op);</b>
+<b class="nc">&nbsp;                                throw new UnsupportedOperationException(&quot;Unsupported operator for int-list: &quot; + op);</b>
 &nbsp;                    };
 &nbsp;                }
-&nbsp;                // boolean logic &amp; comparisons
+&nbsp;
 <b class="fc">&nbsp;                if (R instanceof Boolean rb) {</b>
 <b class="pc">&nbsp;                    return switch (op) {</b>
 &nbsp;                        case &quot;==&quot; -&gt;
@@ -216,17 +206,17 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                        case &quot;||&quot; -&gt;
 <b class="pc">&nbsp;                                list.stream().anyMatch(v -&gt; v instanceof Boolean &amp;&amp; (((Boolean)v) || rb));</b>
 &nbsp;                        default -&gt;
-<b class="nc">&nbsp;                                throw new UnsupportedOperationException(&quot;Unsupported op for bool-list: &quot; + op);</b>
+<b class="nc">&nbsp;                                throw new UnsupportedOperationException(&quot;Unsupported operator for bool-list: &quot; + op);</b>
 &nbsp;                    };
 &nbsp;                }
-&nbsp;                // Generic equality for any other element‐type (String)
+&nbsp;
 <b class="pc">&nbsp;                if (op.equals(&quot;==&quot;) || op.equals(&quot;!=&quot;)) {</b>
 <b class="pc">&nbsp;                    boolean allEqual = list.stream().allMatch(v -&gt; v != null &amp;&amp; v.equals(R));</b>
 <b class="pc">&nbsp;                    return op.equals(&quot;==&quot;) ? allEqual : !allEqual;</b>
 &nbsp;                }
 &nbsp;            }
 &nbsp;
-&nbsp;            // integer arithmetic &amp; comparisons
+&nbsp;
 <b class="pc">&nbsp;            if (L instanceof Integer li &amp;&amp; R instanceof Integer ri) {</b>
 <b class="pc">&nbsp;                return switch (op) {</b>
 <b class="fc">&nbsp;                    case &quot;+&quot;  -&gt; li + ri;</b>
@@ -237,11 +227,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="pc">&nbsp;                    case &quot;&lt;=&quot; -&gt; li &lt;= ri;</b>
 <b class="fc">&nbsp;                    case &quot;==&quot; -&gt; li.equals(ri);</b>
 <b class="fc">&nbsp;                    case &quot;!=&quot; -&gt; !li.equals(ri);</b>
-<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown int op: &quot; + op);</b>
+<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown int operator: &quot; + op);</b>
 &nbsp;                };
 &nbsp;            }
 &nbsp;
-&nbsp;            // boolean logic &amp; comparisons
 <b class="pc">&nbsp;            if (L instanceof Boolean lb &amp;&amp; R instanceof Boolean rb) {</b>
 <b class="pc">&nbsp;                return switch (op) {</b>
 <b class="fc">&nbsp;                    case &quot;&amp;&amp;&quot; -&gt; lb &amp;&amp; rb;</b>
@@ -260,15 +249,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                            yield null;</b>
 &nbsp;                        }
 &nbsp;                    }
-<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown bool op: &quot; + op);</b>
+<b class="nc">&nbsp;                    default   -&gt; throw new UnsupportedOperationException(&quot;Unknown bool operator: &quot; + op);</b>
 &nbsp;                };
 &nbsp;            }
 &nbsp;
-&nbsp;            // fallback for any other types (null-safe equality)
+&nbsp;
 <b class="pc">&nbsp;            return switch (op) {</b>
 <b class="pc">&nbsp;                case &quot;==&quot; -&gt; (L != null) &amp;&amp; L.equals(R);</b>
 <b class="pc">&nbsp;                case &quot;!=&quot; -&gt; (L == null) || !L.equals(R);</b>
-<b class="nc">&nbsp;                default   -&gt; throw new UnsupportedOperationException(&quot;Unknown op: &quot; + op);</b>
+<b class="nc">&nbsp;                default   -&gt; throw new UnsupportedOperationException(&quot;Unknown operator: &quot; + op);</b>
 &nbsp;            };
 &nbsp;        }
 <b class="pc">&nbsp;        else if (expr instanceof ParenExpressionNode p) {</b>
@@ -303,7 +292,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

@@ -96,11 +96,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.Map;
 &nbsp;import java.util.Objects;
 &nbsp;
-&nbsp;/**
-&nbsp; * Immutable snapshot of all object-field values.
-&nbsp; */
+&nbsp;// Class that creates the State s used by the planner
 &nbsp;public class State {
-&nbsp;    private final Map&lt;String, Map&lt;String, Object&gt;&gt; store; //mapper objekt navne til deres konkrete attribut værdier fx &quot;r1&quot; → { &quot;location&quot; → &quot;A&quot;, &quot;carrying&quot; → false }
+&nbsp;    // Map of object names and their corrosponding concrete attributes. &quot;r1 maps to location, which is A, and carrying which is false&quot;
+&nbsp;    private final Map&lt;String, Map&lt;String, Object&gt;&gt; store;
 &nbsp;
 &nbsp;    SemanticAnalyzer semanticAnalyzer;
 &nbsp;
@@ -112,13 +111,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;            this.semanticAnalyzer = semanticAnalyzer;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Read object.field, returning null if the object or the field isn’t present.
-&nbsp;     */
+&nbsp;
+&nbsp;    // Gets the field/attribute of the object
 &nbsp;    public Object get(String object, String field) {
 <b class="fc">&nbsp;        Map&lt;String, Object&gt; objMap = store.get(object);</b>
 <b class="pc">&nbsp;        if (objMap == null) {</b>
-&nbsp;            // no such object in this state
 <b class="nc">&nbsp;            return null;</b>
 &nbsp;        }
 &nbsp;        // may return null if this field was never set
@@ -126,20 +123,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;
-&nbsp;//laver en ny state med opdateret fields
+&nbsp;
+&nbsp;    // Creates a new State with updated fields
 &nbsp;    public State with(String object, String field, Object newValue) {
-&nbsp;        // 1) shallow‐copy the outer map, deep‐copy each inner map
 <b class="fc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; copy = new HashMap&lt;&gt;();</b>
 <b class="fc">&nbsp;        for (var e : store.entrySet()) {</b>
 <b class="fc">&nbsp;            copy.put(e.getKey(), new HashMap&lt;&gt;(e.getValue()));</b>
 &nbsp;        }
 &nbsp;
-&nbsp;        // 2) ensure there’s a map for this objectName
+&nbsp;        // Ensures that a map is present for the object name
 <b class="fc">&nbsp;        copy.computeIfAbsent(object, k -&gt; new HashMap&lt;&gt;())</b>
-&nbsp;                // 3) set the field
 <b class="fc">&nbsp;                .put(field, newValue);</b>
 &nbsp;
-&nbsp;        // 4) return a fresh immutable State
 <b class="fc">&nbsp;        return new State(copy, semanticAnalyzer);</b>
 &nbsp;    }
 &nbsp;
@@ -162,25 +157,23 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return &quot;State&quot; + store;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Build the initial State from the problem’s objects and init assignments.
-&nbsp;     */
+&nbsp;
+&nbsp;    // Create the initial state from the objects and initial state/assignments (Delete if end up not being used)
 &nbsp;    public static State fromProblem(ProblemNode problem, SemanticAnalyzer semanticAnalyzer) {
-&nbsp;        // 1) empty slot for each object
 <b class="nc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; init = new HashMap&lt;&gt;();</b>
 <b class="nc">&nbsp;        for (ObjectNode obj : problem.getObjects()) {</b>
 <b class="nc">&nbsp;            init.computeIfAbsent(obj.getElementName(), k -&gt; new HashMap&lt;&gt;());</b>
 &nbsp;        }
 <b class="nc">&nbsp;        State state = new State(init, semanticAnalyzer);</b>
 &nbsp;
-&nbsp;        // 2) apply each AssignmentNode
+&nbsp;        // Apply each assignmentNode
 <b class="nc">&nbsp;        ExpressionEvaluator eval = new ExpressionEvaluator(semanticAnalyzer);</b>
 <b class="nc">&nbsp;        for (StatementNode stmt : problem.getStatement()) {</b>
 <b class="nc">&nbsp;            if (stmt instanceof AssignmentNode asn) {</b>
 <b class="nc">&nbsp;                DotNode dotNode = asn.getTarget();</b>
 <b class="nc">&nbsp;                ExpressionNode exprNode = dotNode.getTarget();</b>
 <b class="nc">&nbsp;                String objName = ((IdentifierNode) exprNode).getName();</b>
-<b class="nc">&nbsp;                String field   = dotNode.getField();</b>
+<b class="nc">&nbsp;                String field = dotNode.getField();</b>
 <b class="nc">&nbsp;                Object val = eval.evaluate(asn.getExpression(), state);</b>
 <b class="nc">&nbsp;                state = state.with(objName, field, val);</b>
 &nbsp;            }
@@ -223,7 +216,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

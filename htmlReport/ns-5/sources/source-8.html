@@ -131,7 +131,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;            types.add(elementTypeName + &quot;[]&quot;);</b>
 <b class="nc">&nbsp;        } else if (node instanceof OrValueNode) {</b>
 <b class="fc">&nbsp;            for (ValueNode type : ((OrValueNode) node).getTypes()) {</b>
-<b class="fc">&nbsp;                extractTypes(type, types); // Rekursivt kald for nested OrValueNodes</b>
+<b class="fc">&nbsp;                extractTypes(type, types);</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;    }
@@ -164,7 +164,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

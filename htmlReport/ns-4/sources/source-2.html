@@ -96,12 +96,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.Objects;
 &nbsp;import java.util.*;
 &nbsp;
-&nbsp;/**
-&nbsp; * One concrete instantiation of an ActionNode schema.
-&nbsp; */
-&nbsp;public class GroundedAction { //schema=action, binding=paramnavn bundet til konkret objekt navn fx r-&gt;robot1
+&nbsp;// Creating the grounded action
+&nbsp;public class GroundedAction {
 &nbsp;    private final ActionNode schema;
-&nbsp;    private final Map&lt;String, String&gt; binding;
+&nbsp;    private final Map&lt;String, String&gt; binding; // Parameter name bound to concrete object name. &quot;r bound to rob1&quot; as an example
 &nbsp;
 <b class="fc">&nbsp;    public GroundedAction(ActionNode schema, Map&lt;String, String&gt; binding) {</b>
 <b class="fc">&nbsp;        this.schema = schema;</b>
@@ -112,7 +110,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            }
 &nbsp;        }
 <b class="fc">&nbsp;        this.binding = Collections.unmodifiableMap(ordered);</b>
-&nbsp;        //this.binding = Map.copyOf(binding); //laver immutable kopi af mappet
+&nbsp;        //this.binding = Map.copyOf(binding);
 &nbsp;    }
 &nbsp;
 &nbsp;    public ActionNode getSchema() {
@@ -129,7 +127,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return schema.getName() + binding; // fx move{r=rob, dest=A}</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    @Override  //se lige på den her, tror den skal slettes og fixes et andet sted henne
+&nbsp;    @Override  //se lige på den her, tror den skal slettes og fixes et andet sted henne. Bliver vidst ikke brugt (slet?)
 &nbsp;    public boolean equals(Object o) {
 <b class="nc">&nbsp;        if (this == o) return true;</b>
 <b class="nc">&nbsp;        if (!(o instanceof GroundedAction)) return false;</b>
@@ -138,7 +136,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                &amp;&amp; Objects.equals(binding, ga.binding);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Bliver muligvis ikke brugt (slet?)
+&nbsp;
 &nbsp;    @Override
 &nbsp;    public int hashCode() {
 <b class="nc">&nbsp;        return Objects.hash(schema.getName(), binding);</b>
@@ -167,7 +165,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

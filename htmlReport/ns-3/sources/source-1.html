@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    93,4%
+    94,9%
   </span>
   <span class="absValue">
-    (113/121)
+    (112/118)
   </span>
 </td>
 </tr>
@@ -135,12 +135,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                            .map(elem -&gt; new ObjectNode(arrayInit.getType(), arrayInit.getName(), elem, new IdentifierNode(elem)));</b>
 &nbsp;                })
 <b class="fc">&nbsp;                .toList();</b>
-&nbsp;        /*
-&nbsp;         - GAMLE UDGAVE IMENS DER VAR AMBIGUITY I GRAMMAR FIL
-&nbsp;        List&lt;StatementNode&gt; initStatements = ctx.init().statement().stream()
-&nbsp;                .map(s -&gt; (StatementNode) visit(s))
-&nbsp;                .toList();
-&nbsp;                */
+&nbsp;
 <b class="fc">&nbsp;        StatementListNode initList = ctx.init().statementList() != null</b>
 <b class="fc">&nbsp;                ? (StatementListNode) visit(ctx.init().statementList())</b>
 <b class="fc">&nbsp;                : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement</b>
@@ -157,8 +152,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    public TypeNode visitType(ConsilioParser.TypeContext ctx) {
 <b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
 <b class="fc">&nbsp;        List&lt;AttributeNode&gt; attributes = ctx.attribute().stream()</b>
-<b class="fc">&nbsp;                .map(a -&gt; (AttributeNode) visit(a))</b>
-<b class="fc">&nbsp;                .toList();</b>
+<b class="fc">&nbsp;                .map(a -&gt; (AttributeNode) visit(a)).toList();</b>
 &nbsp;
 <b class="fc">&nbsp;        return new TypeNode(name, attributes);</b>
 &nbsp;    }
@@ -195,12 +189,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return new OrValueNode(values);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Bliver pt ikke brugt &quot;doors: door[];&quot; (slet?)
+&nbsp;    // Delete if end up not being used
 &nbsp;    @Override
 &nbsp;    public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
 <b class="nc">&nbsp;        ValueNode elementType = (ValueNode) visit(ctx.valueType());</b>
 &nbsp;
-<b class="nc">&nbsp;        System.out.print(&quot;visitArrayValue&quot; + elementType);</b>
+&nbsp;        //System.out.print(&quot;visitArrayValue&quot; + elementType);
 &nbsp;
 <b class="nc">&nbsp;        return new ArrayValueNode(elementType, 0);</b>
 &nbsp;    }
@@ -215,14 +209,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @Override
 &nbsp;    public ActionNode visitAction(ConsilioParser.ActionContext ctx) {
 <b class="fc">&nbsp;        String name = ctx.IDENTIFIER().getText();</b>
-&nbsp;        // Indsamler parameter rekursivt.
+&nbsp;
 <b class="fc">&nbsp;        List&lt;ParameterNode&gt; parameters = new ArrayList&lt;&gt;();</b>
 <b class="fc">&nbsp;        ConsilioParser.ParameterContext pctx = ctx.parameter();</b>
 <b class="fc">&nbsp;        while (pctx != null) {</b>
 <b class="fc">&nbsp;            parameters.add((ParameterNode) visit(pctx));</b>
 <b class="fc">&nbsp;            pctx = pctx.parameter();</b>
 &nbsp;        }
-&nbsp;        // Body af action
+&nbsp;
 <b class="fc">&nbsp;        StatementNode body = (StatementNode) visit(ctx.statement());</b>
 &nbsp;
 <b class="fc">&nbsp;        return new ActionNode(name, parameters, body);</b>
@@ -278,7 +272,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    public ExpressionNode visitArrayDot(ConsilioParser.ArrayDotContext ctx) {
 <b class="fc">&nbsp;        String arrayName = ctx.IDENTIFIER(0).getText();</b>
 &nbsp;
-&nbsp;        // rekursivt hentes af alle index
 <b class="fc">&nbsp;        List&lt;ExpressionNode&gt; indices = new ArrayList&lt;&gt;();</b>
 <b class="fc">&nbsp;        collectArrayBody(ctx.arrayBodyInt(), indices);</b>
 <b class="fc">&nbsp;        ExpressionNode arrayAccess = new ArrayAccessNode(arrayName, indices);</b>
@@ -305,7 +298,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    private void collectArrayInitElements(ConsilioParser.ArrayBodyContext ctx, List&lt;String&gt; list) {
-&nbsp;        // Hver IDENTIFIER i arrayBody
 <b class="fc">&nbsp;        list.add(ctx.IDENTIFIER().getText());</b>
 <b class="fc">&nbsp;        if (ctx.arrayBody() != null) {</b>
 <b class="fc">&nbsp;            collectArrayInitElements(ctx.arrayBody(), list);</b>
@@ -333,14 +325,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return new ParenExpressionNode(inner);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Bliver heller ikke brugt, &quot;rob.location = rooms[0];&quot; (slet?)
+&nbsp;    // Delete if end up not being used &quot;rob.location = rooms[0];&quot;
 &nbsp;    @Override
 &nbsp;    public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
 <b class="nc">&nbsp;        String arrayName = ctx.IDENTIFIER().getText();</b>
 <b class="nc">&nbsp;        List&lt;ExpressionNode&gt; indices = new ArrayList&lt;&gt;();</b>
 <b class="nc">&nbsp;        collectArrayBody(ctx.arrayBodyInt(), indices);</b>
 &nbsp;
-<b class="nc">&nbsp;        System.out.print(&quot;visitArrayAccessExpression&quot; + arrayName);</b>
+&nbsp;        //System.out.print(&quot;visitArrayAccessExpression&quot; + arrayName);
 &nbsp;
 <b class="nc">&nbsp;        return new ArrayAccessNode(arrayName, indices);</b>
 &nbsp;    }
@@ -395,7 +387,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

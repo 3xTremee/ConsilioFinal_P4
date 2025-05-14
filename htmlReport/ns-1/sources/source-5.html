@@ -128,13 +128,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import org.example.semantic.*;
 &nbsp;import org.example.planner.*;
 &nbsp;import org.antlr.v4.runtime.*;
-&nbsp;import org.w3c.dom.Attr;
 &nbsp;
 &nbsp;import java.io.IOException;
 &nbsp;import java.nio.file.Files;
 &nbsp;import java.nio.file.Path;
 &nbsp;import java.nio.file.StandardOpenOption;
-&nbsp;import java.util.HashMap;
 &nbsp;import java.util.List;
 &nbsp;import java.util.Map;
 &nbsp;import java.util.Optional;
@@ -154,69 +152,42 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        CommonTokenStream tokens = new CommonTokenStream(lexer);</b>
 <b class="nc">&nbsp;        ConsilioParser parser = new ConsilioParser(tokens);</b>
 &nbsp;
-&nbsp;        // Fjerner standard‐error listeners som er lavet af ANTLR
+&nbsp;        // Removes standard error listeners made by ANTLR
 <b class="nc">&nbsp;        parser.removeErrorListeners();</b>
 &nbsp;
-&nbsp;        // Tilføj en listener som kaster exception ved FØRSTE syntax fejl
+&nbsp;        // Add a listener that throws an exception on the FIRST syntax error
 <b class="nc">&nbsp;        parser.addErrorListener(new BaseErrorListener() {</b>
 &nbsp;            @Override
 &nbsp;            public void syntaxError(Recognizer&lt;?,?&gt; recognizer, Object offendingSymbol, int line, int charPositionInLine,
 &nbsp;                    String msg, RecognitionException e)
 &nbsp;            {
-<b class="nc">&nbsp;                throw new RuntimeException(&quot;Syntaxfejl ved linje &quot; + line + &quot;:&quot; + charPositionInLine + &quot; – &quot; + msg);</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Syntax-error in line &quot; + line + &quot;:&quot; + charPositionInLine + &quot; - &quot; + msg);</b>
 &nbsp;            }
 &nbsp;        });
 &nbsp;
-&nbsp;        // Parser og bygger AST
+&nbsp;        // Parse and build AST
 <b class="nc">&nbsp;        AstBuilder astBuilder = new AstBuilder();</b>
 <b class="nc">&nbsp;        ProgramNode program = astBuilder.visitProgram(parser.program());</b>
 &nbsp;
-&nbsp;        // Bare for at printe AST. Skal bare slettes igen på et tidspunkt så den ikke printer AST
-&nbsp;        //System.out.println(program);
 &nbsp;
-&nbsp;        // Semantic tjek
+&nbsp;        // Semantic check
 <b class="nc">&nbsp;        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();</b>
 <b class="nc">&nbsp;        semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());</b>
-&nbsp;        // Typechecking
 <b class="nc">&nbsp;        semanticAnalyzer.addObjectValues(program.getProblem());</b>
 &nbsp;
-&nbsp;        //Type tjekker goals: alle goal-expressions SKAL være boolean
+&nbsp;        // Type checking goals: all goal-expressions MUST be boolean
 <b class="nc">&nbsp;        ExpressionCheck goalCheck = new ExpressionCheck(semanticAnalyzer);</b>
 <b class="nc">&nbsp;        for (ExpressionNode goal : program.getProblem().getExpression()) {</b>
 <b class="nc">&nbsp;            String eval = goalCheck.typeEvaluation(goal);</b>
 <b class="nc">&nbsp;            if (!&quot;boolean&quot;.equals(eval)) {</b>
-<b class="nc">&nbsp;                throw new RuntimeException(&quot;Type-fejl i goalState: udtryk &#39;&quot; + goal + &quot;&#39; er ikke boolean men &quot; + eval);</b>
+<b class="nc">&nbsp;                throw new RuntimeException(&quot;Type-error in goalState: expression &#39;&quot; + goal + &quot;&#39; is not boolean but &quot; + eval);</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;
-&nbsp;        // Type tjekker hver action inden planneren bliver kaldt
+&nbsp;        // Type check all actions before calling the planner
 <b class="nc">&nbsp;        for (ActionNode action : program.getDomain().getActions()) {</b>
 <b class="nc">&nbsp;            semanticAnalyzer.analyzeAction(action);</b>
 &nbsp;        }
-&nbsp;
-&nbsp;        // Print af tabeller
-&nbsp;        //semanticAnalyzer.printTables();
-&nbsp;
-&nbsp;        /*
-&nbsp;        // Test af expressioncheck
-&nbsp;        ExpressionCheck expressionCheck = new ExpressionCheck(semanticAnalyzer);
-&nbsp;        ProblemNode problem = program.getProblem();
-&nbsp;
-&nbsp;        List&lt;ArrayInitializerNode&gt; arraysInProblem = problem.getArrayInitializers();
-&nbsp;
-&nbsp;        for (ArrayInitializerNode array : arraysInProblem) {
-&nbsp;            IdentifierNode identifierNode = new IdentifierNode(array.getName());
-&nbsp;            expressionCheck.checkIdentifier(identifierNode);
-&nbsp;        }
-&nbsp;
-&nbsp;        List&lt;ObjectNode&gt; objectsInProblem = problem.getObjects();
-&nbsp;
-&nbsp;        for (ObjectNode object : objectsInProblem) {
-&nbsp;            String objectType = expressionCheck.checkObject(object.getIdentifier());
-&nbsp;            expressionCheck.typeExists(objectType);
-&nbsp;        }
-&nbsp;
-&nbsp;         */
 &nbsp;
 &nbsp;
 &nbsp;        // Planning
@@ -225,7 +196,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;        Planner planner = new Planner(</b>
 <b class="nc">&nbsp;                program.getDomain(),</b>
 <b class="nc">&nbsp;                program.getProblem().getObjects(),</b>
-&nbsp;                //new StatementCheck(semanticAnalyzer), // Denne var med før, men StatementCheck er fjernet fra planner constructor
 &nbsp;                semanticAnalyzer
 &nbsp;        );
 <b class="nc">&nbsp;        Optional&lt;List&lt;GroundedAction&gt;&gt; plan = planner.bfs(</b>
@@ -241,7 +211,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="nc">&nbsp;                                .map(Object::toString)</b>
 <b class="nc">&nbsp;                                .reduce(&quot;&quot;, (a, b) -&gt; a + b + System.lineSeparator());</b>
 <b class="nc">&nbsp;                        Files.writeString(Path.of(resultFilePath), planContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);</b>
-<b class="nc">&nbsp;                        System.out.println(&quot;Plan written to result.co&quot;);</b>
+<b class="nc">&nbsp;                        System.out.println(&quot;Plan written to result file:&quot;);</b>
 <b class="nc">&nbsp;                    } catch (IOException e) {</b>
 <b class="nc">&nbsp;                        System.err.println(&quot;An error occurred while writing the plan to the file: &quot; + e.getMessage());</b>
 &nbsp;                    }
@@ -305,7 +275,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>

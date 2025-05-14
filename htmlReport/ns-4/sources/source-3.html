@@ -130,20 +130,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import java.util.stream.Collectors;
 &nbsp;
 &nbsp;
-&nbsp;
-&nbsp;/**
-&nbsp; * Simple breadth‑first search planner, with debug prints on every action attempt.
-&nbsp; */
+&nbsp;// BFS search planner
 &nbsp;public class Planner {
 &nbsp;    private final List&lt;GroundedAction&gt; allActions;
-&nbsp;    //private final StatementCheck statementCheck;
 &nbsp;    private final SemanticAnalyzer semanticAnalyzer;
-&nbsp;
-&nbsp;//    public Planner(DomainNode domain, List&lt;ObjectNode&gt; objects, StatementCheck statementCheck, SemanticAnalyzer semanticAnalyzer) {
-&nbsp;//        this.statementCheck = statementCheck;
-&nbsp;//        this.allActions = groundAll(domain, objects);
-&nbsp;//        this.semanticAnalyzer = semanticAnalyzer;
-&nbsp;//    }
 &nbsp;
 <b class="fc">&nbsp;    public Planner(DomainNode domain, List&lt;ObjectNode&gt; objects, SemanticAnalyzer semanticAnalyzer) {</b>
 <b class="fc">&nbsp;        this.allActions = groundAll(domain, objects);</b>
@@ -183,106 +173,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Apply one grounded action to state s.
-&nbsp;     * Returns new State if guard passes, or null if guard fails.
+&nbsp;    /*
+&nbsp;     * Method for applying grounded actions to a State s
+&nbsp;     * Returns the new state s if the guard(condition) passes and null otherwise
 &nbsp;     */
-&nbsp;//    private State apply(GroundedAction ga, State s) {
-&nbsp;//        //ga.getBinding() bruges typisk til mapping fra variabler til konkrete værdier eller objekter
-&nbsp;//        ExpressionEvaluator eval = new ExpressionEvaluator(ga.getBinding(), this.semanticAnalyzer);
-&nbsp;//
-&nbsp;//        //System.out.println(&quot;ga: &quot; + ga.getSchema().getBody());
-&nbsp;//
-&nbsp;//        IfNode ifn = (IfNode) ga.getSchema().getBody();
-&nbsp;//
-&nbsp;//        if((ga.getSchema().getBody() instanceof IfNode)) {
-&nbsp;//            ExpressionNode ifCondition = ((IfNode) ga.getSchema().getBody()).getCondition();          //først castes der til ifNode og bagefter hentes condition
-&nbsp;//
-&nbsp;//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition((IfNode) ga.getSchema().getBody());
-&nbsp;//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
-&nbsp;//
-&nbsp;//            Boolean guard = (Boolean) eval.evaluate(ifCondition, s);
-&nbsp;//            System.out.println(&quot;guard2: &quot; + guard2);
-&nbsp;//            if (!guard2) {
-&nbsp;//                return null;
-&nbsp;//            }
-&nbsp;//        }
-&nbsp;//
-&nbsp;//        /*Boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);
-&nbsp;//        System.out.println(&quot;guard: &quot; + guard);
-&nbsp;//        if (!guard) {
-&nbsp;//            return null;
-&nbsp;//        }*/
-&nbsp;//
-&nbsp;//        State next = s;
-&nbsp;//        for (StatementNode st : (statementCheck.checkThenBranch(ifn))) {    /*;ifn.getThenBranch()).getStatements()*/
-&nbsp;//            AssignmentNode asn = (AssignmentNode) st;
-&nbsp;//            boolean isOkay = statementCheck.checkAssignment(asn);
-&nbsp;//            System.out.println(&quot;isOkay: &quot; + isOkay);
-&nbsp;//
-&nbsp;//
-&nbsp;//            DotNode dotNode = asn.getTarget();
-&nbsp;//            ExpressionNode exprNode = dotNode.getTarget();
-&nbsp;//            String varName = ((IdentifierNode) exprNode).getName();
-&nbsp;//            String object  = ga.getBinding().getOrDefault(varName, varName);
-&nbsp;//            String field   = dotNode.getField();
-&nbsp;//            Object val     = eval.evaluate(asn.getExpression(), next);
-&nbsp;//            next = next.with(object, field, val);
-&nbsp;//        }
-&nbsp;//        return next;
-&nbsp;//    }
-&nbsp;
-&nbsp;
-&nbsp;    //DET HER ER DEN SOM VIRKER PT. EFTER FROKOST ONSDAG D. 7/5
-&nbsp;//    private State apply(GroundedAction ga, State s) {
-&nbsp;//        // Bind parametre ind i symbolTable
-&nbsp;//        Map&lt;String,String&gt; binding = ga.getBinding();
-&nbsp;//        for (var entry : binding.entrySet()) {
-&nbsp;//            String varName = entry.getKey();       // kunne være &quot;r&quot;
-&nbsp;//            String objName = entry.getValue();     // kunne være &quot;rob&quot;
-&nbsp;//            // hent det eksisterende SymbolObject for &quot;rob&quot;
-&nbsp;//            SymbolObject symObj = (SymbolObject) semanticAnalyzer.getSymbolTable().get(objName);
-&nbsp;//            semanticAnalyzer.getSymbolTable().put(varName, symObj);
-&nbsp;//        }
-&nbsp;//
-&nbsp;//        try {
-&nbsp;//            // Opret evaluator med binding
-&nbsp;//            ExpressionEvaluator eval = new ExpressionEvaluator(binding, this.semanticAnalyzer);
-&nbsp;//
-&nbsp;//            IfNode ifn = (IfNode) ga.getSchema().getBody();
-&nbsp;//            // Guard check
-&nbsp;//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition(ifn);
-&nbsp;//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
-&nbsp;//            System.out.println(&quot;guard2: &quot; + guard2);
-&nbsp;//            if (!guard2) {
-&nbsp;//                return null;
-&nbsp;//            }
-&nbsp;//
-&nbsp;//            // Kør body
-&nbsp;//            State next = s;
-&nbsp;//            for (StatementNode st : statementCheck.checkThenBranch(ifn)) {
-&nbsp;//                AssignmentNode asn = (AssignmentNode) st;
-&nbsp;//                //statementCheck.checkAssignment(asn);
-&nbsp;//
-&nbsp;//                DotNode dotNode = asn.getTarget();
-&nbsp;//                // find objekt- og felt-navn
-&nbsp;//                IdentifierNode targetObj = (IdentifierNode) dotNode.getTarget();
-&nbsp;//                String varName = targetObj.getName();
-&nbsp;//                String object = binding.getOrDefault(varName, varName);
-&nbsp;//                String field = dotNode.getField();
-&nbsp;//                Object val = eval.evaluate(asn.getExpression(), next);
-&nbsp;//                next = next.with(object, field, val);
-&nbsp;//            }
-&nbsp;//            return next;
-&nbsp;//
-&nbsp;//        } finally {
-&nbsp;//            // Fjern parametre igen uanset hvad
-&nbsp;//            for (String varName : binding.keySet()) {
-&nbsp;//                semanticAnalyzer.getSymbolTable().remove(varName);
-&nbsp;//            }
-&nbsp;//        }
-&nbsp;//    }
-&nbsp;
 &nbsp;    private State apply(GroundedAction ga, State s) {
 &nbsp;        // Bind parametre
 <b class="fc">&nbsp;        Map&lt;String,String&gt; binding = ga.getBinding();</b>
@@ -295,7 +189,8 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;            ExpressionEvaluator eval = new ExpressionEvaluator(binding, semanticAnalyzer);</b>
 &nbsp;
 <b class="fc">&nbsp;            IfNode ifn = (IfNode) ga.getSchema().getBody();</b>
-&nbsp;            // ren evaluering, ingen type tjek
+&nbsp;
+&nbsp;            // Only evaluating here, no type checking
 <b class="fc">&nbsp;            boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);</b>
 <b class="fc">&nbsp;            if (!guard) return null;</b>
 &nbsp;
@@ -339,7 +234,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;
 &nbsp;
-&nbsp;    /** Check whether every goal expression holds in state s. */
+&nbsp;    // Chech if every goal expression is true in state s
 &nbsp;    private boolean isGoal(State s, List&lt;ExpressionNode&gt; goals) {
 <b class="fc">&nbsp;        ExpressionEvaluator eval = new ExpressionEvaluator(this.semanticAnalyzer); // no bindings</b>
 <b class="fc">&nbsp;        for (ExpressionNode g : goals) {</b>
@@ -351,10 +246,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return true;</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /**
-&nbsp;     * Breadth‑first search for a plan.
-&nbsp;     * Prints every attempted action and result.
-&nbsp;     */
+&nbsp;    // BFS algorithm used to search for a plan
 &nbsp;    public Optional&lt;List&lt;GroundedAction&gt;&gt; bfs(State init, List&lt;ExpressionNode&gt; goals) {
 <b class="fc">&nbsp;        record Node(State state, List&lt;GroundedAction&gt; plan) {}</b>
 <b class="fc">&nbsp;        Queue&lt;Node&gt; frontier = new ArrayDeque&lt;&gt;();</b>
@@ -376,11 +268,12 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                //System.out.println(&quot;Attempting action: &quot; + ga + &quot;\n  from state: &quot; + n.state);
 <b class="fc">&nbsp;                State nxt = apply(ga, n.state);</b>
 <b class="fc">&nbsp;                if (nxt != null) {</b>
-&nbsp;                    //System.out.println(&quot;\u001B[32m&quot; + &quot;  → Applied, new state: &quot; + &quot;\u001B[0m&quot; + nxt);
+&nbsp;                    //System.out.println(&quot;\u001B[32m&quot; + &quot; Applied, new state: &quot; + &quot;\u001B[0m&quot; + nxt);
 <b class="fc">&nbsp;                    if (seen.add(nxt)) {</b>
 <b class="fc">&nbsp;                        List&lt;GroundedAction&gt; p2 = new ArrayList&lt;&gt;(n.plan);</b>
 <b class="fc">&nbsp;                        p2.add(ga);</b>
-&nbsp;                        // Check goal right away
+&nbsp;
+&nbsp;                        //Checks goal state
 <b class="fc">&nbsp;                        if (isGoal(nxt, goals)) {</b>
 &nbsp;                            //System.out.println(&quot;\u001B[34m&quot; + &quot;Reached goal with action: &quot; + ga + &quot;\u001B[0m&quot;);
 <b class="fc">&nbsp;                            System.out.print(&quot;Goal: &quot; + nxt + &quot;\n&quot;);</b>
@@ -389,7 +282,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                        frontier.add(new Node(nxt, p2));</b>
 &nbsp;                    }
 &nbsp;                } else {
-&nbsp;                    //System.out.println(&quot;\u001B[31m&quot; + &quot;  → Guard failed, skipping&quot; + &quot;\u001B[0m&quot;);
+&nbsp;                    //System.out.println(&quot;\u001B[31m&quot; + &quot; Guard failed&quot; + &quot;\u001B[0m&quot;);
 &nbsp;
 &nbsp;                }
 &nbsp;            }
@@ -420,7 +313,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-14 11:03</div>
+    <div style="float:right;">generated on 2025-05-14 12:48</div>
 </div>
 </body>
 </html>
