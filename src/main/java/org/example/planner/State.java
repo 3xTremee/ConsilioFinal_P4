@@ -22,14 +22,11 @@ public class State {
             this.semanticAnalyzer = semanticAnalyzer;
     }
 
-    /**
-     * Read object.field, returning null if the object or the field isn’t present.
-     */
+
     // Gets the field/attribute of the object
     public Object get(String object, String field) {
         Map<String, Object> objMap = store.get(object);
         if (objMap == null) {
-            // no such object in this state
             return null;
         }
         // may return null if this field was never set
@@ -40,7 +37,6 @@ public class State {
 
     // Creates a new State with updated fields
     public State with(String object, String field, Object newValue) {
-        // 1) shallow‐copy the outer map, deep‐copy each inner map
         Map<String, Map<String, Object>> copy = new HashMap<>();
         for (var e : store.entrySet()) {
             copy.put(e.getKey(), new HashMap<>(e.getValue()));
@@ -48,10 +44,8 @@ public class State {
 
         // Ensures that a map is present for the object name
         copy.computeIfAbsent(object, k -> new HashMap<>())
-                // 3) set the field
                 .put(field, newValue);
 
-        // 4) return a fresh immutable State
         return new State(copy, semanticAnalyzer);
     }
 
@@ -77,7 +71,6 @@ public class State {
 
     // Create the initial state from the objects and initial state/assignments (Delete if end up not being used)
     public static State fromProblem(ProblemNode problem, SemanticAnalyzer semanticAnalyzer) {
-        // 1) empty slot for each object
         Map<String, Map<String, Object>> init = new HashMap<>();
         for (ObjectNode obj : problem.getObjects()) {
             init.computeIfAbsent(obj.getElementName(), k -> new HashMap<>());
