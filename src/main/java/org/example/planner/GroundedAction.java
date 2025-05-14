@@ -38,7 +38,7 @@ public class GroundedAction {
         return schema.getName() + binding; // fx move{r=rob, dest=A}
     }
 
-    @Override  //se lige på den her, tror den skal slettes og fixes et andet sted henne
+    @Override  //se lige på den her, tror den skal slettes og fixes et andet sted henne. Bliver vidst ikke brugt (slet?)
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof GroundedAction)) return false;

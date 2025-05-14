@@ -64,18 +64,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    93,8%
+    100%
   </span>
   <span class="absValue">
-    (15/16)
+    (16/16)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    92,6%
+    93,4%
   </span>
   <span class="absValue">
-    (112/121)
+    (113/121)
   </span>
 </td>
 </tr>
@@ -141,9 +141,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                .map(s -&gt; (StatementNode) visit(s))
 &nbsp;                .toList();
 &nbsp;                */
-<b class="pc">&nbsp;        StatementListNode initList = ctx.init().statementList() != null</b>
+<b class="fc">&nbsp;        StatementListNode initList = ctx.init().statementList() != null</b>
 <b class="fc">&nbsp;                ? (StatementListNode) visit(ctx.init().statementList())</b>
-<b class="nc">&nbsp;                : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement</b>
+<b class="fc">&nbsp;                : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement</b>
 <b class="fc">&nbsp;        List&lt;StatementNode&gt; initStatements = initList.getStatements();</b>
 &nbsp;
 <b class="fc">&nbsp;        List&lt;ExpressionNode&gt; goals = ctx.goal().expression().stream()</b>
@@ -250,51 +250,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return (StatementNode) visit(ctx.assignment());</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    /* GAMLE UDGAVE - UDGAVE 1
-&nbsp;    @Override
-&nbsp;    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
-&nbsp;        StatementNode first = (StatementNode) visit(ctx.statement(0));
-&nbsp;        StatementNode second = (StatementNode) visit(ctx.statement(1));
-&nbsp;        List&lt;StatementNode&gt; statements = new ArrayList&lt;&gt;();
-&nbsp;        if(first instanceof StatementListNode) {
-&nbsp;            statements.addAll(((StatementListNode) first).getStatements());
-&nbsp;        } else {
-&nbsp;            statements.add(first);
-&nbsp;        }
-&nbsp;        if(first instanceof StatementListNode) {
-&nbsp;            statements.addAll(((StatementListNode) second).getStatements());
-&nbsp;        } else {
-&nbsp;            statements.add(second);
-&nbsp;        }
-&nbsp;
-&nbsp;        return new StatementListNode(statements);
-&nbsp;    }*/
-&nbsp;
-&nbsp;    /* NYESTE UDGAVE - UDGAVE 2
-&nbsp;    @Override
-&nbsp;    public StatementNode visitStatementConcatination(ConsilioParser.StatementConcatinationContext ctx) {
-&nbsp;        StatementNode leftNode = (StatementNode) visit(ctx.statement(0));
-&nbsp;        StatementNode rightNode = (StatementNode) visit(ctx.statement(1));
-&nbsp;        List&lt;StatementNode&gt; stmts = new ArrayList&lt;&gt;();
-&nbsp;
-&nbsp;        // Left side
-&nbsp;        if (leftNode instanceof StatementListNode) {
-&nbsp;            stmts.addAll(((StatementListNode) leftNode).getStatements());
-&nbsp;        } else {
-&nbsp;            stmts.add(leftNode);
-&nbsp;        }
-&nbsp;
-&nbsp;        // Right side
-&nbsp;        if (rightNode instanceof StatementListNode) {
-&nbsp;            stmts.addAll(((StatementListNode) rightNode).getStatements());
-&nbsp;        } else {
-&nbsp;            stmts.add(rightNode);
-&nbsp;        }
-&nbsp;
-&nbsp;        return new StatementListNode(stmts);
-&nbsp;    }
-&nbsp;    */
-&nbsp;
 &nbsp;    @Override
 &nbsp;    public StatementListNode visitStatementList(ConsilioParser.StatementListContext ctx) {
 <b class="fc">&nbsp;        List&lt;StatementNode&gt; stmts = ctx.statement().stream()</b>
@@ -302,16 +257,6 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;                .collect(Collectors.toList());</b>
 <b class="fc">&nbsp;        return new StatementListNode(stmts);</b>
 &nbsp;    }
-&nbsp;
-&nbsp;
-&nbsp;    // Slet denne method hvis den slettes inde fra .g4 filen.
-&nbsp;   /* @Override
-&nbsp;    public StatementNode visitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx) {
-&nbsp;        DotNode target = (DotNode) visit(ctx.dotNotation());
-&nbsp;        ExpressionNode expr = (ExpressionNode) visit(ctx.expression());
-&nbsp;
-&nbsp;        return new AssignmentNode(target, expr);
-&nbsp;    }*/
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public StatementNode visitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx) {
@@ -450,7 +395,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-13 11:28</div>
+    <div style="float:right;">generated on 2025-05-14 11:03</div>
 </div>
 </body>
 </html>

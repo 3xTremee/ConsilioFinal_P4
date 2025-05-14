@@ -227,7 +227,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;            // slår typen op i table (skal allerede være der fra buildSymbolTable method)
 <b class="fc">&nbsp;            SymbolType typeSym = (SymbolType) symbolTable.get(p.getType());</b>
 <b class="pc">&nbsp;            if (typeSym == null) {</b>
-<b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt type for parameter: &quot; + p.getType());</b>
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Unknown type for parameter: &quot; + p.getType());</b>
 &nbsp;            }
 &nbsp;
 &nbsp;            // laver en temp ObjectNode
@@ -246,13 +246,13 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        // Tjek body’en er en ifNode
 <b class="fc">&nbsp;        StatementNode body = action.getBody();</b>
 <b class="pc">&nbsp;        if (!(body instanceof IfNode ifn)) {</b>
-<b class="nc">&nbsp;            throw new SemanticException(&quot;IfNode er ikke body, fik: &quot; + body.getClass());</b>
+<b class="nc">&nbsp;            throw new SemanticException(&quot;Body of action: &#39;&quot; + action.getName() + &quot;&#39; does not contain an if statement at entry: &quot; + body.getClass());</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // guard skal være boolean
 <b class="fc">&nbsp;        String guardType = expressionCheck.typeEvaluation(ifn.getCondition());</b>
 <b class="pc">&nbsp;        if (!&quot;boolean&quot;.equals(guardType)) {</b>
-<b class="nc">&nbsp;            throw new SemanticException(&quot;If-condition skal være boolean, fik: &quot; + guardType);</b>
+<b class="nc">&nbsp;            throw new SemanticException(&quot;If-condition should be boolean, received: &quot; + guardType);</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // tjek alle assignments i then-branchen
@@ -260,7 +260,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="pc">&nbsp;            if (stNode instanceof AssignmentNode asNode) {</b>
 <b class="fc">&nbsp;                statementCheck.checkAssignment(asNode);</b>
 &nbsp;            } else {
-<b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt StatementNode i action-body: &quot; + stNode.getClass());</b>
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Invalid statement in action-body: &#39;&quot; + action.getName() + &quot;&#39; (nested-ifs not currently supported)&quot;);</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;
@@ -329,7 +329,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-13 11:28</div>
+    <div style="float:right;">generated on 2025-05-14 11:03</div>
 </div>
 </body>
 </html>

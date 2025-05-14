@@ -42,7 +42,7 @@ public class SymbolAttribute extends Symbol {
             types.add(elementTypeName + "[]");
         } else if (node instanceof OrValueNode) {
             for (ValueNode type : ((OrValueNode) node).getTypes()) {
-                extractTypes(type, types); // Rekursivt kald for nested OrValueNodes
+                extractTypes(type, types);
             }
         }
     }
