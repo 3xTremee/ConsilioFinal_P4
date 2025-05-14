@@ -46,12 +46,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
                             .map(elem -> new ObjectNode(arrayInit.getType(), arrayInit.getName(), elem, new IdentifierNode(elem)));
                 })
                 .toList();
-        /*
-         - GAMLE UDGAVE IMENS DER VAR AMBIGUITY I GRAMMAR FIL
-        List<StatementNode> initStatements = ctx.init().statement().stream()
-                .map(s -> (StatementNode) visit(s))
-                .toList();
-                */
+
         StatementListNode initList = ctx.init().statementList() != null
                 ? (StatementListNode) visit(ctx.init().statementList())
                 : new StatementListNode(Collections.emptyList());  // Sker ikke da vi aldrig kan have et tomt statement
@@ -68,8 +63,7 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
     public TypeNode visitType(ConsilioParser.TypeContext ctx) {
         String name = ctx.IDENTIFIER().getText();
         List<AttributeNode> attributes = ctx.attribute().stream()
-                .map(a -> (AttributeNode) visit(a))
-                .toList();
+                .map(a -> (AttributeNode) visit(a)).toList();
 
         return new TypeNode(name, attributes);
     }
@@ -106,12 +100,12 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new OrValueNode(values);
     }
 
-    // Bliver pt ikke brugt "doors: door[];" (slet?)
+    // Delete if end up not being used
     @Override
     public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
         ValueNode elementType = (ValueNode) visit(ctx.valueType());
 
-        System.out.print("visitArrayValue" + elementType);
+        //System.out.print("visitArrayValue" + elementType);
 
         return new ArrayValueNode(elementType, 0);
     }
@@ -126,14 +120,14 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
     @Override
     public ActionNode visitAction(ConsilioParser.ActionContext ctx) {
         String name = ctx.IDENTIFIER().getText();
-        // Indsamler parameter rekursivt.
+
         List<ParameterNode> parameters = new ArrayList<>();
         ConsilioParser.ParameterContext pctx = ctx.parameter();
         while (pctx != null) {
             parameters.add((ParameterNode) visit(pctx));
             pctx = pctx.parameter();
         }
-        // Body af action
+
         StatementNode body = (StatementNode) visit(ctx.statement());
 
         return new ActionNode(name, parameters, body);
@@ -189,7 +183,6 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
     public ExpressionNode visitArrayDot(ConsilioParser.ArrayDotContext ctx) {
         String arrayName = ctx.IDENTIFIER(0).getText();
 
-        // rekursivt hentes af alle index
         List<ExpressionNode> indices = new ArrayList<>();
         collectArrayBody(ctx.arrayBodyInt(), indices);
         ExpressionNode arrayAccess = new ArrayAccessNode(arrayName, indices);
@@ -216,7 +209,6 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
     }
 
     private void collectArrayInitElements(ConsilioParser.ArrayBodyContext ctx, List<String> list) {
-        // Hver IDENTIFIER i arrayBody
         list.add(ctx.IDENTIFIER().getText());
         if (ctx.arrayBody() != null) {
             collectArrayInitElements(ctx.arrayBody(), list);
@@ -244,14 +236,14 @@ public class AstBuilder extends ConsilioBaseVisitor<AstNode> {
         return new ParenExpressionNode(inner);
     }
 
-    // Bliver heller ikke brugt, "rob.location = rooms[0];" (slet?)
+    // Delete if end up not being used "rob.location = rooms[0];"
     @Override
     public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
         String arrayName = ctx.IDENTIFIER().getText();
         List<ExpressionNode> indices = new ArrayList<>();
         collectArrayBody(ctx.arrayBodyInt(), indices);
 
-        System.out.print("visitArrayAccessExpression" + arrayName);
+        //System.out.print("visitArrayAccessExpression" + arrayName);
 
         return new ArrayAccessNode(arrayName, indices);
     }

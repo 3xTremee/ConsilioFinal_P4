@@ -9,7 +9,7 @@ public class AssignmentNode extends StatementNode {
         this.expression = expression;
     }
 
-    // getters
+    //getters
     public DotNode getTarget() {
         return target;
     }
@@ -20,6 +20,6 @@ public class AssignmentNode extends StatementNode {
 
     @Override
     public String toString() {
-        return "Assignment(target=" + target + ", expression=" + expression + ")";
+        return "Assignment(target = " + target + ", expression = " + expression + ")";
     }
 }

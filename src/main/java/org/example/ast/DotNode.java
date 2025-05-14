@@ -20,6 +20,6 @@ public class DotNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "DotNode(target=" + target + ", field=" + field + ")";
+        return "DotNode(Target = " + target + ", field = " + field + ")";
     }
 }

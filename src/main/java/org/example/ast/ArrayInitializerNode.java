@@ -28,7 +28,6 @@ public class ArrayInitializerNode extends AstNode{
 
     @Override
     public String toString() {
-        //return "ArrayInitializer(type=" + Type + ", name=" + name + ", elements=" + elements + ")";
         return "ArrayInitializer(" + type + " " + name + " = {" + String.join(",", elements) + "})";
     }
 }

@@ -22,6 +22,6 @@ public class ArrayAccessNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "ArrayAccessNode(arrayName=" + arrayName + ", indices=" + indices + ")";
+        return "ArrayAccessNode(ArrayName = " + arrayName + ", indices = " + indices + ")";
     }
 }

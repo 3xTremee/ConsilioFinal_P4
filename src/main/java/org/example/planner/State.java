@@ -7,11 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Immutable snapshot of all object-field values.
- */
+// Class that creates the State s used by the planner
 public class State {
-    private final Map<String, Map<String, Object>> store; //mapper objekt navne til deres konkrete attribut værdier fx "r1" → { "location" → "A", "carrying" → false }
+    // Map of object names and their corrosponding concrete attributes. "r1 maps to location, which is A, and carrying which is false"
+    private final Map<String, Map<String, Object>> store;
 
     SemanticAnalyzer semanticAnalyzer;
 
@@ -26,6 +25,7 @@ public class State {
     /**
      * Read object.field, returning null if the object or the field isn’t present.
      */
+    // Gets the field/attribute of the object
     public Object get(String object, String field) {
         Map<String, Object> objMap = store.get(object);
         if (objMap == null) {
@@ -37,20 +37,18 @@ public class State {
     }
 
 
-//laver en ny state med opdateret fields
+
+    // Creates a new State with updated fields
     public State with(String object, String field, Object newValue) {
-        // 1) shallow‐copy the outer map, deep‐copy each inner map
         Map<String, Map<String, Object>> copy = new HashMap<>();
         for (var e : store.entrySet()) {
             copy.put(e.getKey(), new HashMap<>(e.getValue()));
         }
 
-        // 2) ensure there’s a map for this objectName
+        // Ensures that a map is present for the object name
         copy.computeIfAbsent(object, k -> new HashMap<>())
-                // 3) set the field
                 .put(field, newValue);
 
-        // 4) return a fresh immutable State
         return new State(copy, semanticAnalyzer);
     }
 
@@ -73,25 +71,23 @@ public class State {
         return "State" + store;
     }
 
-    /**
-     * Build the initial State from the problem’s objects and init assignments.
-     */
+
+    // Create the initial state from the objects and initial state/assignments (Delete if end up not being used)
     public static State fromProblem(ProblemNode problem, SemanticAnalyzer semanticAnalyzer) {
-        // 1) empty slot for each object
         Map<String, Map<String, Object>> init = new HashMap<>();
         for (ObjectNode obj : problem.getObjects()) {
             init.computeIfAbsent(obj.getElementName(), k -> new HashMap<>());
         }
         State state = new State(init, semanticAnalyzer);
 
-        // 2) apply each AssignmentNode
+        // Apply each assignmentNode
         ExpressionEvaluator eval = new ExpressionEvaluator(semanticAnalyzer);
         for (StatementNode stmt : problem.getStatement()) {
             if (stmt instanceof AssignmentNode asn) {
                 DotNode dotNode = asn.getTarget();
                 ExpressionNode exprNode = dotNode.getTarget();
                 String objName = ((IdentifierNode) exprNode).getName();
-                String field   = dotNode.getField();
+                String field = dotNode.getField();
                 Object val = eval.evaluate(asn.getExpression(), state);
                 state = state.with(objName, field, val);
             }

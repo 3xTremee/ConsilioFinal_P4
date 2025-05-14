@@ -54,7 +54,6 @@ public class ProblemNode extends AstNode{
 
     @Override
     public String toString() {
-        return "Problem(name=" + name + ", import=" + importName +
-                ", arrays=" + arrayInitializers + ", init=" + init + ", goal=" + goal + ")";
+        return "Problem(Name = " + name + ", import = " + importName + ", arrays = " + arrayInitializers + ", init = " + init + ", goal = " + goal + ")";
     }
 }

@@ -26,6 +26,6 @@ public class BinaryOpNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "BinaryOpNode(left=" + left + ", operator=" + operator + ", right=" + right + ")";
+        return "BinaryOpNode(Left = " + left + ", operator = " + operator + ", right = " + right + ")";
     }
 }

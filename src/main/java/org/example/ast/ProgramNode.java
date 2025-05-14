@@ -20,6 +20,6 @@ public class ProgramNode extends AstNode {
 
     @Override
     public String toString() {
-        return "Program:\nDomain: " + domain + "\nProblem: " + problem;
+        return "Program: \nDomain: " + domain + "\nProblem: " + problem;
     }
 }

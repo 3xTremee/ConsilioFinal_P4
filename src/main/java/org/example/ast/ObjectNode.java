@@ -32,6 +32,6 @@ public class ObjectNode extends AstNode {
 
     @Override
     public String toString() {
-        return "(ObjectType=" + type + ", arrayName=" + arrayName + ", elementName=" + elementName +")";
+        return "(ObjectType = " + type + ", arrayName = " + arrayName + ", elementName = " + elementName + ")";
     }
 }

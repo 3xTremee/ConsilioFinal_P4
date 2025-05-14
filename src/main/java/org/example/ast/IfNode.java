@@ -9,7 +9,7 @@ public class IfNode extends StatementNode {
         this.thenBranch = thenBranch;
     }
 
-    // getters
+    //getters
     public ExpressionNode getCondition() {
         return condition;
     }
@@ -20,6 +20,6 @@ public class IfNode extends StatementNode {
 
     @Override
     public String toString() {
-        return "IfNode(condition=" + condition + ", thenBranch=" + thenBranch + ")";
+        return "IfNode(condition = " + condition + ", thenBranch = " + thenBranch + ")";
     }
 }

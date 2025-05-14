@@ -15,6 +15,6 @@ public class OrValueNode extends ValueNode {
 
     @Override
     public String toString() {
-        return "OrValueNode(types=" + types + ")";
+        return "OrValueNode(Types = " + types + ")";
     }
 }

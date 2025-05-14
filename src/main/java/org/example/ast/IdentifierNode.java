@@ -14,6 +14,6 @@ public class IdentifierNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "IdentifierNode= Name:" + name;
+        return "IdentifierNode = Name: " + name;
     }
 }

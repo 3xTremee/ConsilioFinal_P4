@@ -20,6 +20,6 @@ public class ParameterNode extends AstNode {
 
    @Override
    public String toString() {
-        return "Parameter(type=" + type + ", name=" + name + ")";
+        return "Parameter(Type = " + type + ", name = " + name + ")";
    }
 }

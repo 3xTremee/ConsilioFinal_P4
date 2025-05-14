@@ -14,6 +14,6 @@ public class ConstantNode extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Constant(value=" + value + ")";
+        return "Constant(value = " + value + ")";
     }
 }

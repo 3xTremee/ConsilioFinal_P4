@@ -11,10 +11,8 @@ import org.example.semantic.*;
 
 import java.util.*;
 
-/**
- * Evaluate AST expressions in the context of a State,
- * including boolean equality/inequality.
- */
+
+// Evaluate the AST expression in the context of the State.
 public class ExpressionEvaluator {
 
     private final Map<String,String> binding;
@@ -49,7 +47,7 @@ public class ExpressionEvaluator {
                 results.add(s.get(elem.getName(), dn.getField()));
             }
 
-            // unwrap from list if only 1 index, otherwise return entire list
+            // If the list only has 1 element, get that. Otherwise returns the entire list
             return (results.size() == 1) ? results.get(0) : results;
         }
 
@@ -57,7 +55,6 @@ public class ExpressionEvaluator {
             String v = c.getValueConstant();
 
             if (expressionCheck.checkBool(c)){
-                //System.out.println("bool: " + v);
                 return Boolean.parseBoolean(v);
             } else if (expressionCheck.checkInt(c)) {
                 return Integer.parseInt(v);
@@ -67,36 +64,29 @@ public class ExpressionEvaluator {
         else if (expr instanceof IdentifierNode id) {
             try {
                 String name = id.getName();
-                return binding.getOrDefault(name, name);          // hvis binding indeholder en værdi for key(name) returneres dens værdi og hvis ikke returneres bare navnet (uden værdi)
+                return binding.getOrDefault(name, name);
             } catch (NullPointerException e) {
-                System.err.println("Semantisk fejl: " + e.getMessage());
+                System.err.println("Semantic error: " + e.getMessage());
                 return null;
             }
         }
-        // DotNode-objekt (f.eks. noget som x.y)
+
+        // Handling DotNode object. Exmaple coule be x.y
          else if (expr instanceof DotNode dn) {
-            //denne returnerer det som står før punktumet dvs. i x.y er det x.
-            //den castes til IdentifierNode, fordi man antager det er et simpelt variabelnavn.
             String varName = ((IdentifierNode) dn.getTarget()).getName();
-            //hvis der findes en binding (fx "x" -> "user42") så bruges den værdi, ellers bruges x som det er.
-
-
             String object  = binding.getOrDefault(varName, varName);
-            //s ligner en form for symboltabel, model eller et objektlager
-            //dn.getField() er feltet (højresiden af punktumet) fx "y" i x.y
-            //der slås altså op "user42".y og det returneres.
+
             return s.get(object, dn.getField());
         }
 
         else if (expr instanceof BinaryOpNode bin) {
-
             Object L = evaluate(bin.getLeft(), s);
             Object R = evaluate(bin.getRight(), s);
             String op = bin.getOperator();
 
-            // MultiTarget comparisons "robots[0,1,2].location == A";
+            // Handling arrays robots[0,1,2].location == A;
             if (L instanceof List<?> list) {
-                // integer arithmetic & comparisons
+
                 if (R instanceof Integer ri) {
                     return switch (op) {
                         case "==" ->
@@ -112,10 +102,10 @@ public class ExpressionEvaluator {
                         case "<=" ->
                                 list.stream().allMatch(v -> v instanceof Integer && ((Integer)v) <= ri);
                         default ->
-                                throw new UnsupportedOperationException("Unsupported op for int-list: " + op);
+                                throw new UnsupportedOperationException("Unsupported operator for int-list: " + op);
                     };
                 }
-                // boolean logic & comparisons
+
                 if (R instanceof Boolean rb) {
                     return switch (op) {
                         case "==" ->
@@ -127,17 +117,17 @@ public class ExpressionEvaluator {
                         case "||" ->
                                 list.stream().anyMatch(v -> v instanceof Boolean && (((Boolean)v) || rb));
                         default ->
-                                throw new UnsupportedOperationException("Unsupported op for bool-list: " + op);
+                                throw new UnsupportedOperationException("Unsupported operator for bool-list: " + op);
                     };
                 }
-                // Generic equality for any other element‐type (String)
+
                 if (op.equals("==") || op.equals("!=")) {
                     boolean allEqual = list.stream().allMatch(v -> v != null && v.equals(R));
                     return op.equals("==") ? allEqual : !allEqual;
                 }
             }
 
-            // integer arithmetic & comparisons
+
             if (L instanceof Integer li && R instanceof Integer ri) {
                 return switch (op) {
                     case "+"  -> li + ri;
@@ -148,11 +138,10 @@ public class ExpressionEvaluator {
                     case "<=" -> li <= ri;
                     case "==" -> li.equals(ri);
                     case "!=" -> !li.equals(ri);
-                    default   -> throw new UnsupportedOperationException("Unknown int op: " + op);
+                    default   -> throw new UnsupportedOperationException("Unknown int operator: " + op);
                 };
             }
 
-            // boolean logic & comparisons
             if (L instanceof Boolean lb && R instanceof Boolean rb) {
                 return switch (op) {
                     case "&&" -> lb && rb;
@@ -171,15 +160,15 @@ public class ExpressionEvaluator {
                             yield null;
                         }
                     }
-                    default   -> throw new UnsupportedOperationException("Unknown bool op: " + op);
+                    default   -> throw new UnsupportedOperationException("Unknown bool operator: " + op);
                 };
             }
 
-            // fallback for any other types (null-safe equality)
+
             return switch (op) {
                 case "==" -> (L != null) && L.equals(R);
                 case "!=" -> (L == null) || !L.equals(R);
-                default   -> throw new UnsupportedOperationException("Unknown op: " + op);
+                default   -> throw new UnsupportedOperationException("Unknown operator: " + op);
             };
         }
         else if (expr instanceof ParenExpressionNode p) {

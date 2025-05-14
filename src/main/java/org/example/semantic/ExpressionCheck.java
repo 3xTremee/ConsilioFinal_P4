@@ -6,11 +6,10 @@ import java.util.*;
 
 public class ExpressionCheck {
 
-    //kaldes injektion
     SemanticAnalyzer semanticAnalyzer;
     Map<String, Symbol> symbolTable;
 
-    // Constructor for at den har sin egen SemanticAnalyzer
+    // Constructor to create its own SemanticAnalyzer
     public ExpressionCheck(SemanticAnalyzer semanticAnalyzer) {
         this.semanticAnalyzer = semanticAnalyzer;
         this.symbolTable = semanticAnalyzer.getSymbolTable();
@@ -32,23 +31,21 @@ public class ExpressionCheck {
         return "true".equals(v) || "false".equals(v);
     }
 
-    // Metode til at tjekke om
+    // Method to check if the identifier is found in the symbolTable
     public String checkIdentifier(IdentifierNode id) {
-        String name = id.getName();                                                 // get name of IdentifierNode
+        String name = id.getName();
 
         if (symbolTable.containsKey(name)) {
-            //System.out.println("Identifier " + name + " exists");
             return name;
         }
         throw new NullPointerException("Identifier " + name + " not found in symbol table");
     }
 
-    //Her findes typen (type) af et object (SymbolObject) i symboltabellen baseret på navnet
-    // på en identifier-node (id)
-    public SymbolType checkObject(IdentifierNode id) {
 
+    // Finds the type of an object (from SymbolObject) in the symbolTable based on the name of the suiting identifier
+    public SymbolType checkObject(IdentifierNode id) {
         String name = checkIdentifier(id);
-        Symbol symbol = symbolTable.get(name);                            //find tilhørende Symbol for targetName
+        Symbol symbol = symbolTable.get(name);
 
         if (!(symbol instanceof SymbolObject)) {
             throw new RuntimeException("Undeclared type in objects declaration: " + id);
@@ -87,7 +84,8 @@ public class ExpressionCheck {
         }
         // for each constant index, check that object has that field
         for (ExpressionNode idxExpr : arr.getIndices()) {
-            // Kaster exception hvis index ikke er en konstant eller matcher (\d+) hvor 'd' er integer og '+' er en eller flere.
+
+            // Throws and exception if index is not a constant or matches, where d is a digit and + Kleene plus (one or more). \\d+ is a regex
             if (!(idxExpr instanceof ConstantNode c) || !c.getValueConstant().matches("\\d+")){
                 throw new SemanticException("Invalid index in initializer for '" + arr.getArrayName() + "'");
             }
@@ -107,11 +105,13 @@ public class ExpressionCheck {
     public boolean checkDot(IdentifierNode id, String fieldName, ExpressionNode target){
         SymbolType symbolType = checkObject(id);
 
-            /* Laver en datastruktur over alle nøgler fra symbolTypes map attributes. Nøglerne er navne på attributterne
-               Set bruges som hurtigt opslag for at se om fieldName er en attribut for typen*/
+        /*
+         * Create a datastructure for all keys from the symbolTypes maps attributes. The keys are names on the attributes
+         * The Set is used as a quick look up to see if a fieldName is an attribute for the type
+         */
         Set<String> attributeNames = symbolType.getAttributes().keySet();
-        String targetName = ((IdentifierNode) target).getName(); //Printer kun navnet fx rob
-        String typeName = symbolType.getName(); //Printer typen fx Robot
+        String targetName = ((IdentifierNode) target).getName(); // Prints the name, could be rob
+        String typeName = symbolType.getName(); // prints the type, could be robot
 
         if (!typeExists(symbolType.getName())) {
             throw new SemanticException("Object: " + targetName + " is of unrecognized type: " + typeName);
@@ -126,19 +126,20 @@ public class ExpressionCheck {
         }
     }
 
-    //metode tjekker om target er i objekts, samt finder typen på objekt
-    //derudover tjekker den om attributten må bruges på objekt af den type
-    //hvis den må så returneres true.
+    /*
+     * Method that checks if the target is part of objects, and find the types on the object
+     * Checks if attribute can be used on the object of that type
+     */
     public boolean checkDotNodeExpr (DotNode dotNode) {
-        ExpressionNode target = dotNode.getTarget();                 //Printer: targetName: IdentifierNode= Name:rob
-        String fieldName = dotNode.getField();                       //printer field navn
+        ExpressionNode target = dotNode.getTarget();
+        String fieldName = dotNode.getField();
         if (target instanceof IdentifierNode id) {
             return checkDot(id, fieldName, target);
         }
         else if (target instanceof ArrayAccessNode arr) {
             return checkArrayDot(arr, fieldName);
         } else {
-            throw new SemanticException("Unsupported dot‐target: " + target);
+            throw new SemanticException("Unsupported dot target: " + target);
         }
     }
 
@@ -149,10 +150,10 @@ public class ExpressionCheck {
             throw new RuntimeException("Identifier " + name + " not found in symbol table");
         }
         if (sym instanceof SymbolObject) {
-            // Returner typen på objektet/parameteren, ikke selve navnet
+            // returns the type of the object/parameter, not the name itself
             return checkObject(id).getName();
         } else {
-            // returnerer bare navnet hvis nu identifieren repræsenterer noget andet end et objekt (før lavede den en exception)
+            // returns the name of the identifier represents something other than an object. (Before it would throw an exception)
             return name;
         }
     }
@@ -170,16 +171,16 @@ public class ExpressionCheck {
     }
 
     private String typeEvalDot(DotNode dn, ExpressionNode expr){
-        // Tjek først at attributten findes
+        // Checks if the attribute exists
         if (!checkDotNodeExpr(dn)) {
-            throw new SemanticException("Invalid dot‐expression: " + dn);
+            throw new SemanticException("Invalid dot expression: " + dn);
         }
         ExpressionNode target = dn.getTarget();
 
         SymbolType ownerType;
 
         if (target instanceof IdentifierNode id) {
-            // Find typen på objektet (f.eks. robot)
+            // Find the type of the object. Could be 'robot', from robot robots[]...
             ownerType = checkObject(id);
         }
         else if (target instanceof ArrayAccessNode arr) {
@@ -192,13 +193,13 @@ public class ExpressionCheck {
             throw new SemanticException("Unsupported target in expr: " + expr);
         }
 
-        // Find SymbolAttribute for feltet (f.eks. carrying)
+        // Finds the SymbolAttribute for the field. Could be an attribute like 'carrying'
         SymbolAttribute attr = ownerType.getAttributes().get(dn.getField());
         List<String> poss = attr.getPossibleTypes();
         if (poss.size() == 1) {
             return poss.getFirst();
         } else {
-            // Fletter union typer sammen
+            // Joins union types seperated by '||'
             return String.join("||", poss);
         }
     }
@@ -206,7 +207,6 @@ public class ExpressionCheck {
     public String typeEvaluation(ExpressionNode expr){
         if (expr instanceof ConstantNode){
             if (checkBool((ConstantNode) expr)){
-                //System.out.println("bool: " + v);
                 return "boolean";
             } else if (checkInt((ConstantNode) expr)) {
                 return "int";
@@ -236,9 +236,6 @@ public class ExpressionCheck {
         String op = opNode.getOperator();
         String leftType = typeEvaluation(opNode.getLeft());
         String rightType = typeEvaluation(opNode.getRight());
-        //System.out.println("Comparing types for op " + op + ": left=" + typeEvaluation(opNode.getLeft()) + " right=" + typeEvaluation(opNode.getRight()));
-        //System.out.println(">> binOpEval " + op + ": left=" + leftType +  " right=" + rightType);
-        //System.out.println(">> binOpEval " + op + ": venstre=" + leftType + ", højre=" + rightType + " (expression: " + opNode + ")");
         switch (op) {
             case "+", "-":
                 if ("int".equals(leftType) && "int".equals(rightType)) {
@@ -260,10 +257,11 @@ public class ExpressionCheck {
                 break;
 
             case "==", "!=":
-                // Split union-typer på "||"
-                Set<String> leftSet  = new HashSet<>(Arrays.asList(leftType.split("\\|\\|")));
+                // Splits union types on "||"
+                Set<String> leftSet = new HashSet<>(Arrays.asList(leftType.split("\\|\\|")));
                 Set<String> rightSet = new HashSet<>(Arrays.asList(rightType.split("\\|\\|")));
-                // Behold kun de typer, der går igen. Ligesom intersection fra DTG
+
+                // Keep the types that reoccurs on both sides. Like the intersection from DTG course.
                 leftSet.retainAll(rightSet);
                 if (!leftSet.isEmpty()) {
                     return "boolean";

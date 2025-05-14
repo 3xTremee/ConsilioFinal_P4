@@ -9,13 +9,13 @@ public class StatementListNode extends StatementNode {
         this.statements = statements;
     }
 
-    // getters
+    //getters
     public List<StatementNode> getStatements() {
         return statements;
     }
 
     @Override
     public String toString() {
-        return "StatementListNode(statements=" + statements + ")";
+        return "StatementListNode(Statements = " + statements + ")";
     }
 }

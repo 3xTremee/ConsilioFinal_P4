@@ -7,20 +7,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
-
-/**
- * Simple breadth‑first search planner, with debug prints on every action attempt.
- */
+// BFS search planner
 public class Planner {
     private final List<GroundedAction> allActions;
-    //private final StatementCheck statementCheck;
     private final SemanticAnalyzer semanticAnalyzer;
-
-//    public Planner(DomainNode domain, List<ObjectNode> objects, StatementCheck statementCheck, SemanticAnalyzer semanticAnalyzer) {
-//        this.statementCheck = statementCheck;
-//        this.allActions = groundAll(domain, objects);
-//        this.semanticAnalyzer = semanticAnalyzer;
-//    }
 
     public Planner(DomainNode domain, List<ObjectNode> objects, SemanticAnalyzer semanticAnalyzer) {
         this.allActions = groundAll(domain, objects);
@@ -60,106 +50,10 @@ public class Planner {
         }
     }
 
-    /**
-     * Apply one grounded action to state s.
-     * Returns new State if guard passes, or null if guard fails.
+    /*
+     * Method for applying grounded actions to a State s
+     * Returns the new state s if the guard(condition) passes and null otherwise
      */
-//    private State apply(GroundedAction ga, State s) {
-//        //ga.getBinding() bruges typisk til mapping fra variabler til konkrete værdier eller objekter
-//        ExpressionEvaluator eval = new ExpressionEvaluator(ga.getBinding(), this.semanticAnalyzer);
-//
-//        //System.out.println("ga: " + ga.getSchema().getBody());
-//
-//        IfNode ifn = (IfNode) ga.getSchema().getBody();
-//
-//        if((ga.getSchema().getBody() instanceof IfNode)) {
-//            ExpressionNode ifCondition = ((IfNode) ga.getSchema().getBody()).getCondition();          //først castes der til ifNode og bagefter hentes condition
-//
-//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition((IfNode) ga.getSchema().getBody());
-//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
-//
-//            Boolean guard = (Boolean) eval.evaluate(ifCondition, s);
-//            System.out.println("guard2: " + guard2);
-//            if (!guard2) {
-//                return null;
-//            }
-//        }
-//
-//        /*Boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);
-//        System.out.println("guard: " + guard);
-//        if (!guard) {
-//            return null;
-//        }*/
-//
-//        State next = s;
-//        for (StatementNode st : (statementCheck.checkThenBranch(ifn))) {    /*;ifn.getThenBranch()).getStatements()*/
-//            AssignmentNode asn = (AssignmentNode) st;
-//            boolean isOkay = statementCheck.checkAssignment(asn);
-//            System.out.println("isOkay: " + isOkay);
-//
-//
-//            DotNode dotNode = asn.getTarget();
-//            ExpressionNode exprNode = dotNode.getTarget();
-//            String varName = ((IdentifierNode) exprNode).getName();
-//            String object  = ga.getBinding().getOrDefault(varName, varName);
-//            String field   = dotNode.getField();
-//            Object val     = eval.evaluate(asn.getExpression(), next);
-//            next = next.with(object, field, val);
-//        }
-//        return next;
-//    }
-
-
-    //DET HER ER DEN SOM VIRKER PT. EFTER FROKOST ONSDAG D. 7/5
-//    private State apply(GroundedAction ga, State s) {
-//        // Bind parametre ind i symbolTable
-//        Map<String,String> binding = ga.getBinding();
-//        for (var entry : binding.entrySet()) {
-//            String varName = entry.getKey();       // kunne være "r"
-//            String objName = entry.getValue();     // kunne være "rob"
-//            // hent det eksisterende SymbolObject for "rob"
-//            SymbolObject symObj = (SymbolObject) semanticAnalyzer.getSymbolTable().get(objName);
-//            semanticAnalyzer.getSymbolTable().put(varName, symObj);
-//        }
-//
-//        try {
-//            // Opret evaluator med binding
-//            ExpressionEvaluator eval = new ExpressionEvaluator(binding, this.semanticAnalyzer);
-//
-//            IfNode ifn = (IfNode) ga.getSchema().getBody();
-//            // Guard check
-//            ExpressionNode ifCheck2 = statementCheck.checkIfCondition(ifn);
-//            Boolean guard2 = (Boolean) eval.evaluate(ifCheck2, s);
-//            System.out.println("guard2: " + guard2);
-//            if (!guard2) {
-//                return null;
-//            }
-//
-//            // Kør body
-//            State next = s;
-//            for (StatementNode st : statementCheck.checkThenBranch(ifn)) {
-//                AssignmentNode asn = (AssignmentNode) st;
-//                //statementCheck.checkAssignment(asn);
-//
-//                DotNode dotNode = asn.getTarget();
-//                // find objekt- og felt-navn
-//                IdentifierNode targetObj = (IdentifierNode) dotNode.getTarget();
-//                String varName = targetObj.getName();
-//                String object = binding.getOrDefault(varName, varName);
-//                String field = dotNode.getField();
-//                Object val = eval.evaluate(asn.getExpression(), next);
-//                next = next.with(object, field, val);
-//            }
-//            return next;
-//
-//        } finally {
-//            // Fjern parametre igen uanset hvad
-//            for (String varName : binding.keySet()) {
-//                semanticAnalyzer.getSymbolTable().remove(varName);
-//            }
-//        }
-//    }
-
     private State apply(GroundedAction ga, State s) {
         // Bind parametre
         Map<String,String> binding = ga.getBinding();
@@ -172,7 +66,8 @@ public class Planner {
             ExpressionEvaluator eval = new ExpressionEvaluator(binding, semanticAnalyzer);
 
             IfNode ifn = (IfNode) ga.getSchema().getBody();
-            // ren evaluering, ingen type tjek
+
+            // Only evaluating here, no type checking
             boolean guard = (Boolean) eval.evaluate(ifn.getCondition(), s);
             if (!guard) return null;
 
@@ -216,7 +111,7 @@ public class Planner {
 
 
 
-    /** Check whether every goal expression holds in state s. */
+    // Chech if every goal expression is true in state s
     private boolean isGoal(State s, List<ExpressionNode> goals) {
         ExpressionEvaluator eval = new ExpressionEvaluator(this.semanticAnalyzer); // no bindings
         for (ExpressionNode g : goals) {
@@ -228,10 +123,7 @@ public class Planner {
         return true;
     }
 
-    /**
-     * Breadth‑first search for a plan.
-     * Prints every attempted action and result.
-     */
+    // BFS algorithm used to search for a plan
     public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goals) {
         record Node(State state, List<GroundedAction> plan) {}
         Queue<Node> frontier = new ArrayDeque<>();
@@ -253,11 +145,12 @@ public class Planner {
                 //System.out.println("Attempting action: " + ga + "\n  from state: " + n.state);
                 State nxt = apply(ga, n.state);
                 if (nxt != null) {
-                    //System.out.println("\u001B[32m" + "  → Applied, new state: " + "\u001B[0m" + nxt);
+                    //System.out.println("\u001B[32m" + " Applied, new state: " + "\u001B[0m" + nxt);
                     if (seen.add(nxt)) {
                         List<GroundedAction> p2 = new ArrayList<>(n.plan);
                         p2.add(ga);
-                        // Check goal right away
+
+                        //Checks goal state
                         if (isGoal(nxt, goals)) {
                             //System.out.println("\u001B[34m" + "Reached goal with action: " + ga + "\u001B[0m");
                             System.out.print("Goal: " + nxt + "\n");
@@ -266,7 +159,7 @@ public class Planner {
                         frontier.add(new Node(nxt, p2));
                     }
                 } else {
-                    //System.out.println("\u001B[31m" + "  → Guard failed, skipping" + "\u001B[0m");
+                    //System.out.println("\u001B[31m" + " Guard failed" + "\u001B[0m");
 
                 }
             }

@@ -20,6 +20,6 @@ public class ArrayValueNode extends ValueNode {
 
     @Override
     public String toString() {
-        return "ArrayValueNode(elementType=" + elementType + ", size=" + size + ")";
+        return "ArrayValueNode(elementType = " + elementType + ", size = " + size + ")";
     }
 }

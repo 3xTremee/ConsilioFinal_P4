@@ -15,7 +15,7 @@ public class ActionNode extends AstNode {
         this.body = body;
     }
 
-    //Getters
+    //getters
     public String getName() {
         return name;
     }
@@ -30,6 +30,6 @@ public class ActionNode extends AstNode {
 
     @Override
     public String toString() {
-        return "Action(name=" + name + ", parameters=" + parameters + ", body=" + body + ")";
+        return "Action(name = " + name + ", parameters = " + parameters + ", body = " + body + ")";
     }
 }

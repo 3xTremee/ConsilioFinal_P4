@@ -7,12 +7,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.*;
 
-/**
- * One concrete instantiation of an ActionNode schema.
- */
-public class GroundedAction { //schema=action, binding=paramnavn bundet til konkret objekt navn fx r->robot1
+// Creating the grounded action
+public class GroundedAction {
     private final ActionNode schema;
-    private final Map<String, String> binding;
+    private final Map<String, String> binding; // Parameter name bound to concrete object name. "r bound to rob1" as an example
 
     public GroundedAction(ActionNode schema, Map<String, String> binding) {
         this.schema = schema;
@@ -23,7 +21,7 @@ public class GroundedAction { //schema=action, binding=paramnavn bundet til konk
             }
         }
         this.binding = Collections.unmodifiableMap(ordered);
-        //this.binding = Map.copyOf(binding); //laver immutable kopi af mappet
+        //this.binding = Map.copyOf(binding);
     }
 
     public ActionNode getSchema() {
@@ -49,7 +47,7 @@ public class GroundedAction { //schema=action, binding=paramnavn bundet til konk
                 && Objects.equals(binding, ga.binding);
     }
 
-    // Bliver muligvis ikke brugt (slet?)
+
     @Override
     public int hashCode() {
         return Objects.hash(schema.getName(), binding);

@@ -22,6 +22,6 @@ public class AttributeNode extends AstNode{
 
     @Override
     public String toString() {
-        return "identifier: " + identifier + " value: " + value;
+        return "identifier:  " + identifier + " value: " + value;
     }
 }

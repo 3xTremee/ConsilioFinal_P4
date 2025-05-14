@@ -28,6 +28,6 @@ public class DomainNode extends AstNode {
 
     @Override
     public String toString() {
-        return "Domain(name=" + name + ", types=" + types + ", actions=" + actions + ")";
+        return "Domain(Name = " + name + ", Types = " + types + ", Actions = " + actions + ")";
     }
 }
