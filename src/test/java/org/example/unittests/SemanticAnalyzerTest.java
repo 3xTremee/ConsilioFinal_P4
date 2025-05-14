@@ -1,5 +1,6 @@
 package org.example.unittests;
 
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -14,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,16 @@ import java.util.Set;
 
 public class SemanticAnalyzerTest {
     private SemanticAnalyzer semanticAnalyzer;
+
+    private ProgramNode loadProgram(String filename) throws Exception {
+        String code = Files.readString(Paths.get("src/main/java/org/example/files/" + filename));
+        CharStream input = CharStreams.fromString(code);
+        ConsilioLexer lexer = new ConsilioLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        ConsilioParser parser = new ConsilioParser(tokens);
+        AstBuilder builder = new AstBuilder();
+        return (ProgramNode) builder.visit(parser.program());
+    }
 
     @BeforeEach
     public void setup() {
@@ -149,7 +162,25 @@ public class SemanticAnalyzerTest {
         assertThrows(SemanticException.class,
                 () -> semanticAnalyzer.buildSymbolTable(domainNode, problemNode));
     }
-// ================================================================SEMANTIK UNIT TESTS - FYLDER MEGET
+
+// domain and problem build the symbol table
+    @Test
+    public void testValidProgramAnalysis() throws Exception {
+        ProgramNode program = loadProgram("program.co");
+        assertDoesNotThrow(() -> {
+            semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
+            semanticAnalyzer.addObjectValues(program.getProblem());
+        });
+    }
+
+    @Test
+    public void testMissingAttributInitializationThrows() throws Exception {
+        ProgramNode program = loadProgram("program.co");
+        semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
+        assertThrows(SemanticException.class, () -> semanticAnalyzer.addObjectValues(program.getProblem()));
+    }
+
+// =================SEMANTIK UNIT TESTS - FYLDER MEGET=================================
     //====================================================================================
     @Test
     public void testValidProgramWorks() {

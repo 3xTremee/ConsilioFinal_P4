@@ -46,7 +46,7 @@ objects {
 }
 
 initialState {
-    rob.location = A;
+
     rob.carrying = false;
 
     packages[0,1].location = A;

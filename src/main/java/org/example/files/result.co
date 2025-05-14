@@ -1,9 +1,9 @@
 pickUpPackage{r=rob, p=pack1}
 move{r=rob, dest=C}
-putDownPackage{p=pack1, rm=C, r=rob}
+putDownPackage{rm=C, p=pack1, r=rob}
 pickUpPackage{r=rob, p=rPack1}
 move{r=rob, dest=A}
-putDownPackage{p=rPack1, rm=A, r=rob}
+putDownPackage{rm=A, p=rPack1, r=rob}
 pickUpPackage{r=rob, p=pack2}
 move{r=rob, dest=B}
-putDownPackage{p=pack2, rm=B, r=rob}
+putDownPackage{rm=B, p=pack2, r=rob}
