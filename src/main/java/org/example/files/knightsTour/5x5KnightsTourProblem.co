@@ -1,0 +1,35 @@
+define problem knightTour
+import knightTour
+
+objects {
+    Knight knight[]  = {N1};
+    Square squares[] = {
+        A1, A2, A3, A4, A5,
+        B1, B2, B3, B4, B5,
+        C1, C2, C3, C4, C5,
+        D1, D2, D3, D4, D5,
+        E1, E2, E3, E4, E5};
+}
+
+initialState {
+    knight[0].location = A1;
+
+    squares[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].isVisited = false;
+    A1.isVisited = true;
+
+    squares[0,1,2,3,4].row = 1;
+    squares[5,6,7,8,9].row = 2;
+    squares[10,11,12,13,14].row = 3;
+    squares[15,16,17,18,19].row = 4;
+    squares[20,21,22,23,24].row = 5;
+
+    squares[0,5,10,15,20].col = 1;
+    squares[1,6,11,16,21].col = 2;
+    squares[2,7,12,17,22].col = 3;
+    squares[3,8,13,18,23].col = 4;
+    squares[4,9,14,19,24].col = 5;
+}
+
+goalState {
+    squares[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24].isVisited == true;
+}
