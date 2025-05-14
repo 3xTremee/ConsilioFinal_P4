@@ -1,0 +1,16 @@
+moveKnight{N=N1, from=A1, to=B3}
+moveKnight{N=N1, from=B3, to=C1}
+moveKnight{N=N1, from=C1, to=E2}
+moveKnight{N=N1, from=E2, to=C3}
+moveKnight{N=N1, from=C3, to=B1}
+moveKnight{N=N1, from=B1, to=A3}
+moveKnight{N=N1, from=A3, to=C2}
+moveKnight{N=N1, from=C2, to=E1}
+moveKnight{N=N1, from=E1, to=F3}
+moveKnight{N=N1, from=F3, to=D2}
+moveKnight{N=N1, from=D2, to=F1}
+moveKnight{N=N1, from=F1, to=E3}
+moveKnight{N=N1, from=E3, to=D1}
+moveKnight{N=N1, from=D1, to=B2}
+moveKnight{N=N1, from=B2, to=D3}
+moveKnight{N=N1, from=D3, to=F2}
