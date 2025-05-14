@@ -45,7 +45,7 @@ public class TypecheckerIntegrationTest {
         SemanticAnalyzer sem = buildSymbols(program);
 
         for (ActionNode action : program.getDomain().getActions()) {
-            assertDoesNotThrow(() -> sem.analyzeAction(action), () -> "Action '" + action.getName() + "' failed to type‐check");
+            assertDoesNotThrow(() -> sem.analyzeAction(action), () -> "Action '" + action.getName() + "' failed to type-check");
         }
     }
 
@@ -58,7 +58,7 @@ public class TypecheckerIntegrationTest {
         for (StatementNode stmt : program.getProblem().getInit()) {
             assertTrue(stmt instanceof AssignmentNode, "expected only assignments in initialState, got " + stmt);
             AssignmentNode asn = (AssignmentNode) stmt;
-            assertTrue(stmtChk.checkAssignment(asn), "initialState assignment failed type‐check: " + asn);
+            assertTrue(stmtChk.checkAssignment(asn), "initialState assignment failed type-check: " + asn);
         }
     }
 
@@ -87,7 +87,7 @@ public class TypecheckerIntegrationTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertThrows(SemanticException.class, () -> stmtChk.checkComparison(bad), "Expected a type‐mismatch when comparing " + bad);
+        assertThrows(SemanticException.class, () -> stmtChk.checkComparison(bad), "Expected a type-mismatch when comparing " + bad);
     }
 
     @Test
@@ -98,6 +98,6 @@ public class TypecheckerIntegrationTest {
         sem.buildSymbolTable(program.getDomain(), program.getProblem());
 
         assertThrows(RuntimeException.class, () -> sem.addObjectValues(program.getProblem()),
-                "Expected a bad‐type assignment in initialState to trigger an exception");
+                "Expected a bad-type assignment in initialState to trigger an exception");
     }
 }
