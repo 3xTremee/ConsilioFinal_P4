@@ -62,10 +62,8 @@ public class SemanticAnalyzer {
             for (String elementName : ai.getElements()) {
                 ObjectNode objectNode = new ObjectNode(typeName, arrayName, elementName, new IdentifierNode(elementName));
                 SymbolObject objSymbol = new SymbolObject(elementName, objectNode, typeSymbol);
-                if (typeSymbol != null) {
                     for (SymbolAttribute attrDef : typeSymbol.getAttributes().values()) {
                         objSymbol.setAttributeValue(attrDef.getName(), null); // Initialize with null Value
-                    }
                 }
                 arraySymbol.addObjects(objSymbol);
                 enterSymbol(elementName, objSymbol);

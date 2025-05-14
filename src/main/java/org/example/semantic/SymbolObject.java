@@ -28,23 +28,12 @@ public class SymbolObject extends Symbol{
         return type;
     }
 
-    public void addAttributes(String attributeName, Object value) {
-        if (attributes.containsKey(attributeName)) {
-            throw new SemanticException("Duplicate attribute declaration: " + attributeName);
-        }
-        attributes.put(attributeName, value);
-    }
-
     public void setAttributeValue(String attributeName, Object value) {
         attributes.put(attributeName, value);
     }
 
     public Object getAttributeValue(String attributeName) {
         return attributes.get(attributeName);
-    }
-
-    public void updateAttributes(String attributeName, Object value) {
-        attributes.put(attributeName, value);
     }
 
     public Map<String, Object> getAttributes() {

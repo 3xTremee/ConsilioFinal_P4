@@ -15,10 +15,6 @@ public class SymbolArray extends Symbol {
         return "ObjectArray";
     }
 
-    public ArrayInitializerNode getArrayInitializerNode() {
-        return (ArrayInitializerNode) getNode();
-    }
-
     public void addObjects(SymbolObject object) {
         objects.add(object);
     }

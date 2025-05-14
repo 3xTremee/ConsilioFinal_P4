@@ -16,10 +16,6 @@ public class SymbolType extends Symbol {
         return "Type";
     }
 
-    public TypeNode getTypeNode() {
-        return (TypeNode) getNode();
-    }
-
     public void addAttribute(String attributeName, SymbolAttribute attributeSymbol) {
         attributes.put(attributeName, attributeSymbol);
     }
