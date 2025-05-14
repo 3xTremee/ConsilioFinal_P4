@@ -76,6 +76,7 @@ public class State {
     /**
      * Build the initial State from the problem’s objects and init assignments.
      */
+    // Bliver vidst ikke brugt (slet?)
     public static State fromProblem(ProblemNode problem, SemanticAnalyzer semanticAnalyzer) {
         // 1) empty slot for each object
         Map<String, Map<String, Object>> init = new HashMap<>();

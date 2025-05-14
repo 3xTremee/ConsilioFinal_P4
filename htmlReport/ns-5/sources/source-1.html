@@ -72,10 +72,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    82,2%
+    81,5%
   </span>
   <span class="absValue">
-    (97/118)
+    (97/119)
   </span>
 </td>
 </tr>
@@ -323,8 +323,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="pc">&nbsp;                if (&quot;int&quot;.equals(leftType) &amp;&amp; &quot;int&quot;.equals(rightType)) {</b>
 <b class="fc">&nbsp;                    return &quot;int&quot;;</b>
 &nbsp;                }
-&nbsp;                break;
-&nbsp;
+&nbsp;                else{
+<b class="nc">&nbsp;                    throw new SemanticException(&quot;Invalid types: &#39;&quot; + leftType + &quot;&#39; and: &#39;&quot; + rightType + &quot;&#39; for arithmetic operation&quot;);</b>
+&nbsp;                }
 &nbsp;            case &quot;&gt;&quot;, &quot;&lt;&quot;, &quot;&gt;=&quot;, &quot;&lt;=&quot;:
 <b class="pc">&nbsp;                if (&quot;int&quot;.equals(leftType) &amp;&amp; &quot;int&quot;.equals(rightType)) {</b>
 <b class="fc">&nbsp;                    return &quot;boolean&quot;;</b>
@@ -349,14 +350,10 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;                break;
 &nbsp;
 &nbsp;            default:
-<b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt operator: &quot; + op);</b>
+<b class="nc">&nbsp;                throw new SemanticException(&quot;Invalid operator: &quot; + op);</b>
 &nbsp;        }
-&nbsp;
-<b class="nc">&nbsp;        throw new RuntimeException(</b>
-&nbsp;                &quot;Not compatible types: &quot; + leftType + &quot; and &quot; + rightType
-&nbsp;        );
+<b class="nc">&nbsp;        throw new RuntimeException(&quot;Not compatible types: &quot; + leftType + &quot; and &quot; + rightType);</b>
 &nbsp;    }
-&nbsp;
 &nbsp;}
 </code>
 </pre>
@@ -381,7 +378,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-13 11:28</div>
+    <div style="float:right;">generated on 2025-05-14 11:03</div>
 </div>
 </body>
 </html>
