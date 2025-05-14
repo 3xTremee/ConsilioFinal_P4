@@ -36,10 +36,6 @@ public class SymbolAttribute extends Symbol {
             types.add(((ValueTypeNode) node).getTypeName());
         } else if (node instanceof BaseValueNode) {
             types.add(((BaseValueNode) node).getValue());
-        } else if (node instanceof ArrayValueNode) {
-            ValueNode elementType = ((ArrayValueNode) node).getElementType();
-            String elementTypeName = ((ValueTypeNode) elementType).getTypeName();
-            types.add(elementTypeName + "[]");
         } else if (node instanceof OrValueNode) {
             for (ValueNode type : ((OrValueNode) node).getTypes()) {
                 extractTypes(type, types);
