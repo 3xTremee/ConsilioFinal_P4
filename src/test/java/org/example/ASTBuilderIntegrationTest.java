@@ -45,11 +45,11 @@ public class ASTBuilderIntegrationTest {
 
     @Test
     public void testAstWithTypesAndAttributes(){
-        String input = "define domain emptyDomain\n" +
+        String input = "define domain testDomain\n" +
                 "type testPerson{ age: int; exists: boolean; name: testPerson;}\n" +
                 "type otherPerson{name: testPerson || otherPerson;}\n" +
-                "define problem emptyProblem\n" +
-                "import emptyDomain\n" +
+                "define problem testProblem\n" +
+                "import testDomain\n" +
                 "objects {}\n" +
                 "initialState {}\n" +
                 "goalState {}";
