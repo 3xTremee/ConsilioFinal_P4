@@ -4,7 +4,6 @@ import org.example.ast.*;
 
 import java.util.List;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class StatementCheck {
 
@@ -16,19 +15,11 @@ public class StatementCheck {
         this.expressionCheck = new ExpressionCheck(semanticAnalyzer);
     }
 
-    public ExpressionNode checkIfCondition(IfNode ifNode) {
-        ExpressionNode ifCondition = ifNode.getCondition();
-
-        //System.out.println("ifCond: " + ifCondition);
-        return ifCondition;
-    }
-
     public boolean checkComparison(BinaryOpNode node){
         String leftType = expressionCheck.typeEvaluation(node.getLeft());
         String rightType = expressionCheck.typeEvaluation(node.getRight());
 
         if(leftType.equals(rightType)){
-            //System.out.println("Successful comparison of " + node.getLeft() + " and " + node.getRight());
             return true;
         } else {
             throw new SemanticException("Cannot compare " + leftType + " with " + rightType);
@@ -36,25 +27,20 @@ public class StatementCheck {
     }
 
     public List<StatementNode> checkThenBranch(IfNode ifNode) {
-        //bliver nødt til at caste for at få statements.
+        // Must cast to StatementListNode to get the statements
         StatementListNode thenBranch = (StatementListNode) ifNode.getThenBranch();
-
-        //System.out.println("thenBranch: " + thenBranch);
-        //System.out.println(thenBranch.getStatements());
 
         return thenBranch.getStatements();
     }
 
     public boolean checkAssignment(AssignmentNode node){
-        // get the possible values of the attribute on left-hand side
+        // Get the possible values of the attribute on left-hand side
         DotNode target = node.getTarget();
         ExpressionNode exprNode = target.getTarget();
         String field = target.getField();
 
         // Left side; possible types
         List<String> possibleValueType = getAssignableTypes(node);
-
-        //System.out.println("possibleValueType: " + possibleValueType);
 
         String objectName;
         if (exprNode instanceof IdentifierNode id) {
@@ -68,22 +54,20 @@ public class StatementCheck {
             throw new SemanticException("Cannot assign " + exprNode + " to " + field);
         }
 
-        //get value that is assigned to the attribute
+        // Get value that is assigned to the attribute
         String valueType = getExpressionType(node.getExpression());
-        //System.out.println("valueType: " + valueType);
-
         if (valueType == null){
             throw new RuntimeException("Value assigned for attribute: " + target.getField() + ", in object: " + objectName + ", is not recognized.");
         }
         else if (!possibleValueType.contains(valueType)) {
             throw new RuntimeException("Value assigned for attribute: " + target.getField() + ", in object: " + objectName + ", is of wrong type.");
+
         }
-        //System.out.println("Assigment OK");
         return true;
     }
 
     public List<String> getAssignableTypes(AssignmentNode node) {
-        // Extract the field‐access on the LHS
+        // Extract the field-access on the left-hand side
         DotNode target = node.getTarget();
         ExpressionNode exprNode = target.getTarget();
         String field = target.getField();
@@ -147,7 +131,7 @@ public class StatementCheck {
         } else if (expression instanceof BinaryOpNode){
             return expressionCheck.binOpEval((BinaryOpNode) expression);
         }
-        // DotNode, så man kan skrive p.location == r.robot. Altså dotNode på hver side af ==
+        // DotNode, in the case that one writes p.location == r.robot. That is, dotNode on each side of ==
         if (expression instanceof DotNode dotNode) {
             return expressionCheck.typeEvaluation(dotNode);
         }

@@ -19,6 +19,7 @@ public class SemanticAnalyzer {
     }
 
     public void buildSymbolTable (DomainNode domain, ProblemNode problem) {
+        // Add types and their attributes to the symbol table
         for (TypeNode typeNode : domain.getTypes()) {
             SymbolType typeSymbol = new SymbolType(typeNode.getName(), typeNode);
             enterSymbol(typeNode.getName(), typeSymbol);
@@ -36,26 +37,26 @@ public class SemanticAnalyzer {
             enterSymbol(actionNode.getName(), actionSymbol);
         }
 
-        // Check domain import
+        // Check if the domain matches the import name
         if (!domain.getName().equals(problem.getImportName())) {
             throw new SemanticException("Import name mismatch: " + problem.getImportName() + ", Expected: " + domain.getName());
         }
 
-        // Add Object Arrays and Objects
+        // Add Object arrays and objects in the same manner
         for (ArrayInitializerNode ai : problem.getArrayInitializers()) {
             String typeName = ai.getType();
             String arrayName = ai.getName();
 
-            //får fat i attributterne og navnet for typen
+            // Get the type symbol from the symbol table such that its attributes can be added to the object
             SymbolType typeSymbol = (SymbolType) symbolTable.get(typeName);
             Symbol sym = symbolTable.get(typeName);
 
-            // typetjek for om typen som man bruger i et array findes
+            // Check if the type of the array is found in the symbol table
             if (!expressionCheck.arrayInitializerCheck(sym, typeName)) {
                 return;
             }
 
-            // fortsæt hvis typen findes
+            // Continue if the type exists
             SymbolArray arraySymbol = new SymbolArray(arrayName, ai);
             enterSymbol(arrayName, arraySymbol);
 
@@ -63,7 +64,7 @@ public class SemanticAnalyzer {
                 ObjectNode objectNode = new ObjectNode(typeName, arrayName, elementName, new IdentifierNode(elementName));
                 SymbolObject objSymbol = new SymbolObject(elementName, objectNode, typeSymbol);
                     for (SymbolAttribute attrDef : typeSymbol.getAttributes().values()) {
-                        objSymbol.setAttributeValue(attrDef.getName(), null); // Initialize with null Value
+                        objSymbol.setAttributeValue(attrDef.getName(), null);
                 }
                 arraySymbol.addObjects(objSymbol);
                 enterSymbol(elementName, objSymbol);
@@ -71,11 +72,10 @@ public class SemanticAnalyzer {
         }
     }
 
-    // Funktion til at tilføje værdier til objekter
+    // Method for adding the initial values to the objects
     public void addObjectValues(ProblemNode problem) {
         ExpressionEvaluator evaluator = new ExpressionEvaluator(this);
-        // Noget der Værdier til attributes til objekter
-        // Baseret på initial state listen fra AST builder
+
         List<StatementNode> initialState = problem.getInit();
 
         for (StatementNode statement : initialState) {
@@ -93,13 +93,11 @@ public class SemanticAnalyzer {
             Object val = evaluator.evaluate(asn.getExpression(), null);
 
             if (exprNode instanceof IdentifierNode id) {
-                // Single-object case
                 String name = id.getName();
                 SymbolObject objSymbol = (SymbolObject) symbolTable.get(name);
                 objSymbol.setAttributeValue(field, val);
             }
             else if (exprNode instanceof ArrayAccessNode arr) {
-                // Array-of-objects case
                 String arrayName = arr.getArrayName();
                 SymbolArray symArr = (SymbolArray) symbolTable.get(arrayName);
 
@@ -109,10 +107,8 @@ public class SemanticAnalyzer {
                     element.setAttributeValue(field, val);
                 }
             }
-            /* Noget der baseret på assignmentsne fra initial state listen
-             Finder værdierne af expressions noden på højre side og tillægger den
-             Den rigtige attribut i objektet objSymbol.*/
         }
+        // Check if all attributes of all objects are initialized
         for (SymbolObject objSymbol : symbolTable.values().stream()
                 .filter(symbol -> symbol instanceof SymbolObject)
                 .map(symbol -> (SymbolObject) symbol)
@@ -131,40 +127,40 @@ public class SemanticAnalyzer {
     }
 
     public void analyzeAction(ActionNode action) {
-        // Tilføj parametre som midlertidige SymbolObject
+        // Add parameters as temporary SymbolObjects
         for (ParameterNode p : action.getParameters()) {
-            // slår typen op i table (skal allerede være der fra buildSymbolTable method)
+            // Check if the type is found in the symbol table (Should already be there from the buildSymbolTable method)
             SymbolType typeSym = (SymbolType) symbolTable.get(p.getType());
             if (typeSym == null) {
                 throw new SemanticException("Unknown type for parameter: " + p.getType());
             }
 
-            // laver en temp ObjectNode
+            // Making a temporary ObjectNode
             ObjectNode tempNode = new ObjectNode(p.getType(), null, p.getName(), new IdentifierNode(p.getName()));
             SymbolObject parameterSym = new SymbolObject(p.getName(), tempNode, typeSym);
 
-            // initialiser alle attributter til null, fordi der er et andet tjek som siger at objects skal være initialiseret
+            // Initialize all attributes to null, because there is another check that says objects must be initialized
             for (SymbolAttribute attr : typeSym.getAttributes().values()) {
                 parameterSym.setAttributeValue(attr.getName(), null);
             }
 
-            // put ind i table
+            // Put the parameter into the table
             symbolTable.put(p.getName(), parameterSym);
         }
 
-        // Tjek body’en er en ifNode
+        // Check if the body is an ifNode
         StatementNode body = action.getBody();
         if (!(body instanceof IfNode ifn)) {
             throw new SemanticException("Body of action: '" + action.getName() + "' does not contain an if statement at entry: " + body.getClass());
         }
 
-        // guard skal være boolean
+        // Guard has to be boolean
         String guardType = expressionCheck.typeEvaluation(ifn.getCondition());
         if (!"boolean".equals(guardType)) {
             throw new SemanticException("If-condition should be boolean, received: " + guardType);
         }
 
-        // tjek alle assignments i then-branchen
+        // Check all assignments in the then-branch
         for (StatementNode stNode : statementCheck.checkThenBranch(ifn)) {
             if (stNode instanceof AssignmentNode asNode) {
                 statementCheck.checkAssignment(asNode);
@@ -173,45 +169,9 @@ public class SemanticAnalyzer {
             }
         }
 
-        // Fjern parametre igen
+        // Remove the parameters again
         for (ParameterNode p : action.getParameters()) {
             symbolTable.remove(p.getName());
         }
     }
-
-/*
-    //  Print symbol table
-    public void printTables() {
-        System.out.println("\nSymbol Table:");
-        for (Map.Entry<String, Symbol> entry : symbolTable.entrySet()) {
-            String name = entry.getKey();
-            Symbol symbol = entry.getValue();
-            if (symbol instanceof SymbolType) {
-                SymbolType typeSymbol = (SymbolType) symbol;
-                System.out.println("Type: " + name);
-                System.out.println(", Attributes:");
-                for (SymbolAttribute attrSymbol : typeSymbol.getAttributes().values()) { // Iterate through values of the map
-                    System.out.println("  - Name: " + attrSymbol.getName());
-                    for (String possibleType : attrSymbol.getPossibleTypes()) {
-                        System.out.println("    - Possible Type: " + possibleType);
-                    }
-                }
-            } else if (symbol instanceof SymbolArray) {
-                SymbolArray arraySymbol = (SymbolArray) symbol;
-                System.out.println("Array: " + name);
-                System.out.println(", Objects:");
-                for (SymbolObject objSymbol : arraySymbol.getObjects()) {
-                    System.out.println("  - Name: " + objSymbol.getName() +
-                            ", Type: " + objSymbol.getType());
-                    if (!objSymbol.getAttributes().isEmpty()) {
-                        System.out.println("    - Attributes:");
-                        for (Map.Entry<String, Object> attrEntry : objSymbol.getAttributes().entrySet()) {
-                            System.out.println("      - Name: " + attrEntry.getKey() + ", Value: " + attrEntry.getValue());
-                        }
-                    }
-                }
-            }
-        }
-    }
-    */
 }

@@ -5,13 +5,11 @@ import org.example.ast.*;
 import org.example.semantic.*;
 import org.example.planner.*;
 import org.antlr.v4.runtime.*;
-import org.w3c.dom.Attr;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,69 +29,42 @@ public class Main {
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ConsilioParser parser = new ConsilioParser(tokens);
 
-        // Fjerner standard‐error listeners som er lavet af ANTLR
+        // Removes standard error listeners made by ANTLR
         parser.removeErrorListeners();
 
-        // Tilføj en listener som kaster exception ved FØRSTE syntax fejl
+        // Add a listener that throws an exception on the FIRST syntax error
         parser.addErrorListener(new BaseErrorListener() {
             @Override
             public void syntaxError(Recognizer<?,?> recognizer, Object offendingSymbol, int line, int charPositionInLine,
                     String msg, RecognitionException e)
             {
-                throw new RuntimeException("Syntaxfejl ved linje " + line + ":" + charPositionInLine + " – " + msg);
+                throw new RuntimeException("Syntax-error in line " + line + ":" + charPositionInLine + " - " + msg);
             }
         });
 
-        // Parser og bygger AST
+        // Parse and build AST
         AstBuilder astBuilder = new AstBuilder();
         ProgramNode program = astBuilder.visitProgram(parser.program());
 
-        // Bare for at printe AST. Skal bare slettes igen på et tidspunkt så den ikke printer AST
-        //System.out.println(program);
 
-        // Semantic tjek
+        // Semantic check
         SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
         semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
-        // Typechecking
         semanticAnalyzer.addObjectValues(program.getProblem());
 
-        //Type tjekker goals: alle goal-expressions SKAL være boolean
+        // Type checking goals: all goal-expressions MUST be boolean
         ExpressionCheck goalCheck = new ExpressionCheck(semanticAnalyzer);
         for (ExpressionNode goal : program.getProblem().getExpression()) {
             String eval = goalCheck.typeEvaluation(goal);
             if (!"boolean".equals(eval)) {
-                throw new RuntimeException("Type-fejl i goalState: udtryk '" + goal + "' er ikke boolean men " + eval);
+                throw new RuntimeException("Type-error in goalState: expression '" + goal + "' is not boolean but " + eval);
             }
         }
 
-        // Type tjekker hver action inden planneren bliver kaldt
+        // Type check all actions before calling the planner
         for (ActionNode action : program.getDomain().getActions()) {
             semanticAnalyzer.analyzeAction(action);
         }
-
-        // Print af tabeller
-        //semanticAnalyzer.printTables();
-
-        /*
-        // Test af expressioncheck
-        ExpressionCheck expressionCheck = new ExpressionCheck(semanticAnalyzer);
-        ProblemNode problem = program.getProblem();
-
-        List<ArrayInitializerNode> arraysInProblem = problem.getArrayInitializers();
-
-        for (ArrayInitializerNode array : arraysInProblem) {
-            IdentifierNode identifierNode = new IdentifierNode(array.getName());
-            expressionCheck.checkIdentifier(identifierNode);
-        }
-
-        List<ObjectNode> objectsInProblem = problem.getObjects();
-
-        for (ObjectNode object : objectsInProblem) {
-            String objectType = expressionCheck.checkObject(object.getIdentifier());
-            expressionCheck.typeExists(objectType);
-        }
-
-         */
 
 
         // Planning
@@ -102,7 +73,6 @@ public class Main {
         Planner planner = new Planner(
                 program.getDomain(),
                 program.getProblem().getObjects(),
-                //new StatementCheck(semanticAnalyzer), // Denne var med før, men StatementCheck er fjernet fra planner constructor
                 semanticAnalyzer
         );
         Optional<List<GroundedAction>> plan = planner.bfs(
@@ -118,7 +88,7 @@ public class Main {
                                 .map(Object::toString)
                                 .reduce("", (a, b) -> a + b + System.lineSeparator());
                         Files.writeString(Path.of(resultFilePath), planContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                        System.out.println("Plan written to result.co");
+                        System.out.println("Plan written to result file:");
                     } catch (IOException e) {
                         System.err.println("An error occurred while writing the plan to the file: " + e.getMessage());
                     }
