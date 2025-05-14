@@ -48,34 +48,34 @@ Current scope:     <a href="../../index.html">all classes</a>
   <td class="name">State</td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    100%
   </span>
   <span class="absValue">
-    (0/1)
+    (1/1)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    87,5%
   </span>
   <span class="absValue">
-    (0/8)
+    (7/8)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    55%
   </span>
   <span class="absValue">
-    (0/20)
+    (11/20)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    0%
+    63,4%
   </span>
   <span class="absValue">
-    (0/41)
+    (26/41)
   </span>
 </td>
 </tr>
@@ -104,62 +104,62 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    SemanticAnalyzer semanticAnalyzer;
 &nbsp;
-<b class="nc">&nbsp;    public State(Map&lt;String, Map&lt;String, Object&gt;&gt; initial, SemanticAnalyzer semanticAnalyzer) {</b>
-<b class="nc">&nbsp;            this.store = new HashMap&lt;&gt;();</b>
-<b class="nc">&nbsp;            for (Map.Entry&lt;String, Map&lt;String, Object&gt;&gt; e : initial.entrySet()) {</b>
-<b class="nc">&nbsp;                this.store.put(e.getKey(), new HashMap&lt;&gt;(e.getValue()));</b>
+<b class="fc">&nbsp;    public State(Map&lt;String, Map&lt;String, Object&gt;&gt; initial, SemanticAnalyzer semanticAnalyzer) {</b>
+<b class="fc">&nbsp;            this.store = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;            for (Map.Entry&lt;String, Map&lt;String, Object&gt;&gt; e : initial.entrySet()) {</b>
+<b class="fc">&nbsp;                this.store.put(e.getKey(), new HashMap&lt;&gt;(e.getValue()));</b>
 &nbsp;        }
-<b class="nc">&nbsp;            this.semanticAnalyzer = semanticAnalyzer;</b>
+<b class="fc">&nbsp;            this.semanticAnalyzer = semanticAnalyzer;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
 &nbsp;     * Read object.field, returning null if the object or the field isn’t present.
 &nbsp;     */
 &nbsp;    public Object get(String object, String field) {
-<b class="nc">&nbsp;        Map&lt;String, Object&gt; objMap = store.get(object);</b>
-<b class="nc">&nbsp;        if (objMap == null) {</b>
+<b class="fc">&nbsp;        Map&lt;String, Object&gt; objMap = store.get(object);</b>
+<b class="pc">&nbsp;        if (objMap == null) {</b>
 &nbsp;            // no such object in this state
 <b class="nc">&nbsp;            return null;</b>
 &nbsp;        }
 &nbsp;        // may return null if this field was never set
-<b class="nc">&nbsp;        return objMap.get(field);</b>
+<b class="fc">&nbsp;        return objMap.get(field);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
 &nbsp;//laver en ny state med opdateret fields
 &nbsp;    public State with(String object, String field, Object newValue) {
 &nbsp;        // 1) shallow‐copy the outer map, deep‐copy each inner map
-<b class="nc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; copy = new HashMap&lt;&gt;();</b>
-<b class="nc">&nbsp;        for (var e : store.entrySet()) {</b>
-<b class="nc">&nbsp;            copy.put(e.getKey(), new HashMap&lt;&gt;(e.getValue()));</b>
+<b class="fc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; copy = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        for (var e : store.entrySet()) {</b>
+<b class="fc">&nbsp;            copy.put(e.getKey(), new HashMap&lt;&gt;(e.getValue()));</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // 2) ensure there’s a map for this objectName
-<b class="nc">&nbsp;        copy.computeIfAbsent(object, k -&gt; new HashMap&lt;&gt;())</b>
+<b class="fc">&nbsp;        copy.computeIfAbsent(object, k -&gt; new HashMap&lt;&gt;())</b>
 &nbsp;                // 3) set the field
-<b class="nc">&nbsp;                .put(field, newValue);</b>
+<b class="fc">&nbsp;                .put(field, newValue);</b>
 &nbsp;
 &nbsp;        // 4) return a fresh immutable State
-<b class="nc">&nbsp;        return new State(copy, semanticAnalyzer);</b>
+<b class="fc">&nbsp;        return new State(copy, semanticAnalyzer);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public boolean equals(Object o) {
-<b class="nc">&nbsp;        if (this == o) return true;</b>
-<b class="nc">&nbsp;        if (!(o instanceof State)) return false;</b>
-<b class="nc">&nbsp;        State other = (State) o;</b>
-<b class="nc">&nbsp;        return Objects.equals(store, other.store);</b>
+<b class="pc">&nbsp;        if (this == o) return true;</b>
+<b class="pc">&nbsp;        if (!(o instanceof State)) return false;</b>
+<b class="fc">&nbsp;        State other = (State) o;</b>
+<b class="fc">&nbsp;        return Objects.equals(store, other.store);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public int hashCode() {
-<b class="nc">&nbsp;        return Objects.hash(store);</b>
+<b class="fc">&nbsp;        return Objects.hash(store);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @Override
 &nbsp;    public String toString() {
-<b class="nc">&nbsp;        return &quot;State&quot; + store;</b>
+<b class="fc">&nbsp;        return &quot;State&quot; + store;</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    /**
@@ -189,15 +189,15 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    }
 &nbsp;
 &nbsp;    public static State fromSymbolTable(Map&lt;String, Symbol&gt; symbolTable, SemanticAnalyzer semanticAnalyzer) {
-<b class="nc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; initialStateMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        Map&lt;String, Map&lt;String, Object&gt;&gt; initialStateMap = new HashMap&lt;&gt;();</b>
 &nbsp;
-<b class="nc">&nbsp;        for (Symbol symbol : symbolTable.values()) {</b>
-<b class="nc">&nbsp;            if (symbol instanceof SymbolObject) {</b>
-<b class="nc">&nbsp;                SymbolObject objSymbol = (SymbolObject) symbol;</b>
-<b class="nc">&nbsp;                initialStateMap.put(objSymbol.getName(), objSymbol.getAttributes());</b>
+<b class="fc">&nbsp;        for (Symbol symbol : symbolTable.values()) {</b>
+<b class="fc">&nbsp;            if (symbol instanceof SymbolObject) {</b>
+<b class="fc">&nbsp;                SymbolObject objSymbol = (SymbolObject) symbol;</b>
+<b class="fc">&nbsp;                initialStateMap.put(objSymbol.getName(), objSymbol.getAttributes());</b>
 &nbsp;            }
 &nbsp;        }
-<b class="nc">&nbsp;        return new State(initialStateMap, semanticAnalyzer);</b>
+<b class="fc">&nbsp;        return new State(initialStateMap, semanticAnalyzer);</b>
 &nbsp;    }
 &nbsp;}
 </code>
@@ -223,7 +223,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>

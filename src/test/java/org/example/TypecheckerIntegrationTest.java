@@ -21,6 +21,35 @@ public class TypecheckerIntegrationTest {
     }
 
     @Test
+    public void testUnionTypeInitAssignments() throws Exception {
+        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("typeChecks/initUnionOk.co");
+        SemanticAnalyzer sem = buildSymbols(program);
+        StatementCheck stmtChk = new StatementCheck(sem);
+
+        // find all the package.location assignments
+        List<AssignmentNode> assigns = program.getProblem().getInit().stream()
+                .filter(s -> s instanceof AssignmentNode)
+                .map(s -> (AssignmentNode)s)
+                .filter(a -> a.getTarget().toString().contains("packages"))    // e.g. packages[0].location
+                .toList();
+
+        for (AssignmentNode asn : assigns) {
+            assertTrue(stmtChk.checkAssignment(asn),
+                    "Should accept union-type assignment: " + asn);
+        }
+    }
+
+    @Test
+    public void testActionBodiesTypeCheck() throws Exception {
+        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
+        SemanticAnalyzer sem = buildSymbols(program);
+
+        for (ActionNode action : program.getDomain().getActions()) {
+            assertDoesNotThrow(() -> sem.analyzeAction(action), () -> "Action '" + action.getName() + "' failed to type-check");
+        }
+    }
+
+    @Test
     public void testInitAssignmentsTypeCheck() throws Exception {
         ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
         SemanticAnalyzer sem = buildSymbols(program);
@@ -29,7 +58,7 @@ public class TypecheckerIntegrationTest {
         for (StatementNode stmt : program.getProblem().getInit()) {
             assertTrue(stmt instanceof AssignmentNode, "expected only assignments in initialState, got " + stmt);
             AssignmentNode asn = (AssignmentNode) stmt;
-            assertTrue(stmtChk.checkAssignment(asn), "initialState assignment failed type‐check: " + asn);
+            assertTrue(stmtChk.checkAssignment(asn), "initialState assignment failed type-check: " + asn);
         }
     }
 
@@ -58,7 +87,7 @@ public class TypecheckerIntegrationTest {
                 .findFirst()
                 .orElseThrow();
 
-        assertThrows(SemanticException.class, () -> stmtChk.checkComparison(bad), "Expected a type‐mismatch when comparing " + bad);
+        assertThrows(SemanticException.class, () -> stmtChk.checkComparison(bad), "Expected a type-mismatch when comparing " + bad);
     }
 
     @Test
@@ -69,6 +98,6 @@ public class TypecheckerIntegrationTest {
         sem.buildSymbolTable(program.getDomain(), program.getProblem());
 
         assertThrows(RuntimeException.class, () -> sem.addObjectValues(program.getProblem()),
-                "Expected a bad‐type assignment in initialState to trigger an exception");
+                "Expected a bad-type assignment in initialState to trigger an exception");
     }
 }

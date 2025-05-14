@@ -5,7 +5,7 @@
 <html id="htmlId">
 <head>
   <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
-  <title>Coverage Report > ConsilioListener</title>
+  <title>Coverage Report > ConsilioVisitor</title>
   <style type="text/css">
     @import "../../css/coverage.css";
     @import "../../css/idea.min.css";
@@ -22,14 +22,14 @@ Current scope:     <a href="../../index.html">all classes</a>
     <a href="../index.html">org.example</a>
 </div>
 
-<h1>Coverage Summary for Class: ConsilioListener (org.example)</h1>
+<h1>Coverage Summary for Class: ConsilioVisitor (org.example)</h1>
 
 <table class="coverageStats">
 <tr>
   <th class="name">Class</th>
 </tr>
 <tr>
-  <td class="name">ConsilioListener</td>
+  <td class="name">ConsilioVisitor</td>
 </tr>
 
 </table>
@@ -41,427 +41,261 @@ Current scope:     <a href="../../index.html">all classes</a>
 <pre>
 <code class="sourceCode" id="sourceCode">&nbsp;// Generated from Consilio.g4 by ANTLR 4.13.1
 &nbsp;package org.example;
-&nbsp;import org.antlr.v4.runtime.tree.ParseTreeListener;
+&nbsp;import org.antlr.v4.runtime.tree.ParseTreeVisitor;
 &nbsp;
 &nbsp;/**
-&nbsp; * This interface defines a complete listener for a parse tree produced by
-&nbsp; * {@link ConsilioParser}.
+&nbsp; * This interface defines a complete generic visitor for a parse tree produced
+&nbsp; * by {@link ConsilioParser}.
+&nbsp; *
+&nbsp; * @param &lt;T&gt; The return type of the visit operation. Use {@link Void} for
+&nbsp; * operations with no return type.
 &nbsp; */
-&nbsp;public interface ConsilioListener extends ParseTreeListener {
+&nbsp;public interface ConsilioVisitor&lt;T&gt; extends ParseTreeVisitor&lt;T&gt; {
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#program}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#program}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterProgram(ConsilioParser.ProgramContext ctx);
+&nbsp;	T visitProgram(ConsilioParser.ProgramContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#program}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#domain}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitProgram(ConsilioParser.ProgramContext ctx);
+&nbsp;	T visitDomain(ConsilioParser.DomainContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#domain}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#problem}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterDomain(ConsilioParser.DomainContext ctx);
+&nbsp;	T visitProblem(ConsilioParser.ProblemContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#domain}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#type}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitDomain(ConsilioParser.DomainContext ctx);
+&nbsp;	T visitType(ConsilioParser.TypeContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#problem}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#attribute}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterProblem(ConsilioParser.ProblemContext ctx);
+&nbsp;	T visitAttribute(ConsilioParser.AttributeContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#problem}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitProblem(ConsilioParser.ProblemContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#type}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterType(ConsilioParser.TypeContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#type}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitType(ConsilioParser.TypeContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#attribute}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterAttribute(ConsilioParser.AttributeContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#attribute}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitAttribute(ConsilioParser.AttributeContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code baseValue}
+&nbsp;	 * Visit a parse tree produced by the {@code baseValue}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterBaseValue(ConsilioParser.BaseValueContext ctx);
+&nbsp;	T visitBaseValue(ConsilioParser.BaseValueContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code baseValue}
+&nbsp;	 * Visit a parse tree produced by the {@code orValue}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitBaseValue(ConsilioParser.BaseValueContext ctx);
+&nbsp;	T visitOrValue(ConsilioParser.OrValueContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code orValue}
+&nbsp;	 * Visit a parse tree produced by the {@code arrayValue}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterOrValue(ConsilioParser.OrValueContext ctx);
+&nbsp;	T visitArrayValue(ConsilioParser.ArrayValueContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code orValue}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#valueType}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitOrValue(ConsilioParser.OrValueContext ctx);
+&nbsp;	T visitValueType(ConsilioParser.ValueTypeContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code arrayValue}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#action}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterArrayValue(ConsilioParser.ArrayValueContext ctx);
+&nbsp;	T visitAction(ConsilioParser.ActionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code arrayValue}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#value}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#parameter}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitArrayValue(ConsilioParser.ArrayValueContext ctx);
+&nbsp;	T visitParameter(ConsilioParser.ParameterContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#valueType}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#objects}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterValueType(ConsilioParser.ValueTypeContext ctx);
+&nbsp;	T visitObjects(ConsilioParser.ObjectsContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#valueType}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#objectBody}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitValueType(ConsilioParser.ValueTypeContext ctx);
+&nbsp;	T visitObjectBody(ConsilioParser.ObjectBodyContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#action}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#arrayInitializer}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterAction(ConsilioParser.ActionContext ctx);
+&nbsp;	T visitArrayInitializer(ConsilioParser.ArrayInitializerContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#action}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#arrayBody}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitAction(ConsilioParser.ActionContext ctx);
+&nbsp;	T visitArrayBody(ConsilioParser.ArrayBodyContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#parameter}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#init}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterParameter(ConsilioParser.ParameterContext ctx);
+&nbsp;	T visitInit(ConsilioParser.InitContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#parameter}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#goal}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitParameter(ConsilioParser.ParameterContext ctx);
+&nbsp;	T visitGoal(ConsilioParser.GoalContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#objects}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#ifBlock}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterObjects(ConsilioParser.ObjectsContext ctx);
+&nbsp;	T visitIfBlock(ConsilioParser.IfBlockContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#objects}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitObjects(ConsilioParser.ObjectsContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#objectBody}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterObjectBody(ConsilioParser.ObjectBodyContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#objectBody}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitObjectBody(ConsilioParser.ObjectBodyContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#arrayInitializer}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterArrayInitializer(ConsilioParser.ArrayInitializerContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#arrayInitializer}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitArrayInitializer(ConsilioParser.ArrayInitializerContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#arrayBody}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterArrayBody(ConsilioParser.ArrayBodyContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#arrayBody}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitArrayBody(ConsilioParser.ArrayBodyContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#init}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterInit(ConsilioParser.InitContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#init}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitInit(ConsilioParser.InitContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#goal}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterGoal(ConsilioParser.GoalContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#goal}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitGoal(ConsilioParser.GoalContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#ifBlock}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterIfBlock(ConsilioParser.IfBlockContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#ifBlock}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitIfBlock(ConsilioParser.IfBlockContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code ifStatement}
+&nbsp;	 * Visit a parse tree produced by the {@code ifStatement}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#statement}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterIfStatement(ConsilioParser.IfStatementContext ctx);
+&nbsp;	T visitIfStatement(ConsilioParser.IfStatementContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code ifStatement}
+&nbsp;	 * Visit a parse tree produced by the {@code assignmentStatement}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#statement}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitIfStatement(ConsilioParser.IfStatementContext ctx);
+&nbsp;	T visitAssignmentStatement(ConsilioParser.AssignmentStatementContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code assignmentStatement}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#statement}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#statementList}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterAssignmentStatement(ConsilioParser.AssignmentStatementContext ctx);
+&nbsp;	T visitStatementList(ConsilioParser.StatementListContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code assignmentStatement}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#statement}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitAssignmentStatement(ConsilioParser.AssignmentStatementContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#statementList}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterStatementList(ConsilioParser.StatementListContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#statementList}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitStatementList(ConsilioParser.StatementListContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code identifierAssignment}
+&nbsp;	 * Visit a parse tree produced by the {@code identifierAssignment}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#assignment}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx);
+&nbsp;	T visitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code identifierAssignment}
+&nbsp;	 * Visit a parse tree produced by the {@code dotNotationAssignment}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#assignment}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitIdentifierAssignment(ConsilioParser.IdentifierAssignmentContext ctx);
+&nbsp;	T visitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code dotNotationAssignment}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#assignment}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code dotNotationAssignment}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#assignment}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitDotNotationAssignment(ConsilioParser.DotNotationAssignmentContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code simpleDot}
+&nbsp;	 * Visit a parse tree produced by the {@code simpleDot}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#dotNotation}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterSimpleDot(ConsilioParser.SimpleDotContext ctx);
+&nbsp;	T visitSimpleDot(ConsilioParser.SimpleDotContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code simpleDot}
+&nbsp;	 * Visit a parse tree produced by the {@code arrayDot}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#dotNotation}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitSimpleDot(ConsilioParser.SimpleDotContext ctx);
+&nbsp;	T visitArrayDot(ConsilioParser.ArrayDotContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code arrayDot}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#dotNotation}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#arrayBodyInt}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterArrayDot(ConsilioParser.ArrayDotContext ctx);
+&nbsp;	T visitArrayBodyInt(ConsilioParser.ArrayBodyIntContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code arrayDot}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#dotNotation}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitArrayDot(ConsilioParser.ArrayDotContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#arrayBodyInt}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterArrayBodyInt(ConsilioParser.ArrayBodyIntContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#arrayBodyInt}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitArrayBodyInt(ConsilioParser.ArrayBodyIntContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code compareExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code compareExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterCompareExpression(ConsilioParser.CompareExpressionContext ctx);
+&nbsp;	T visitCompareExpression(ConsilioParser.CompareExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code compareExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code dotExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitCompareExpression(ConsilioParser.CompareExpressionContext ctx);
+&nbsp;	T visitDotExpression(ConsilioParser.DotExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code dotExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code arrayAccessExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterDotExpression(ConsilioParser.DotExpressionContext ctx);
+&nbsp;	T visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code dotExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code constantExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitDotExpression(ConsilioParser.DotExpressionContext ctx);
+&nbsp;	T visitConstantExpression(ConsilioParser.ConstantExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code arrayAccessExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code additionExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx);
+&nbsp;	T visitAdditionExpression(ConsilioParser.AdditionExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code arrayAccessExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code identifierExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx);
+&nbsp;	T visitIdentifierExpression(ConsilioParser.IdentifierExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code constantExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code parenthesisExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterConstantExpression(ConsilioParser.ConstantExpressionContext ctx);
+&nbsp;	T visitParenthesisExpression(ConsilioParser.ParenthesisExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code constantExpression}
+&nbsp;	 * Visit a parse tree produced by the {@code logicalExpression}
 &nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitConstantExpression(ConsilioParser.ConstantExpressionContext ctx);
+&nbsp;	T visitLogicalExpression(ConsilioParser.LogicalExpressionContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code additionExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#addOp}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterAdditionExpression(ConsilioParser.AdditionExpressionContext ctx);
+&nbsp;	T visitAddOp(ConsilioParser.AddOpContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code additionExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#compOp}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitAdditionExpression(ConsilioParser.AdditionExpressionContext ctx);
+&nbsp;	T visitCompOp(ConsilioParser.CompOpContext ctx);
 &nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code identifierExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#locOp}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void enterIdentifierExpression(ConsilioParser.IdentifierExpressionContext ctx);
+&nbsp;	T visitLocOp(ConsilioParser.LocOpContext ctx);
 &nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code identifierExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
+&nbsp;	 * Visit a parse tree produced by {@link ConsilioParser#constant}.
 &nbsp;	 * @param ctx the parse tree
+&nbsp;	 * @return the visitor result
 &nbsp;	 */
-&nbsp;	void exitIdentifierExpression(ConsilioParser.IdentifierExpressionContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code parenthesisExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterParenthesisExpression(ConsilioParser.ParenthesisExpressionContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code parenthesisExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitParenthesisExpression(ConsilioParser.ParenthesisExpressionContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by the {@code logicalExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterLogicalExpression(ConsilioParser.LogicalExpressionContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by the {@code logicalExpression}
-&nbsp;	 * labeled alternative in {@link ConsilioParser#expression}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitLogicalExpression(ConsilioParser.LogicalExpressionContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#addOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterAddOp(ConsilioParser.AddOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#addOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitAddOp(ConsilioParser.AddOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#compOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterCompOp(ConsilioParser.CompOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#compOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitCompOp(ConsilioParser.CompOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#locOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterLocOp(ConsilioParser.LocOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#locOp}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitLocOp(ConsilioParser.LocOpContext ctx);
-&nbsp;	/**
-&nbsp;	 * Enter a parse tree produced by {@link ConsilioParser#constant}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void enterConstant(ConsilioParser.ConstantContext ctx);
-&nbsp;	/**
-&nbsp;	 * Exit a parse tree produced by {@link ConsilioParser#constant}.
-&nbsp;	 * @param ctx the parse tree
-&nbsp;	 */
-&nbsp;	void exitConstant(ConsilioParser.ConstantContext ctx);
+&nbsp;	T visitConstant(ConsilioParser.ConstantContext ctx);
 &nbsp;}
 </code>
 </pre>
@@ -486,7 +320,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>

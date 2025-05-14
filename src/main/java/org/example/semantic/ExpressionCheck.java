@@ -244,8 +244,9 @@ public class ExpressionCheck {
                 if ("int".equals(leftType) && "int".equals(rightType)) {
                     return "int";
                 }
-                break;
-
+                else{
+                    throw new SemanticException("Invalid types: '" + leftType + "' and: '" + rightType + "' for arithmetic operation");
+                }
             case ">", "<", ">=", "<=":
                 if ("int".equals(leftType) && "int".equals(rightType)) {
                     return "boolean";
@@ -270,12 +271,8 @@ public class ExpressionCheck {
                 break;
 
             default:
-                throw new SemanticException("Ukendt operator: " + op);
+                throw new SemanticException("Invalid operator: " + op);
         }
-
-        throw new RuntimeException(
-                "Not compatible types: " + leftType + " and " + rightType
-        );
+        throw new RuntimeException("Not compatible types: " + leftType + " and " + rightType);
     }
-
 }

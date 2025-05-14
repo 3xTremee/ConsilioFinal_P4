@@ -56,26 +56,26 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    71,4%
+    100%
   </span>
   <span class="absValue">
-    (5/7)
+    (6/6)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    42,6%
+    78,8%
   </span>
   <span class="absValue">
-    (29/68)
+    (41/52)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    57,3%
+    92%
   </span>
   <span class="absValue">
-    (63/110)
+    (80/87)
   </span>
 </td>
 </tr>
@@ -223,87 +223,88 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    public void analyzeAction(ActionNode action) {
 &nbsp;        // Tilføj parametre som midlertidige SymbolObject
-<b class="nc">&nbsp;        for (ParameterNode p : action.getParameters()) {</b>
+<b class="fc">&nbsp;        for (ParameterNode p : action.getParameters()) {</b>
 &nbsp;            // slår typen op i table (skal allerede være der fra buildSymbolTable method)
-<b class="nc">&nbsp;            SymbolType typeSym = (SymbolType) symbolTable.get(p.getType());</b>
-<b class="nc">&nbsp;            if (typeSym == null) {</b>
+<b class="fc">&nbsp;            SymbolType typeSym = (SymbolType) symbolTable.get(p.getType());</b>
+<b class="pc">&nbsp;            if (typeSym == null) {</b>
 <b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt type for parameter: &quot; + p.getType());</b>
 &nbsp;            }
 &nbsp;
 &nbsp;            // laver en temp ObjectNode
-<b class="nc">&nbsp;            ObjectNode tempNode = new ObjectNode(p.getType(), null, p.getName(), new IdentifierNode(p.getName()));</b>
-<b class="nc">&nbsp;            SymbolObject parameterSym = new SymbolObject(p.getName(), tempNode, typeSym);</b>
+<b class="fc">&nbsp;            ObjectNode tempNode = new ObjectNode(p.getType(), null, p.getName(), new IdentifierNode(p.getName()));</b>
+<b class="fc">&nbsp;            SymbolObject parameterSym = new SymbolObject(p.getName(), tempNode, typeSym);</b>
 &nbsp;
 &nbsp;            // initialiser alle attributter til null, fordi der er et andet tjek som siger at objects skal være initialiseret
-<b class="nc">&nbsp;            for (SymbolAttribute attr : typeSym.getAttributes().values()) {</b>
-<b class="nc">&nbsp;                parameterSym.setAttributeValue(attr.getName(), null);</b>
+<b class="fc">&nbsp;            for (SymbolAttribute attr : typeSym.getAttributes().values()) {</b>
+<b class="fc">&nbsp;                parameterSym.setAttributeValue(attr.getName(), null);</b>
 &nbsp;            }
 &nbsp;
 &nbsp;            // put ind i table
-<b class="nc">&nbsp;            symbolTable.put(p.getName(), parameterSym);</b>
+<b class="fc">&nbsp;            symbolTable.put(p.getName(), parameterSym);</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // Tjek body’en er en ifNode
-<b class="nc">&nbsp;        StatementNode body = action.getBody();</b>
-<b class="nc">&nbsp;        if (!(body instanceof IfNode ifn)) {</b>
+<b class="fc">&nbsp;        StatementNode body = action.getBody();</b>
+<b class="pc">&nbsp;        if (!(body instanceof IfNode ifn)) {</b>
 <b class="nc">&nbsp;            throw new SemanticException(&quot;IfNode er ikke body, fik: &quot; + body.getClass());</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // guard skal være boolean
-<b class="nc">&nbsp;        String guardType = expressionCheck.typeEvaluation(ifn.getCondition());</b>
-<b class="nc">&nbsp;        if (!&quot;boolean&quot;.equals(guardType)) {</b>
+<b class="fc">&nbsp;        String guardType = expressionCheck.typeEvaluation(ifn.getCondition());</b>
+<b class="pc">&nbsp;        if (!&quot;boolean&quot;.equals(guardType)) {</b>
 <b class="nc">&nbsp;            throw new SemanticException(&quot;If-condition skal være boolean, fik: &quot; + guardType);</b>
 &nbsp;        }
 &nbsp;
 &nbsp;        // tjek alle assignments i then-branchen
-<b class="nc">&nbsp;        for (StatementNode stNode : statementCheck.checkThenBranch(ifn)) {</b>
-<b class="nc">&nbsp;            if (stNode instanceof AssignmentNode asNode) {</b>
-<b class="nc">&nbsp;                statementCheck.checkAssignment(asNode);</b>
+<b class="fc">&nbsp;        for (StatementNode stNode : statementCheck.checkThenBranch(ifn)) {</b>
+<b class="pc">&nbsp;            if (stNode instanceof AssignmentNode asNode) {</b>
+<b class="fc">&nbsp;                statementCheck.checkAssignment(asNode);</b>
 &nbsp;            } else {
 <b class="nc">&nbsp;                throw new SemanticException(&quot;Ukendt StatementNode i action-body: &quot; + stNode.getClass());</b>
 &nbsp;            }
 &nbsp;        }
 &nbsp;
 &nbsp;        // Fjern parametre igen
-<b class="nc">&nbsp;        for (ParameterNode p : action.getParameters()) {</b>
-<b class="nc">&nbsp;            symbolTable.remove(p.getName());</b>
+<b class="fc">&nbsp;        for (ParameterNode p : action.getParameters()) {</b>
+<b class="fc">&nbsp;            symbolTable.remove(p.getName());</b>
 &nbsp;        }
 &nbsp;    }
 &nbsp;
-&nbsp;
+&nbsp;/*
 &nbsp;    //  Print symbol table
 &nbsp;    public void printTables() {
-<b class="nc">&nbsp;        System.out.println(&quot;\nSymbol Table:&quot;);</b>
-<b class="nc">&nbsp;        for (Map.Entry&lt;String, Symbol&gt; entry : symbolTable.entrySet()) {</b>
-<b class="nc">&nbsp;            String name = entry.getKey();</b>
-<b class="nc">&nbsp;            Symbol symbol = entry.getValue();</b>
-<b class="nc">&nbsp;            if (symbol instanceof SymbolType) {</b>
-<b class="nc">&nbsp;                SymbolType typeSymbol = (SymbolType) symbol;</b>
-<b class="nc">&nbsp;                System.out.println(&quot;Type: &quot; + name);</b>
-<b class="nc">&nbsp;                System.out.println(&quot;, Attributes:&quot;);</b>
-<b class="nc">&nbsp;                for (SymbolAttribute attrSymbol : typeSymbol.getAttributes().values()) { // Iterate through values of the map</b>
-<b class="nc">&nbsp;                    System.out.println(&quot;  - Name: &quot; + attrSymbol.getName());</b>
-<b class="nc">&nbsp;                    for (String possibleType : attrSymbol.getPossibleTypes()) {</b>
-<b class="nc">&nbsp;                        System.out.println(&quot;    - Possible Type: &quot; + possibleType);</b>
+&nbsp;        System.out.println(&quot;\nSymbol Table:&quot;);
+&nbsp;        for (Map.Entry&lt;String, Symbol&gt; entry : symbolTable.entrySet()) {
+&nbsp;            String name = entry.getKey();
+&nbsp;            Symbol symbol = entry.getValue();
+&nbsp;            if (symbol instanceof SymbolType) {
+&nbsp;                SymbolType typeSymbol = (SymbolType) symbol;
+&nbsp;                System.out.println(&quot;Type: &quot; + name);
+&nbsp;                System.out.println(&quot;, Attributes:&quot;);
+&nbsp;                for (SymbolAttribute attrSymbol : typeSymbol.getAttributes().values()) { // Iterate through values of the map
+&nbsp;                    System.out.println(&quot;  - Name: &quot; + attrSymbol.getName());
+&nbsp;                    for (String possibleType : attrSymbol.getPossibleTypes()) {
+&nbsp;                        System.out.println(&quot;    - Possible Type: &quot; + possibleType);
 &nbsp;                    }
 &nbsp;                }
-<b class="nc">&nbsp;            } else if (symbol instanceof SymbolArray) {</b>
-<b class="nc">&nbsp;                SymbolArray arraySymbol = (SymbolArray) symbol;</b>
-<b class="nc">&nbsp;                System.out.println(&quot;Array: &quot; + name);</b>
-<b class="nc">&nbsp;                System.out.println(&quot;, Objects:&quot;);</b>
-<b class="nc">&nbsp;                for (SymbolObject objSymbol : arraySymbol.getObjects()) {</b>
-<b class="nc">&nbsp;                    System.out.println(&quot;  - Name: &quot; + objSymbol.getName() +</b>
-<b class="nc">&nbsp;                            &quot;, Type: &quot; + objSymbol.getType());</b>
-<b class="nc">&nbsp;                    if (!objSymbol.getAttributes().isEmpty()) {</b>
-<b class="nc">&nbsp;                        System.out.println(&quot;    - Attributes:&quot;);</b>
-<b class="nc">&nbsp;                        for (Map.Entry&lt;String, Object&gt; attrEntry : objSymbol.getAttributes().entrySet()) {</b>
-<b class="nc">&nbsp;                            System.out.println(&quot;      - Name: &quot; + attrEntry.getKey() + &quot;, Value: &quot; + attrEntry.getValue());</b>
+&nbsp;            } else if (symbol instanceof SymbolArray) {
+&nbsp;                SymbolArray arraySymbol = (SymbolArray) symbol;
+&nbsp;                System.out.println(&quot;Array: &quot; + name);
+&nbsp;                System.out.println(&quot;, Objects:&quot;);
+&nbsp;                for (SymbolObject objSymbol : arraySymbol.getObjects()) {
+&nbsp;                    System.out.println(&quot;  - Name: &quot; + objSymbol.getName() +
+&nbsp;                            &quot;, Type: &quot; + objSymbol.getType());
+&nbsp;                    if (!objSymbol.getAttributes().isEmpty()) {
+&nbsp;                        System.out.println(&quot;    - Attributes:&quot;);
+&nbsp;                        for (Map.Entry&lt;String, Object&gt; attrEntry : objSymbol.getAttributes().entrySet()) {
+&nbsp;                            System.out.println(&quot;      - Name: &quot; + attrEntry.getKey() + &quot;, Value: &quot; + attrEntry.getValue());
 &nbsp;                        }
 &nbsp;                    }
 &nbsp;                }
 &nbsp;            }
 &nbsp;        }
 &nbsp;    }
+&nbsp;    */
 &nbsp;}
 </code>
 </pre>
@@ -328,7 +329,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>

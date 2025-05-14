@@ -64,18 +64,18 @@ Current scope:     <a href="../../index.html">all classes</a>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    67%
+    69,3%
   </span>
   <span class="absValue">
-    (59/88)
+    (61/88)
   </span>
 </td>
 <td class="coverageStat">
   <span class="percent">
-    81,4%
+    82,2%
   </span>
   <span class="absValue">
-    (96/118)
+    (97/118)
   </span>
 </td>
 </tr>
@@ -120,7 +120,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    public boolean checkBool(ConstantNode c) {
 <b class="fc">&nbsp;        String v = c.getValueConstant();</b>
-<b class="pc">&nbsp;        return &quot;true&quot;.equals(v) || &quot;false&quot;.equals(v);</b>
+<b class="fc">&nbsp;        return &quot;true&quot;.equals(v) || &quot;false&quot;.equals(v);</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    // Metode til at tjekke om
@@ -234,9 +234,9 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;        //System.out.println(&quot;&gt;&gt; typeEvaluation on: &quot; + expr.getClass().getSimpleName() + &quot; -&gt; &quot; + expr);
 &nbsp;
 <b class="fc">&nbsp;        if (expr instanceof ConstantNode){</b>
-<b class="pc">&nbsp;            if (checkBool((ConstantNode) expr)){</b>
+<b class="fc">&nbsp;            if (checkBool((ConstantNode) expr)){</b>
 &nbsp;                //System.out.println(&quot;bool: &quot; + v);
-<b class="nc">&nbsp;                return &quot;boolean&quot;;</b>
+<b class="fc">&nbsp;                return &quot;boolean&quot;;</b>
 <b class="pc">&nbsp;            } else if (checkInt((ConstantNode) expr)) {</b>
 <b class="fc">&nbsp;                return &quot;int&quot;;</b>
 &nbsp;            }
@@ -381,7 +381,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>
