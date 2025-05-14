@@ -1,0 +1,23 @@
+define domain horseDomain
+
+type Knight{
+    location: Square;
+}
+
+type Square{
+    isVisited: boolean;
+}
+
+action move2Row(Knight N, Square from, Square to){
+    if(from.isVisited == false && N.location == from){
+        to.isVisited = true;
+        N.location = to;
+    }
+}
+
+action move2Column(Knight N, Square from, Square to){
+    if(from.isVisited == false && N.location == from){
+        to.isVisited = true;
+        N.location = to;
+    }
+}

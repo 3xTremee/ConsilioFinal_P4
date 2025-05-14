@@ -16,9 +16,9 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String domainFilePath = "./src/main/java/org/example/files/robotProgram/domain.co";
-        String problemFilePath = "./src/main/java/org/example/files/robotProgram/problem.co";
-        String outputFilePath = "./src/main/java/org/example/files/robotProgram/program.co";
+        String domainFilePath = "./src/main/java/org/example/files/chessHorseProgram/horseDomain.co";
+        String problemFilePath = "./src/main/java/org/example/files/chessHorseProgram/horseProblem.co";
+        String outputFilePath = "./src/main/java/org/example/files/chessHorseProgram/horseProgram.co";
         concatenateFiles(
                 domainFilePath,
                 problemFilePath,
@@ -79,7 +79,7 @@ public class Main {
                 init,
                 program.getProblem().getExpression()
         );
-        String resultFilePath = "./src/main/java/org/example/files/robotProgram/result.co";
+        String resultFilePath = "./src/main/java/org/example/files/chessHorseProgram/horseResult.co";
 
         plan.ifPresentOrElse(
                 p -> {
@@ -88,7 +88,7 @@ public class Main {
                                 .map(Object::toString)
                                 .reduce("", (a, b) -> a + b + System.lineSeparator());
                         Files.writeString(Path.of(resultFilePath), planContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                        System.out.println("Plan written to result file:");
+                        System.out.println("Plan written to: " + resultFilePath);
                     } catch (IOException e) {
                         System.err.println("An error occurred while writing the plan to the file: " + e.getMessage());
                     }
