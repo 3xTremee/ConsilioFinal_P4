@@ -195,7 +195,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return new OrValueNode(values);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Bliver pt ikke brugt &quot;doors: door[];&quot;
+&nbsp;    // Bliver pt ikke brugt &quot;doors: door[];&quot; (slet?)
 &nbsp;    @Override
 &nbsp;    public ValueNode visitArrayValue(ConsilioParser.ArrayValueContext ctx) {
 <b class="nc">&nbsp;        ValueNode elementType = (ValueNode) visit(ctx.valueType());</b>
@@ -388,7 +388,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 <b class="fc">&nbsp;        return new ParenExpressionNode(inner);</b>
 &nbsp;    }
 &nbsp;
-&nbsp;    // Bliver heller ikke brugt, &quot;rob.location = rooms[0];&quot;
+&nbsp;    // Bliver heller ikke brugt, &quot;rob.location = rooms[0];&quot; (slet?)
 &nbsp;    @Override
 &nbsp;    public ExpressionNode visitArrayAccessExpression(ConsilioParser.ArrayAccessExpressionContext ctx) {
 <b class="nc">&nbsp;        String arrayName = ctx.IDENTIFIER().getText();</b>
@@ -450,7 +450,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 
 <div class="footer">
     
-    <div style="float:right;">generated on 2025-05-12 12:04</div>
+    <div style="float:right;">generated on 2025-05-13 11:28</div>
 </div>
 </body>
 </html>
