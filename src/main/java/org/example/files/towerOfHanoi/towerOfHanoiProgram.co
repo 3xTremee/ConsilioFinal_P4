@@ -28,28 +28,41 @@ import towerOfHanoiDomain
 
 objects {
     Peg pegs[] = {A, B, C};
-    Disk disks[] = {D3, D2, D1};
+    Disk disks[] = {D4, D3, D2, D1};
     Disk groundDisk[] = {G};
 }
 
 initialState {
-    G.size      = 4;
-    G.peg       = A;
-    G.below     = G;
-    G.belowSize = 4;
+    G.size = 5;
+    G.peg = A;
+    G.below = G;
+    G.belowSize = 5;
 
-    disks[0,1,2].peg = A;
+    pegs[0,1,2].top = G;
+    pegs[0,1,2].topSize = 5;
 
-    D3.size = 3;  D3.below = G;  D3.belowSize = 4;
-    D2.size = 2;  D2.below = D3; D2.belowSize = 3;
-    D1.size = 1;  D1.below = D2; D1.belowSize = 2;
+    A.top = D1;
+    A.topSize = 1;
 
-    A.top = G;  A.topSize = 4;
-    B.top = G;  B.topSize = 4;
-    C.top = G;  C.topSize = 4;
-    A.top = D1;  A.topSize = 1;
+    disks[0,1,2,3].peg = A;
+
+    D4.size = 4;
+    D4.below = G;
+    D4.belowSize = 5;
+
+    D3.size = 3;
+    D3.below = D4;
+    D3.belowSize = 4;
+
+    D2.size = 2;
+    D2.below = D3;
+    D2.belowSize = 3;
+
+    D1.size = 1;
+    D1.below = D2;
+    D1.belowSize = 2;
 }
 
 goalState {
-    disks[0,1,2].peg == C;
+    disks[0,1,2,3].peg == C;
 }
