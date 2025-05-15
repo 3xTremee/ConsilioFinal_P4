@@ -1,0 +1,7 @@
+move{from=A, to=C, D=D1}
+move{from=A, to=B, D=D2}
+move{from=C, to=B, D=D1}
+move{from=A, to=C, D=D3}
+move{from=B, to=A, D=D1}
+move{from=B, to=C, D=D2}
+move{from=A, to=C, D=D1}

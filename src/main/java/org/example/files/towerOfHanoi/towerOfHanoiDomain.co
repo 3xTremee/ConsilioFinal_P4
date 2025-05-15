@@ -1,0 +1,25 @@
+define domain towerOfHanoiDomain
+
+type Disc {
+    size: int;
+    peg: Peg;
+    below: Disc;
+    belowSize: int;
+}
+
+type Peg {
+    top: Disc;
+    topSize: int;
+}
+
+action move(Peg from, Peg to, Disc D){
+    if (D.tower == from && from.top == D && to.topSize > D.size ){
+        from.top = D.below;
+        from.topSize = D.belowSize;
+        D.below = to.top;
+        D.belowSize = to.topSize;
+        to.top = D;
+        to.topSize = D.size;
+        D.peg = to;
+    }
+}
