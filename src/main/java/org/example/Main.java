@@ -107,7 +107,6 @@ public class Main {
                     }
                 }
         );
-
     }
 
     public static void concatenateFiles(String domainFilePath, String problemFilePath, String outputFilePath) {
@@ -126,6 +125,4 @@ public class Main {
             System.err.println("An error occurred while concatenating files: " + e.getMessage());
         }
     }
-
-
 }
