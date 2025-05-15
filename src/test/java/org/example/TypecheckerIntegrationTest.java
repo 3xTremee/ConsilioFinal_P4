@@ -22,7 +22,7 @@ public class TypecheckerIntegrationTest {
 
     @Test
     public void testActionBodiesTypeCheck() throws Exception {
-        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
+        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("robotProgram/program.co");
         SemanticAnalyzer sem = buildSymbols(program);
 
         for (ActionNode action : program.getDomain().getActions()) {
@@ -32,7 +32,7 @@ public class TypecheckerIntegrationTest {
 
     @Test
     public void testInitAssignmentsTypeCheck() throws Exception {
-        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
+        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("robotProgram/program.co");
         SemanticAnalyzer sem = buildSymbols(program);
         StatementCheck stmtChk = new StatementCheck(sem);
 
@@ -44,8 +44,8 @@ public class TypecheckerIntegrationTest {
     }
 
     @Test
-    public void testGoalExpressionCheckIntegration() throws Exception {
-        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("program.co");
+    public void testGoalExpressionTypeCheck() throws Exception {
+        ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("robotProgram/program.co");
         SemanticAnalyzer sem = buildSymbols(program);
         StatementCheck stmtChk = new StatementCheck(sem);
         for (ExpressionNode expr : program.getProblem().getExpression()) {
@@ -54,7 +54,7 @@ public class TypecheckerIntegrationTest {
     }
 
     @Test
-    public void testBadComparisonThrows() throws Exception {
+    public void testBadGoalExpressionThrows() throws Exception {
         ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("typeChecks/goalError.co");
         SemanticAnalyzer sem = buildSymbols(program);
         StatementCheck stmtChk = new StatementCheck(sem);
@@ -72,7 +72,7 @@ public class TypecheckerIntegrationTest {
     }
 
     @Test
-    public void testBadAssignmentThrows() throws Exception {
+    public void testBadInitThrows() throws Exception {
         ProgramNode program = InterpreterIntegrationTest.parseAndBuildAST("typeChecks/initError.co");
 
         SemanticAnalyzer sem = new SemanticAnalyzer();

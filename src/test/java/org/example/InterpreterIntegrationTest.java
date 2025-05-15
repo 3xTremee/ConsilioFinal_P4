@@ -55,20 +55,10 @@ public class InterpreterIntegrationTest {
 
     @Test
     public void testRobotDomain() throws Exception {
-        ProgramNode program = parseAndBuildAST("program.co");
-        List<String> expected = readExpected("result.co");
+        ProgramNode program = parseAndBuildAST("robotProgram/program.co");
+        List<String> expected = readExpected("robotProgram/result.co");
 
         List<String> actual = planProgram(program);
         assertEquals(expected, actual, "Plan for program.co should match expected result.co");
     }
-
-    /*
-    @Test
-    public void testDeliveryDomain() throws Exception {
-        ProgramNode program = parseAndBuildAST("rescueProgram.co");
-        List<String> expected = readExpected("rescueResult.co");
-        List<String> actual = planProgram(program);
-        assertEquals(expected, actual, "Plan for rescueProgram.co should match expected rescueResult.co");
-    }
-*/
 }
