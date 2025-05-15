@@ -47,7 +47,6 @@ public class GroundedAction {
                 && Objects.equals(binding, ga.binding);
     }
 
-
     @Override
     public int hashCode() {
         return Objects.hash(schema.getName(), binding);

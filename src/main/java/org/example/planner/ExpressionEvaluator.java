@@ -129,7 +129,6 @@ public class ExpressionEvaluator {
                 }
             }
 
-
             if (L instanceof Integer li && R instanceof Integer ri) {
                 return switch (op) {
                     case "+"  -> li + ri;
@@ -165,7 +164,6 @@ public class ExpressionEvaluator {
                     default   -> throw new UnsupportedOperationException("Unknown bool operator: " + op);
                 };
             }
-
 
             return switch (op) {
                 case "==" -> (L != null) && L.equals(R);
