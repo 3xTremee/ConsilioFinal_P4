@@ -1,7 +1,7 @@
-move{from=A, to=C, D=D1}
-move{from=A, to=B, D=D2}
-move{from=C, to=B, D=D1}
-move{from=A, to=C, D=D3}
-move{from=B, to=A, D=D1}
-move{from=B, to=C, D=D2}
-move{from=A, to=C, D=D1}
+moveDisk{D=D1, from=A, to=C}
+moveDisk{D=D2, from=A, to=B}
+moveDisk{D=D1, from=C, to=B}
+moveDisk{D=D3, from=A, to=C}
+moveDisk{D=D1, from=B, to=A}
+moveDisk{D=D2, from=B, to=C}
+moveDisk{D=D1, from=A, to=C}

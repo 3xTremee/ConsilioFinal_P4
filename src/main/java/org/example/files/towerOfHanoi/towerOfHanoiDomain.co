@@ -1,19 +1,19 @@
 define domain towerOfHanoiDomain
 
-type Disc {
-    size: int;
+type Peg {
+    topSize: int;
+    top: Disk;
+}
+
+type Disk {
     peg: Peg;
-    below: Disc;
+    size: int;
+    below: Disk;
     belowSize: int;
 }
 
-type Peg {
-    top: Disc;
-    topSize: int;
-}
-
-action move(Peg from, Peg to, Disc D){
-    if (D.tower == from && from.top == D && to.topSize > D.size ){
+action moveDisk(Disk D, Peg from, Peg to) {
+    if (D.peg == from && from.top == D && D.size < to.topSize) {
         from.top = D.below;
         from.topSize = D.belowSize;
         D.below = to.top;

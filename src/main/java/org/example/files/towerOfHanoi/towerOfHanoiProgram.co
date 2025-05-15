@@ -1,19 +1,19 @@
 define domain towerOfHanoiDomain
 
-type Disc {
-    size: int;
+type Peg {
+    topSize: int;
+    top: Disk;
+}
+
+type Disk {
     peg: Peg;
-    below: Disc;
+    size: int;
+    below: Disk;
     belowSize: int;
 }
 
-type Peg {
-    top: Disc;
-    topSize: int;
-}
-
-action move(Peg from, Peg to, Disc D){
-    if (D.tower == from && from.top == D && to.topSize > D.size ){
+action moveDisk(Disk D, Peg from, Peg to) {
+    if (D.peg == from && from.top == D && D.size < to.topSize) {
         from.top = D.below;
         from.topSize = D.belowSize;
         D.below = to.top;
@@ -26,27 +26,30 @@ action move(Peg from, Peg to, Disc D){
 define problem towerOfHanoiProblem
 import towerOfHanoiDomain
 
-objects{
+objects {
     Peg pegs[] = {A, B, C};
-    Disc discs[] = {D1,D2,D3};
-    Disc groundDisc[] = {G};
+    Disk disks[] = {D3, D2, D1};
+    Disk groundDisk[] = {G};
 }
 
-initialState{
-    G.size = 4; G.peg = A; G.below = G; G.belowSize = 4;
-    A.top = G; A.topSize = 4;
-    B.top = G; B.topSize = 4;
-    C.top = G; C.topSize = 4;
+initialState {
+    G.size      = 4;
+    G.peg       = A;
+    G.below     = G;
+    G.belowSize = 4;
 
-    D1.size = 1; D2.size = 2; D3.size = 3;
+    disks[0,1,2].peg = A;
 
-    A.top = D1; A.topSize = D1.size;
+    D3.size = 3;  D3.below = G;  D3.belowSize = 4;
+    D2.size = 2;  D2.below = D3; D2.belowSize = 3;
+    D1.size = 1;  D1.below = D2; D1.belowSize = 2;
 
-    D1.peg = A; D1.below = D2; D1.belowSize = 2;
-    D2.peg = A; D2.below = D3; D2.belowSize = 3;
-    D3.peg = A; D3.below = G;  D3.belowSize = 4;
+    A.top = G;  A.topSize = 4;
+    B.top = G;  B.topSize = 4;
+    C.top = G;  C.topSize = 4;
+    A.top = D1;  A.topSize = 1;
 }
 
-goalState{
-    discs[0,1,2].peg == C;
+goalState {
+    disks[0,1,2].peg == C;
 }
