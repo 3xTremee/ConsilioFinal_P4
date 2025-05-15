@@ -5,6 +5,7 @@ import org.example.ast.*;
 import org.example.semantic.*;
 import org.example.planner.*;
 import org.antlr.v4.runtime.*;
+import org.example.semantic.symbols.Symbol;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -16,9 +17,9 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String domainFilePath = "./src/main/java/org/example/files/AcceptanceDomain.co";
-        String problemFilePath = "./src/main/java/org/example/files/AcceptanceProblem.co";
-        String outputFilePath = "./src/main/java/org/example/files/AcceptanceProgram.co";
+        String domainFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceDomain.co";
+        String problemFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceProblem.co";
+        String outputFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceProgram.co";
         concatenateFiles(
                 domainFilePath,
                 problemFilePath,
@@ -79,7 +80,7 @@ public class Main {
                 init,
                 program.getProblem().getExpression()
         );
-        String resultFilePath = "./src/main/java/org/example/files/AcceptanceResult.co";
+        String resultFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceResult.co";
 
         plan.ifPresentOrElse(
                 p -> {

@@ -1,6 +1,8 @@
 package org.example.planner;
 
 import org.example.semantic.*;
+import org.example.semantic.symbols.Symbol;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package org.example.semantic;
+package org.example.semantic.symbols;
 
 import org.example.ast.TypeNode;
 import java.util.LinkedHashMap;

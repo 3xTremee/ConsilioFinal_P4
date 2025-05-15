@@ -2,9 +2,10 @@ package org.example.planner;
 
 import org.example.ast.*;
 import org.example.semantic.*;
+import org.example.semantic.symbols.SymbolArray;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 // BFS search planner

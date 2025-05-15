@@ -1,6 +1,10 @@
 package org.example.semantic;
 
 import org.example.ast.*;
+import org.example.semantic.symbols.SymbolArray;
+import org.example.semantic.symbols.SymbolAttribute;
+import org.example.semantic.symbols.SymbolObject;
+import org.example.semantic.symbols.SymbolType;
 
 import java.util.List;
 import java.util.*;

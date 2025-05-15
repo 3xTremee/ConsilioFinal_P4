@@ -8,6 +8,8 @@ import org.example.ast.IdentifierNode;
 import org.example.ast.ParenExpressionNode;
 import org.example.ast.ArrayAccessNode;
 import org.example.semantic.*;
+import org.example.semantic.symbols.SymbolArray;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.*;
 
