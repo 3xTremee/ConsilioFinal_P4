@@ -19,6 +19,5 @@ initialState {
 }
 
 goalState {
-    L1.curr == nul1;
     L1.curr == nul1 && N3.next == N2 && N2.next == N1 && N1.next == nul1;
 }

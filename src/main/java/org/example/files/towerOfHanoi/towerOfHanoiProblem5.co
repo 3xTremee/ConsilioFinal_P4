@@ -1,0 +1,47 @@
+define problem towerOfHanoiProblem
+import towerOfHanoiDomain
+
+objects {
+    Peg pegs[] = {A, B, C};
+    Disk disks[] = {D5, D4, D3, D2, D1};
+    Disk groundDisk[] = {G};
+}
+
+initialState {
+    G.size = 6;
+    G.peg = A;
+    G.below = G;
+    G.belowSize = 6;
+
+    pegs[0,1,2].top = G;
+    pegs[0,1,2].topSize = 6;
+
+    A.top = D1;
+    A.topSize = 1;
+
+    disks[0,1,2,3,4].peg = A;
+
+    D5.size = 5;
+    D5.below = G;
+    D5.belowSize = 6;
+
+    D4.size = 4;
+    D4.below = D5;
+    D4.belowSize = 5;
+
+    D3.size = 3;
+    D3.below = D4;
+    D3.belowSize = 4;
+
+    D2.size = 2;
+    D2.below = D3;
+    D2.belowSize = 3;
+
+    D1.size = 1;
+    D1.below = D2;
+    D1.belowSize = 2;
+}
+
+goalState {
+    disks[0,1,2,3,4].peg == C;
+}

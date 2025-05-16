@@ -16,9 +16,9 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String domainFilePath = "./src/main/java/org/example/files/listReversal/listReversalDomain.co";
-        String problemFilePath = "./src/main/java/org/example/files/listReversal/listReversalProblem.co";
-        String outputFilePath = "./src/main/java/org/example/files/listReversal/listReversalProgram.co";
+        String domainFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiDomain.co";
+        String problemFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiProblem5.co";
+        String outputFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiProgram5.co";
         concatenateFiles(
                 domainFilePath,
                 problemFilePath,
@@ -79,7 +79,7 @@ public class Main {
                 init,
                 program.getProblem().getExpression()
         );
-        String resultFilePath = "./src/main/java/org/example/files/listReversal/listReversalResult.co";
+        String resultFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiResult5.co";
 
         plan.ifPresentOrElse(
                 p -> {
@@ -88,7 +88,7 @@ public class Main {
                                 .map(Object::toString)
                                 .reduce("", (a, b) -> a + b + System.lineSeparator());
                         Files.writeString(Path.of(resultFilePath), planContent, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-                        System.out.println("Plan written to: " + resultFilePath);
+                        System.out.println("Plan found after applying: "+plan.get().size()+ " action(s)\nPlan written to: " + resultFilePath);
                     } catch (IOException e) {
                         System.err.println("An error occurred while writing the plan to the file: " + e.getMessage());
                     }

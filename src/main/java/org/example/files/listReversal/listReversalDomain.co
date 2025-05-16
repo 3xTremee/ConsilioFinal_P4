@@ -1,7 +1,7 @@
 define domain listReversalDomain
 
 type Node {
-  next: Node || NullType;
+  nxt: Node || NullType;
 }
 
 type List {
@@ -20,12 +20,13 @@ action initialize(Node start, List list, NullType null){
         list.head = start;
         list.prev = null;
         list.curr = start;
+        list.next  = null;
     }
 }
 
 action reverseStep(List list, NullType null, Node curr, Node nxt){
     if (list.curr != null && list.curr == curr){
-        list.next = curr.next;
+        list.next = curr.nxt;
         curr.next = list.prev;
         list.prev = curr;
         list.curr = nxt;
