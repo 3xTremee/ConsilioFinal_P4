@@ -21,9 +21,8 @@ dependencies {
 }
 
 generateGrammarSource {
-    // Force the generated classes to have package org.example
     arguments += [
-            '-visitor',       // <-- Tells ANTLR to generate BaseVisitor classes
+            '-visitor',
             '-package', 'org.example'
     ]
     outputDirectory = file('build/generated-src/antlr/main/org/example')
@@ -37,13 +36,13 @@ sourceSets {
     }
 }
 
-compileJava.dependsOn generateGrammarSource // Sikre at generateGrammarSource køres før compileJava
+compileJava.dependsOn generateGrammarSource
 
 test {
     useJUnitPlatform()
 }
 
 application {
-    mainClass = 'org.example.Main' // Erstat 'org.example.Main' med den fulde sti til din hovedklasse
+    mainClass = 'org.example.Main'
 }
 
