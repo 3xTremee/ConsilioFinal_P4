@@ -1,0 +1,11 @@
+define domain robotDomain
+
+type robot {
+    carrying : boolean;
+}
+
+action pickUpPackage(robot r){
+    if(r.carrying == false){
+        r.carrying = true;
+    }
+}

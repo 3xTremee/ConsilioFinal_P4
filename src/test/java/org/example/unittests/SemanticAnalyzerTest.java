@@ -166,7 +166,7 @@ public class SemanticAnalyzerTest {
 // domain and problem build the symbol table
     @Test
     public void testValidProgramAnalysis() throws Exception {
-        ProgramNode program = loadProgram("program.co");
+        ProgramNode program = loadProgram("Unit_Test_Valid_Program.co");
         assertDoesNotThrow(() -> {
             semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
             semanticAnalyzer.addObjectValues(program.getProblem());

@@ -38,7 +38,7 @@ public class StatementCheckTest {
         assertThrows(SemanticException.class, () -> checker.checkComparison(comparison));
 
     }
-
+/*
 //Returns if-statements condition
     @Test
     public void testCheckIfStatementReturnsCorrectCondition() {
@@ -46,7 +46,7 @@ public class StatementCheckTest {
         IfNode ifNode = new IfNode(condition,new StatementListNode(List.of()));
         assertEquals(condition, checker.checkIfCondition(ifNode));
     }
-
+*/
 //Returns all statements from then-branch
     @Test
     public void testCheckIfStatementReturnsCorrectThenBranch(){

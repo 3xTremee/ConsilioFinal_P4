@@ -114,7 +114,7 @@ public class ExpressionCheckTest {
         assertThrows(RuntimeException.class, () -> checker.attributeCheck(symbolType, fakeAttr));
     }
 
-
+/* GAMLE TESTS, RYKKET TIL DOTNODECHECKTEST
     @Test
     public void testDotValidAttributeAcces(){
         AttributeNode attr = new AttributeNode("carrying", new ValueTypeNode("boolean"));
@@ -144,7 +144,7 @@ public class ExpressionCheckTest {
         DotNode dot = new DotNode(new IdentifierNode("rob"), "unknown");
         assertThrows(RuntimeException.class, () -> checker.checkDotNode(dot));
     }
-
+*/
     @Test
     public void testBinaryAdditionValid() {
         BinaryOpNode op = new BinaryOpNode(new ConstantNode("2"),"+", new ConstantNode("45"));
