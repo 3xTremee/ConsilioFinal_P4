@@ -17,9 +17,9 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String domainFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceDomain.co";
-        String problemFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceProblem.co";
-        String outputFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceProgram.co";
+        String domainFilePath = "./src/main/java/org/example/files/robotProgram/domain.co";
+        String problemFilePath = "./src/main/java/org/example/files/robotProgram/problem.co";
+        String outputFilePath = "./src/main/java/org/example/files/robotProgram/program.co";
         concatenateFiles(
                 domainFilePath,
                 problemFilePath,
@@ -70,7 +70,7 @@ public class Main {
 
         // Planning
         Map<String, Symbol> symbolTable = semanticAnalyzer.getSymbolTable();
-        State init = State.fromSymbolTable(symbolTable, semanticAnalyzer);
+        State init = State.fromSymbolTable(symbolTable);
         Planner planner = new Planner(
                 program.getDomain(),
                 program.getProblem().getObjects(),
@@ -80,7 +80,7 @@ public class Main {
                 init,
                 program.getProblem().getExpression()
         );
-        String resultFilePath = "./src/main/java/org/example/files/acceptanceTest/AcceptanceResult.co";
+        String resultFilePath = "./src/main/java/org/example/files/robotProgram/result.co";
 
         plan.ifPresentOrElse(
                 p -> {

@@ -13,14 +13,12 @@ public class State {
     // Map of object names and their corrosponding concrete attributes. "r1 maps to location, which is A, and carrying which is false"
     private final Map<String, Map<String, Object>> store;
 
-    SemanticAnalyzer semanticAnalyzer;
 
-    public State(Map<String, Map<String, Object>> initial, SemanticAnalyzer semanticAnalyzer) {
+    public State(Map<String, Map<String, Object>> initial) {
         this.store = new HashMap<>();
         for (Map.Entry<String, Map<String, Object>> e : initial.entrySet()) {
             this.store.put(e.getKey(), new HashMap<>(e.getValue()));
         }
-        this.semanticAnalyzer = semanticAnalyzer;
     }
 
     // Gets the field/attribute of the object
@@ -44,10 +42,10 @@ public class State {
         copy.computeIfAbsent(object, k -> new HashMap<>())
                 .put(field, newValue);
 
-        return new State(copy, semanticAnalyzer);
+        return new State(copy);
     }
 
-    public static State fromSymbolTable(Map<String, Symbol> symbolTable, SemanticAnalyzer semanticAnalyzer) {
+    public static State fromSymbolTable(Map<String, Symbol> symbolTable) {
         Map<String, Map<String, Object>> initialStateMap = new HashMap<>();
 
         for (Symbol symbol : symbolTable.values()) {
@@ -56,7 +54,7 @@ public class State {
                 initialStateMap.put(objSymbol.getName(), objSymbol.getAttributes());
             }
         }
-        return new State(initialStateMap, semanticAnalyzer);
+        return new State(initialStateMap);
     }
 
     @Override

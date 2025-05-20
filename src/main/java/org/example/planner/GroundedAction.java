@@ -21,7 +21,6 @@ public class GroundedAction {
             }
         }
         this.binding = Collections.unmodifiableMap(ordered);
-        //this.binding = Map.copyOf(binding);
     }
 
     public ActionNode getSchema() {
