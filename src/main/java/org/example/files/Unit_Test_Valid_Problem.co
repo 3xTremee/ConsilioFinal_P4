@@ -1,0 +1,27 @@
+define domain robotDomain
+    type robot {
+        location: int;
+        carrying: boolean;
+    }
+
+    action move(robot r) {
+        if (r.carrying == false) {
+            r.carrying = true;
+        }
+    }
+
+define problem simpleMove
+    import robotDomain
+
+    objects {
+        robot robots[] = {rob};
+    }
+
+    initialState {
+        rob.location = 0;
+        rob.carrying = false;
+    }
+
+    goalState {
+        rob.carrying == true;
+    }
