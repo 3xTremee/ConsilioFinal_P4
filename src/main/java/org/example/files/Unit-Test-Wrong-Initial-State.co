@@ -2,7 +2,7 @@ define domain robotDomain
 
 type robot {
     carrying : boolean;
-    missing : boolean
+    missing : boolean;
 }
 
 action pickUpPackage(robot r){
