@@ -1,10 +1,5 @@
 grammar Consilio;
-/*
-program
-    : domain EOF
-    | problem EOF
-    ;
-*/
+
 
 program
     : domain problem EOF
@@ -84,9 +79,6 @@ ifBlock
 statement
     : ifBlock                   #ifStatement
     | assignment SEMI           #assignmentStatement // var før assignment SEMI
-//    | statement statement     #statementConcatination
-//    | expression        #expressionStatement
-//    | SEMI              #semiColon
     ;
 
 statementList
