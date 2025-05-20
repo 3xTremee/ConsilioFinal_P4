@@ -1,13 +1,11 @@
-package org.example;
+package org.example.integrationTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 import org.example.ast.*;
 import org.example.semantic.SemanticException;
 import org.example.semantic.StatementCheck;
 import org.example.semantic.SemanticAnalyzer;
-import org.example.semantic.ExpressionCheck;
 
 import org.junit.jupiter.api.Test;
 

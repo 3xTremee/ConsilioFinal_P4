@@ -1,4 +1,4 @@
-package org.example.unittests;
+package org.example.unitTest;
 
 import org.example.ast.*;
 import org.example.semantic.*;

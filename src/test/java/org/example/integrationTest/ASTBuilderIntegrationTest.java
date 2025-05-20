@@ -1,15 +1,15 @@
-package org.example;
+package org.example.integrationTest;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.example.ConsilioLexer;
+import org.example.ConsilioParser;
 import org.example.ast.*;
 import org.example.parser.AstBuilder;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
