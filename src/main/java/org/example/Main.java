@@ -16,9 +16,9 @@ import java.util.Optional;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String domainFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiDomain.co";
-        String problemFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiProblem5.co";
-        String outputFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiProgram5.co";
+        String domainFilePath = "./src/main/java/org/example/files/robotProgram/domain.co";
+        String problemFilePath = "./src/main/java/org/example/files/robotProgram/problem.co";
+        String outputFilePath = "./src/main/java/org/example/files/robotProgram/program.co";
         concatenateFiles(
                 domainFilePath,
                 problemFilePath,
@@ -79,7 +79,7 @@ public class Main {
                 init,
                 program.getProblem().getExpression()
         );
-        String resultFilePath = "./src/main/java/org/example/files/towerOfHanoi/towerOfHanoiResult5.co";
+        String resultFilePath = "./src/main/java/org/example/files/robotProgram/result.co";
 
         plan.ifPresentOrElse(
                 p -> {
