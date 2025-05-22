@@ -1,0 +1,3 @@
+pickUpPackage{r=rob, p=pack, rm=A}
+move{r=rob, dest=B}
+putDownPackage{r=rob, p=pack, rm=B}

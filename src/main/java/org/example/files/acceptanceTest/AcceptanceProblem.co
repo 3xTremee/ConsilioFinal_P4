@@ -1,0 +1,23 @@
+define problem AcceptanceProblem
+import AcceptanceDomain
+
+objects {
+    robot robots[] = {rob};
+    package packages[] = {pack};
+    room rooms[] = {A, B};
+}
+
+initialState {
+    rob.location = A;
+    rob.carrying = false;
+
+    packages[0].location = A;
+
+    rooms[0,1].numberOfItems = 3;
+}
+
+goalState {
+    packages[0].location == B;
+    rob.carrying == false;
+    A.numberOfItems == 2;
+}

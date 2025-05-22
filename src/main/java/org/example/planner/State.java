@@ -1,7 +1,8 @@
 package org.example.planner;
 
-import org.example.ast.*;
 import org.example.semantic.*;
+import org.example.semantic.symbols.Symbol;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,16 +13,13 @@ public class State {
     // Map of object names and their corrosponding concrete attributes. "r1 maps to location, which is A, and carrying which is false"
     private final Map<String, Map<String, Object>> store;
 
-    SemanticAnalyzer semanticAnalyzer;
 
-    public State(Map<String, Map<String, Object>> initial, SemanticAnalyzer semanticAnalyzer) {
-            this.store = new HashMap<>();
-            for (Map.Entry<String, Map<String, Object>> e : initial.entrySet()) {
-                this.store.put(e.getKey(), new HashMap<>(e.getValue()));
+    public State(Map<String, Map<String, Object>> initial) {
+        this.store = new HashMap<>();
+        for (Map.Entry<String, Map<String, Object>> e : initial.entrySet()) {
+            this.store.put(e.getKey(), new HashMap<>(e.getValue()));
         }
-            this.semanticAnalyzer = semanticAnalyzer;
     }
-
 
     // Gets the field/attribute of the object
     public Object get(String object, String field) {
@@ -32,8 +30,6 @@ public class State {
         // may return null if this field was never set
         return objMap.get(field);
     }
-
-
 
     // Creates a new State with updated fields
     public State with(String object, String field, Object newValue) {
@@ -46,9 +42,20 @@ public class State {
         copy.computeIfAbsent(object, k -> new HashMap<>())
                 .put(field, newValue);
 
-        return new State(copy, semanticAnalyzer);
+        return new State(copy);
     }
 
+    public static State fromSymbolTable(Map<String, Symbol> symbolTable) {
+        Map<String, Map<String, Object>> initialStateMap = new HashMap<>();
+
+        for (Symbol symbol : symbolTable.values()) {
+            if (symbol instanceof SymbolObject) {
+                SymbolObject objSymbol = (SymbolObject) symbol;
+                initialStateMap.put(objSymbol.getName(), objSymbol.getAttributes());
+            }
+        }
+        return new State(initialStateMap);
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -66,41 +73,5 @@ public class State {
     @Override
     public String toString() {
         return "State" + store;
-    }
-
-
-    // Create the initial state from the objects and initial state/assignments (Delete if end up not being used)
-    public static State fromProblem(ProblemNode problem, SemanticAnalyzer semanticAnalyzer) {
-        Map<String, Map<String, Object>> init = new HashMap<>();
-        for (ObjectNode obj : problem.getObjects()) {
-            init.computeIfAbsent(obj.getElementName(), k -> new HashMap<>());
-        }
-        State state = new State(init, semanticAnalyzer);
-
-        // Apply each assignmentNode
-        ExpressionEvaluator eval = new ExpressionEvaluator(semanticAnalyzer);
-        for (StatementNode stmt : problem.getStatement()) {
-            if (stmt instanceof AssignmentNode asn) {
-                DotNode dotNode = asn.getTarget();
-                ExpressionNode exprNode = dotNode.getTarget();
-                String objName = ((IdentifierNode) exprNode).getName();
-                String field = dotNode.getField();
-                Object val = eval.evaluate(asn.getExpression(), state);
-                state = state.with(objName, field, val);
-            }
-        }
-        return state;
-    }
-
-    public static State fromSymbolTable(Map<String, Symbol> symbolTable, SemanticAnalyzer semanticAnalyzer) {
-        Map<String, Map<String, Object>> initialStateMap = new HashMap<>();
-
-        for (Symbol symbol : symbolTable.values()) {
-            if (symbol instanceof SymbolObject) {
-                SymbolObject objSymbol = (SymbolObject) symbol;
-                initialStateMap.put(objSymbol.getName(), objSymbol.getAttributes());
-            }
-        }
-        return new State(initialStateMap, semanticAnalyzer);
     }
 }

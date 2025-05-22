@@ -1,7 +1,9 @@
-package org.example;
+package org.example.integrationTest;
 
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.example.ConsilioLexer;
+import org.example.ConsilioParser;
 import org.example.ast.*;
 import org.example.parser.AstBuilder;
 import org.example.planner.Planner;

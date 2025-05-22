@@ -21,7 +21,6 @@ public class GroundedAction {
             }
         }
         this.binding = Collections.unmodifiableMap(ordered);
-        //this.binding = Map.copyOf(binding);
     }
 
     public ActionNode getSchema() {
@@ -46,7 +45,6 @@ public class GroundedAction {
         return schema.getName().equals(ga.schema.getName())
                 && Objects.equals(binding, ga.binding);
     }
-
 
     @Override
     public int hashCode() {

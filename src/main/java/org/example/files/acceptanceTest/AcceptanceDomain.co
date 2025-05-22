@@ -1,0 +1,36 @@
+define domain AcceptanceDomain
+
+type robot {
+    location : room;
+    carrying : boolean;
+}
+
+type package {
+    location : room || robot;
+}
+
+type room {
+    numberOfItems : int;
+}
+
+action pickUpPackage(robot r, package p, room rm){
+    if(r.carrying == false && r.location == p.location && rm.numberOfItems > 0 && p.location == rm){
+        p.location = r;
+        r.carrying = true;
+        rm.numberOfItems = rm.numberOfItems - 1;
+    }
+}
+
+action move(robot r, room dest){
+    if(r.location != dest){
+        r.location = dest;
+    }
+}
+
+action putDownPackage(robot r, package p, room rm){
+    if(r.carrying == true && p.location == r && r.location == rm){
+        p.location = rm;
+        r.carrying = false;
+        rm.numberOfItems = rm.numberOfItems + 1;
+    }
+}

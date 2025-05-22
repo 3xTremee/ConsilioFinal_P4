@@ -1,4 +1,4 @@
-package org.example.unittests;
+package org.example.unitTest;
 
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;

@@ -2,9 +2,10 @@ package org.example.planner;
 
 import org.example.ast.*;
 import org.example.semantic.*;
+import org.example.semantic.symbols.SymbolArray;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 // BFS search planner
@@ -109,8 +110,6 @@ public class Planner {
         }
     }
 
-
-
     // Chech if every goal expression is true in state s
     private boolean isGoal(State s, List<ExpressionNode> goals) {
         ExpressionEvaluator eval = new ExpressionEvaluator(this.semanticAnalyzer); // no bindings
@@ -131,7 +130,7 @@ public class Planner {
 
         frontier.add(new Node(init, List.of()));
         seen.add(init);
-        System.out.print("Init: " + init + "\n");
+        System.out.print("\n Init state: " + init + "\n");
 
         if (isGoal(init, goals)) {
             throw new SemanticException("Initial state is already in goal state");
@@ -142,25 +141,19 @@ public class Planner {
 
             // Try each action from this state
             for (GroundedAction ga : allActions) {
-                //System.out.println("Attempting action: " + ga + "\n  from state: " + n.state);
                 State nxt = apply(ga, n.state);
                 if (nxt != null) {
-                    //System.out.println("\u001B[32m" + " Applied, new state: " + "\u001B[0m" + nxt);
                     if (seen.add(nxt)) {
                         List<GroundedAction> p2 = new ArrayList<>(n.plan);
                         p2.add(ga);
 
                         //Checks goal state
                         if (isGoal(nxt, goals)) {
-                            //System.out.println("\u001B[34m" + "Reached goal with action: " + ga + "\u001B[0m");
-                            System.out.print("Goal: " + nxt + "\n");
+                            System.out.print("\n Goal state: " + nxt + "\n\n");
                             return Optional.of(p2);
                         }
                         frontier.add(new Node(nxt, p2));
                     }
-                } else {
-                    //System.out.println("\u001B[31m" + " Guard failed" + "\u001B[0m");
-
                 }
             }
         }

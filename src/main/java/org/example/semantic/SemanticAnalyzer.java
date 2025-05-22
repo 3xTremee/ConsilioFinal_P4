@@ -4,6 +4,7 @@ import java.util.*;
 
 import org.example.ast.*;
 import org.example.planner.ExpressionEvaluator;
+import org.example.semantic.symbols.*;
 
 public class SemanticAnalyzer {
 

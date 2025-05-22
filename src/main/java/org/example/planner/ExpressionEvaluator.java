@@ -8,6 +8,8 @@ import org.example.ast.IdentifierNode;
 import org.example.ast.ParenExpressionNode;
 import org.example.ast.ArrayAccessNode;
 import org.example.semantic.*;
+import org.example.semantic.symbols.SymbolArray;
+import org.example.semantic.symbols.SymbolObject;
 
 import java.util.*;
 
@@ -127,7 +129,6 @@ public class ExpressionEvaluator {
                 }
             }
 
-
             if (L instanceof Integer li && R instanceof Integer ri) {
                 return switch (op) {
                     case "+"  -> li + ri;
@@ -163,7 +164,6 @@ public class ExpressionEvaluator {
                     default   -> throw new UnsupportedOperationException("Unknown bool operator: " + op);
                 };
             }
-
 
             return switch (op) {
                 case "==" -> (L != null) && L.equals(R);

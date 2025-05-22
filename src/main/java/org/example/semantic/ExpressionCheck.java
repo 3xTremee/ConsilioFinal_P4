@@ -1,6 +1,7 @@
 package org.example.semantic;
 
 import org.example.ast.*;
+import org.example.semantic.symbols.*;
 
 import java.util.*;
 

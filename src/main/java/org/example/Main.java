@@ -5,6 +5,7 @@ import org.example.ast.*;
 import org.example.semantic.*;
 import org.example.planner.*;
 import org.antlr.v4.runtime.*;
+import org.example.semantic.symbols.Symbol;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -69,7 +70,7 @@ public class Main {
 
         // Planning
         Map<String, Symbol> symbolTable = semanticAnalyzer.getSymbolTable();
-        State init = State.fromSymbolTable(symbolTable, semanticAnalyzer);
+        State init = State.fromSymbolTable(symbolTable);
         Planner planner = new Planner(
                 program.getDomain(),
                 program.getProblem().getObjects(),
@@ -107,7 +108,6 @@ public class Main {
                     }
                 }
         );
-
     }
 
     public static void concatenateFiles(String domainFilePath, String problemFilePath, String outputFilePath) {
@@ -126,6 +126,4 @@ public class Main {
             System.err.println("An error occurred while concatenating files: " + e.getMessage());
         }
     }
-
-
 }
