@@ -4,9 +4,7 @@ import org.example.ast.*;
 import org.example.planner.ExpressionEvaluator;
 import org.example.planner.State;
 import org.example.semantic.SemanticAnalyzer;
-import org.example.semantic.Symbol;
-import org.example.semantic.SymbolObject;
-import org.example.semantic.SymbolType;
+import org.example.semantic.symbols.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -85,7 +83,7 @@ public class ExpressionEvaluatorTest {
         robAttributes.put("carrying", true);
         stateMap.put("rob", robAttributes);
 
-        State state = new State(stateMap, analyzer);
+        State state = new State(stateMap);
 
         DotNode dot = new DotNode(new IdentifierNode("rob"), "carrying");
         assertEquals(true, evaluator.evaluate(dot, state));
@@ -98,7 +96,7 @@ public class ExpressionEvaluatorTest {
     public void testEvaluateDotNodeWithMissingFieldReturnsNull() {
         Map<String, Map<String, Object>> stateMap = new HashMap<>();
         stateMap.put("rob", Map.of("location", "A"));
-        State state = new State(stateMap, analyzer);
+        State state = new State(stateMap);
 
         DotNode node = new DotNode(new IdentifierNode("rob"), "carrying");
         Object result = evaluator.evaluate(node, state);
@@ -110,7 +108,7 @@ public class ExpressionEvaluatorTest {
     @Test
     public void testEvaluateDotNodeWithUnknownObjectReturnsNull() {
         Map<String, Map<String, Object>> stateMap = new HashMap<>();
-        State state = new State(stateMap, analyzer);
+        State state = new State(stateMap);
 
         DotNode node = new DotNode(new IdentifierNode("robFail"), "field");
         Object result = evaluator.evaluate(node, state);

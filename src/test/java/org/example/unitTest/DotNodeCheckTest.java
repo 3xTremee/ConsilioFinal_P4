@@ -2,6 +2,7 @@ package org.example.unitTest;
 
 import org.example.ast.*;
 import org.example.semantic.*;
+import org.example.semantic.symbols.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

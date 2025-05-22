@@ -12,6 +12,8 @@ import org.example.planner.GroundedAction;
 import org.example.semantic.SemanticAnalyzer;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.example.semantic.symbols.Symbol;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
@@ -46,8 +48,8 @@ public class InterpreterIntegrationTest {
 
         analyzer.addObjectValues(problem);
 
-        Map<String, org.example.semantic.Symbol> symbolTable = analyzer.getSymbolTable();
-        State init = State.fromSymbolTable(symbolTable, analyzer);
+        Map<String, Symbol> symbolTable = analyzer.getSymbolTable();
+        State init = State.fromSymbolTable(symbolTable);
 
         Planner planner = new Planner(domain, problem.getObjects(), analyzer);
         Optional<List<GroundedAction>> maybePlan = planner.bfs(init, problem.getExpression());
