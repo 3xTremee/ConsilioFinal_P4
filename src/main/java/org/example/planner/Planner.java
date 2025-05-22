@@ -126,10 +126,10 @@ public class Planner {
     public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goals) {
         record Node(State state, List<GroundedAction> plan) {}
         Queue<Node> frontier = new ArrayDeque<>();
-        Set<State> seen = new HashSet<>();
+        Set<State> seenState = new HashSet<>();
 
         frontier.add(new Node(init, List.of()));
-        seen.add(init);
+        seenState.add(init);
         System.out.print("\n Init state: " + init + "\n");
 
         if (isGoal(init, goals)) {
@@ -143,7 +143,7 @@ public class Planner {
             for (GroundedAction ga : allActions) {
                 State nxt = apply(ga, n.state);
                 if (nxt != null) {
-                    if (seen.add(nxt)) {
+                    if (seenState.add(nxt)) {
                         List<GroundedAction> p2 = new ArrayList<>(n.plan);
                         p2.add(ga);
 
