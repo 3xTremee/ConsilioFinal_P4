@@ -215,8 +215,7 @@ public class SemanticAnalyzerTest {
 
     }
 
-// =================SEMANTIK UNIT TESTS - FYLDER MEGET, og nogle er måske blevet lidt redundant men sletter dem ikke lige endnu=================================
-    //====================================================================================
+// SEMANTIK UNIT TESTS - FYLDER MEGET, og nogle er måske blevet lidt redundant men sletter dem ikke lige endnu
     @Test
     public void testValidProgramWorks() {
         String input = """
@@ -329,45 +328,7 @@ public class SemanticAnalyzerTest {
         """;
         assertSemanticError(input);
     }
-/*
-    @Test
-    public void testDuplicateFieldsInType() {
-        String input = """
-        define domain robotDomain
 
-        type robot {
-            location: room;
-            location: boolean;
-        }
-
-        type room {
-            numberOfItems: int;
-        }
-
-        action set(robot r, room d) {
-            r.location = d;
-        }
-
-        define problem p
-        import robotDomain
-
-        objects {
-            robot robots[] = {rob};
-            room rooms[] = {A};
-        }
-
-        initialState {
-            rob.location = A;
-            A.numberOfItems = 0;
-        }
-
-        goalState {
-            rob.location == A;
-        }
-        """;
-        assertSemanticError(input);
-    }
-*/
     @Test
     public void testMismatchedDomainNameInImport() {
         String input = """
@@ -448,130 +409,6 @@ public class SemanticAnalyzerTest {
         """;
         assertSemanticError(input);
     }
-
-
-
-
-/* igen idk om skal checkes semantisk.
-    //test for assign forkert type
-    @Test
-    public void testAssignmentTypeMismatch() {
-        String input = """
-        define domain robotDomain
-
-        type robot {
-            carrying: boolean;
-            location: room;
-        }
-
-        type room {
-            numberOfItems: int;
-        }
-
-        action assignBoolToInt(robot r, room d) {
-            r.carrying = 42;
-        }
-
-        define problem p
-        import robotDomain
-
-        objects {
-            robot robots[] = {rob};
-            room rooms[] = {A};
-        }
-
-        initialState {
-            rob.location = A;
-            rob.carrying = false;
-            A.numberOfItems = 0;
-        }
-
-        goalState {
-            rob.carrying == true;
-        }
-        """;
-        assertSemanticError(input);
-    }
-*/
-    /* øhm den her test virker ikke fordi bliver vel bare fanget i expression evaluator istedet for. måske skal dette ændrefixes at some point eller bare slet tests.
-    @Test
-    public void testAssignmentToUndeclaredField() {
-        String input = """
-        define domain robotDomain
-
-        type robot {
-            carrying: boolean;
-            location: room;
-        }
-
-        type room {
-            numberOfItems: int;
-        }
-
-        action set(robot r, room d) {
-            r.unknown = d;
-        }
-
-        define problem p
-        import robotDomain
-
-        objects {
-            robot robots[] = {rob};
-            room rooms[] = {A};
-        }
-
-        initialState {
-            rob.location = A;
-            rob.carrying = false;
-            A.numberOfItems = 0;
-        }
-
-        goalState {
-            rob.carrying == true;
-        }
-        """;
-        assertSemanticError(input);
-    }
-
-     @Test
-    public void testAssignmentToUndeclaredObject() {
-        String input = """
-        define domain robotDomain
-
-        type robot {
-            carrying: boolean;
-            location: room;
-        }
-
-        type room {
-            numberOfItems: int;
-        }
-
-        action set(robot r, room d) {
-            ghost.carrying = true;
-        }
-
-        define problem p
-        import robotDomain
-
-        objects {
-            robot robots[] = {rob};
-            room rooms[] = {A};
-        }
-
-        initialState {
-            rob.location = A;
-            rob.carrying = false;
-            A.numberOfItems = 0;
-        }
-
-        goalState {
-            rob.carrying == true;
-        }
-        """;
-        assertSemanticError(input);
-    }
-*/
 
     // Parses and builds the AST, then checks if semantic analysis fails as expected
     private void assertSemanticError(String input) {
