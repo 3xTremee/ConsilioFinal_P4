@@ -123,8 +123,8 @@ public class Planner {
     }
 
     // BFS algorithm used to search for a plan
-    public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goals) {
-        record Node(State state, List<GroundedAction> plan) {}
+    public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goalConditions) {
+        record Node(State state, List<GroundedAction> currentPlan) {}
         Queue<Node> frontier = new ArrayDeque<>();
         Set<State> seenState = new HashSet<>();
 
@@ -132,27 +132,27 @@ public class Planner {
         seenState.add(init);
         System.out.print("\n Init state: " + init + "\n");
 
-        if (isGoal(init, goals)) {
+        if (isGoal(init, goalConditions)) {
             throw new SemanticException("Initial state is already in goal state");
         }
 
         while (!frontier.isEmpty()) {
-            Node n = frontier.poll();
+            Node node = frontier.poll();
 
             // Try each action from this state
-            for (GroundedAction ga : allActions) {
-                State nxt = apply(ga, n.state);
-                if (nxt != null) {
-                    if (seenState.add(nxt)) {
-                        List<GroundedAction> p2 = new ArrayList<>(n.plan);
-                        p2.add(ga);
+            for (GroundedAction groundedAction : allActions) {
+                State nextState = apply(groundedAction, node.state);
+                if (nextState != null) {
+                    if (seenState.add(nextState)) {
+                        List<GroundedAction> newPlan = new ArrayList<>(node.currentPlan);
+                        newPlan.add(groundedAction);
 
                         //Checks goal state
-                        if (isGoal(nxt, goals)) {
-                            System.out.print("\n Goal state: " + nxt + "\n\n");
-                            return Optional.of(p2);
+                        if (isGoal(nextState, goalConditions)) {
+                            System.out.print("\n Goal state: " + nextState + "\n\n");
+                            return Optional.of(newPlan);
                         }
-                        frontier.add(new Node(nxt, p2));
+                        frontier.add(new Node(nextState, newPlan));
                     }
                 }
             }
