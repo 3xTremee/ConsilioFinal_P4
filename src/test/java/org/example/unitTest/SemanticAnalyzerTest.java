@@ -167,7 +167,7 @@ public class SemanticAnalyzerTest {
 // domain and problem build the symbol table
     @Test
     public void testValidProgramAnalysis() throws Exception {
-        ProgramNode program = loadProgram("Unit_Test_Valid_Program.co");
+        ProgramNode program = loadProgram("unitTest/Unit_Test_Valid_Program.co");
         assertDoesNotThrow(() -> {
             semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
             semanticAnalyzer.addObjectValues(program.getProblem());
@@ -177,27 +177,27 @@ public class SemanticAnalyzerTest {
     // an attribute is missing in the initial state
     @Test
     public void testMissingAttributInitializationThrows() throws Exception {
-        ProgramNode program = loadProgram("Unit-Test-Wrong-Initial-State.co");
+        ProgramNode program = loadProgram("unitTest/Unit-Test-Wrong-Initial-State.co");
         semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
         assertThrows(SemanticException.class, () -> semanticAnalyzer.addObjectValues(program.getProblem()));
     }
 // import name is mismatched
     @Test
     public void testMismatchedImportThrows() throws Exception {
-        ProgramNode program = loadProgram("Unit-Test-Wrong-Import-Program.co");
+        ProgramNode program = loadProgram("unitTest/Unit-Test-Wrong-Import-Program.co");
         assertThrows(SemanticException.class, () -> semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem()));
     }
 //all attributes initialized succesfully
     @Test
     public void testFullyInitializedAttributesPasses() throws Exception {
-        ProgramNode program = loadProgram("Unit-Test-Program-Fully-Initialized.co");
+        ProgramNode program = loadProgram("unitTest/Unit-Test-Program-Fully-Initialized.co");
         semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
         assertDoesNotThrow(() -> semanticAnalyzer.addObjectValues(program.getProblem()));
     }
 // valid action with boolean guard passes
     @Test
     public void testValidActionBodyWithBooleanGuard() throws Exception {
-        ProgramNode program = loadProgram("Unit-Test-Valid-Action-Body-With-Boolean-Guard.co");
+        ProgramNode program = loadProgram("unitTest/Unit-Test-Valid-Action-Body-With-Boolean-Guard.co");
         semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
         for (ActionNode action : program.getDomain().getActions()) {
             assertDoesNotThrow(() -> semanticAnalyzer.analyzeAction(action));
@@ -206,7 +206,7 @@ public class SemanticAnalyzerTest {
 
     @Test
     public void testActionWithNonBooleanConditionThrows() throws Exception {
-        ProgramNode program = loadProgram("Unit-Test-Action-With-Non-Boolean-Condition.co");
+        ProgramNode program = loadProgram("unitTest/Unit-Test-Action-With-Non-Boolean-Condition.co");
         semanticAnalyzer.buildSymbolTable(program.getDomain(), program.getProblem());
         for (ActionNode action : program.getDomain().getActions()) {
             assertThrows(SemanticException.class, () -> semanticAnalyzer.analyzeAction(action));
