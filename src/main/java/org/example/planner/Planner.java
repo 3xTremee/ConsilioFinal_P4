@@ -18,17 +18,17 @@ public class Planner {
         this.semanticAnalyzer = semanticAnalyzer;
     }
 
-    private List<GroundedAction> groundAll(DomainNode domain, List<ObjectNode> objs) {
-        Map<String, List<String>> byType = new HashMap<>();
-        for (ObjectNode o : objs) {
-            byType.computeIfAbsent(o.getType(), k -> new ArrayList<>())
-                    .add(o.getElementName());
+    private List<GroundedAction> groundAll(DomainNode domain, List<ObjectNode> allObjects) {
+        Map<String, List<String>> objectsByType = new HashMap<>();
+        for (ObjectNode object : allObjects) {
+            objectsByType.computeIfAbsent(object.getType(), k -> new ArrayList<>())
+                    .add(object.getElementName());
         }
-        List<GroundedAction> out = new ArrayList<>();
-        for (ActionNode a : domain.getActions()) {
-            backtrackBind(a.getParameters(), byType, 0, new HashMap<>(), a, out);
+        List<GroundedAction> groundedActions = new ArrayList<>();
+        for (ActionNode actionSchema : domain.getActions()) {
+            backtrackBind(actionSchema.getParameters(), objectsByType, 0, new HashMap<>(), actionSchema, groundedActions);
         }
-        return out;
+        return groundedActions;
     }
 
     private void backtrackBind(
