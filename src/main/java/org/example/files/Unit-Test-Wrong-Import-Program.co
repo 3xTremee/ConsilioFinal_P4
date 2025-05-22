@@ -1,0 +1,26 @@
+define domain robotDomain
+
+type robot {
+    carrying : boolean;
+}
+
+action pickUpPackage(robot r){
+    if(r.carrying == false){
+        r.carrying = true;
+    }
+}
+
+define problem movePackagesDemo
+import robotDomainFail
+
+objects {
+    robot robots[] = {rob};
+}
+
+initialState {
+    rob.carrying = false;
+}
+
+goalState {
+rob.carrying == true;
+}
