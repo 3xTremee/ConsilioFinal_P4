@@ -124,7 +124,7 @@ public class Planner {
 
     // BFS algorithm used to search for a plan
     public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goalConditions) {
-        record Node(State state, List<GroundedAction> currentPlan) {}
+        record Node(State currentState, List<GroundedAction> currentPlan) {}
         Queue<Node> frontier = new ArrayDeque<>();
         Set<State> seenState = new HashSet<>();
 
@@ -141,7 +141,7 @@ public class Planner {
 
             // Try each action from this state
             for (GroundedAction groundedAction : allActions) {
-                State nextState = apply(groundedAction, node.state);
+                State nextState = apply(groundedAction, node.currentState);
                 if (nextState != null) {
                     if (seenState.add(nextState)) {
                         List<GroundedAction> newPlan = new ArrayList<>(node.currentPlan);
