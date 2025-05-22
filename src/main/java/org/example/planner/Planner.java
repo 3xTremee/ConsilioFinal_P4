@@ -123,16 +123,16 @@ public class Planner {
     }
 
     // BFS algorithm used to search for a plan
-    public Optional<List<GroundedAction>> bfs(State init, List<ExpressionNode> goalConditions) {
+    public Optional<List<GroundedAction>> bfs(State initialState, List<ExpressionNode> goalConditions) {
         record Node(State currentState, List<GroundedAction> currentPlan) {}
         Queue<Node> frontier = new ArrayDeque<>();
         Set<State> seenState = new HashSet<>();
 
-        frontier.add(new Node(init, List.of()));
-        seenState.add(init);
-        System.out.print("\n Init state: " + init + "\n");
+        frontier.add(new Node(initialState, List.of()));
+        seenState.add(initialState);
+        System.out.print("\n Init state: " + initialState + "\n");
 
-        if (isGoal(init, goalConditions)) {
+        if (isGoal(initialState, goalConditions)) {
             throw new SemanticException("Initial state is already in goal state");
         }
 
