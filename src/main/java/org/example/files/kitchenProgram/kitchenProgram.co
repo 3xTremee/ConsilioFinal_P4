@@ -1,0 +1,65 @@
+define domain kitchenDomain
+
+type sandwich {
+    glutenFree : boolean;
+    location : kitchen || nonExisting;
+}
+
+type bread {
+    location : kitchen || nonExisting;
+    glutenFree : boolean;
+}
+
+type contents {
+    location : kitchen || nonExisting;
+    glutenFree : boolean;
+}
+
+type nonExisting {
+}
+
+type kitchen {
+}
+
+action makeSandwich(sandwich s, bread b, contents c, kitchen k, nonExisting n) {
+    if (s.location == n && b.location == k && c.location == k) {
+        s.location = k;
+        s.glutenFree = b.glutenFree && c.glutenFree;
+        b.location = n;
+        c.location = n;
+    }
+}
+
+
+define problem kitchenDemo
+import kitchenDomain
+
+objects {
+    kitchen kitchens[] = {mainKitchen};
+    sandwich sandwiches[] = {s1, s2};
+    bread breads[] = {b1, b2, b3};
+    contents contentss[] = {c1, c2, c3, c4};
+    nonExisting nonExistingObjects[] = {void};
+}
+
+initialState {
+
+    sandwiches[0,1].location = void;
+
+    sandwiches[0,1].glutenFree = false;
+
+    breads[0,1,2].location = mainKitchen;
+    breads[0,1].glutenFree = false;
+    breads[2].glutenFree = true;
+
+    contentss[0,1,2,3].location = mainKitchen;
+    contentss[0,1,2].glutenFree = false;
+    contentss[3].glutenFree = true;
+}
+
+goalState {
+    sandwiches[0,1].location == mainKitchen;
+
+    sandwiches[0].glutenFree == true;
+    sandwiches[1].glutenFree == false;
+}

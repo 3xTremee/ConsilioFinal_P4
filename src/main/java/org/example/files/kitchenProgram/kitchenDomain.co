@@ -1,0 +1,31 @@
+define domain kitchenDomain
+
+type sandwich {
+    glutenFree : boolean;
+    location : kitchen || nonExisting;
+}
+
+type bread {
+    location : kitchen || nonExisting;
+    glutenFree : boolean;
+}
+
+type contents {
+    location : kitchen || nonExisting;
+    glutenFree : boolean;
+}
+
+type nonExisting {
+}
+
+type kitchen {
+}
+
+action makeSandwich(sandwich s, bread b, contents c, kitchen k, nonExisting n) {
+    if (s.location == n && b.location == k && c.location == k) {
+        s.location = k;
+        s.glutenFree = b.glutenFree && c.glutenFree;
+        b.location = n;
+        c.location = n;
+    }
+}
