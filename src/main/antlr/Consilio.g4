@@ -168,7 +168,9 @@ OR       : '||';
 ADD      : '+';
 SUB      : '-';
 
-
+//dette er en regel som gør at hver gang der er mellemrum vil den matche med denne regel, så det der
+//står før mellemrum vil være en regel for sig fx define vil blive en string der skal matches med en regel
+//fordi der er mellemrum
 WS: [ \t\r\n]+ -> skip;
 
 IDENTIFIER: Letter LetterOrDigit*;

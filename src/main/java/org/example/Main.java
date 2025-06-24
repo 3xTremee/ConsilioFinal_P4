@@ -26,9 +26,11 @@ public class Main {
                 outputFilePath
         );
         CharStream input = CharStreams.fromFileName(outputFilePath);
-        ConsilioLexer lexer = new ConsilioLexer(input);
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ConsilioParser parser = new ConsilioParser(tokens);
+
+
+        ConsilioLexer lexer = new ConsilioLexer(input); //instanciere klassen så man kan bruge dens metoder.
+        CommonTokenStream tokens = new CommonTokenStream(lexer); //for at få næste token så kaldes getNextToken på ConsilioLexer klassen. Dette
+        ConsilioParser parser = new ConsilioParser(tokens); //laver en instance af parseren og giver den tokenstream. Her laves altså parsetræet.
 
         // Removes standard error listeners made by ANTLR
         parser.removeErrorListeners();
